@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	<!-- 号段内存 -->
+	<bean id="phoneMemory" class="com.lxt2.mtprocess.phase.PhaseMemory" />
+
+	<!-- 号段文件 -->
+	<bean id="phoneInfoFile" class="com.lxt2.mtprocess.phase.PhoneInfoFile">
+		<constructor-arg>
+			<value>${WORKDIR}../../../data/biz/phoneInfo</value>
+		</constructor-arg>
+	</bean>
+	<!-- 号段DAO -->
+	<bean id="phoneInfoDAO" class="com.lxt2.mtprocess.phase.PhoneInfoListDAO">
+		<property name="phoneInfoListDao" ref="tlPhoneInfo" />
+	</bean>
+	<!-- 号段校验类 -->
+	<bean id="phoneInfoList" class="com.lxt2.mtprocess.phase.StandardList"
+		init-method="init">
+		<property name="phoneInfoFile" ref="phoneInfoFile" />
+		<property name="phoneMemory" ref="phoneMemory" />
+		<property name="phoneInfoDAO" ref="phoneInfoDAO" />
+	</bean>
+	
+	<!-- 号段同步命令 -->
+	<bean id="phaseSyncCmd1102" class="com.lxt2.mtprocess.task.PhaseSyncCmd">
+        <property name="standardList" ref="phoneInfoList"/>
+    </bean>
+    
+    <!-- 号段同步任务 -->
+	<bean id="phaseSyncAllTask1102" class="com.lxt2.mtprocess.task.PhaseSysTask">
+		<property name="id" value="109"/>
+		<property name="name" value="小号段信息加载(运营商、省份、城市)"/>
+		<!-- 每天凌晨2点执行 -->
+		<property name="taskSchRule" value="@{sch(0,2)}"/>
+		<property name="standardList" ref="phoneInfoList"/>
+        <property name="commandMap">
+            <map>
+                <entry key="sync" value-ref="phaseSyncCmd1102"/>
+            </map>
+        </property>
+	</bean>
+</beans>

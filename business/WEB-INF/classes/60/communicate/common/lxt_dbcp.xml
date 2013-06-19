@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverclass}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="maxActive" value="20"/>
+        <property name="maxIdle" value="10"/>
+        <property name="minIdle" value="1"/>
+        <property name="validationQuery" value="${jdbc.validationQuery}"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="testWhileIdle" value="true"/>
+    </bean>
+
+    <bean id="masDataSource2306" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${masdb.driverClass}"/>
+        <property name="initialSize" value="2"></property>
+        <property name="maxActive" value="20"/>
+        <property name="maxIdle" value="3"/>
+        <property name="minIdle" value="1"/>
+        <property name="maxWait" value="1000" />
+        <property name="validationQuery" value="${masdb.validationQuery}"/>
+        <property name="validationQueryTimeout" value="5"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="testOnReturn" value="true"/>
+    </bean>
+    
+    <bean id="connTestDs" class="org.springframework.jdbc.datasource.DriverManagerDataSource" scope="prototype">
+        <property name="driverClassName" value="${masdb.driverClass}"/>
+    </bean>
+</beans>

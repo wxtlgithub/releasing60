@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<sevlet>
+		<servlet-name>TlRoutestra</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.routestra.TlRoutestraSev
+		</servlet-class>
+		<url-pattern>/URL/system/routestra.ashx</url-pattern>
+	</sevlet>
+</sevlets>

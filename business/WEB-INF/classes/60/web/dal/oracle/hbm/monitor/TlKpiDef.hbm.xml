@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.systemapp.model.monitor.TlKpiDef" table="TL_KPI_DEF">
+
+		<!--指标定义ID(NUMBER:22)-->
+		<id name="numkpidefid" type="java.lang.Integer">
+			<column name="NUMKPIDEFID" precision="22" scale="0" />
+			<generator class="increment"></generator>
+		</id>
+
+		<!--模块ID(VARCHAR2:200)-->
+		<property name="vc2modeltype" type="java.lang.String">
+			<column name="VC2MODELTYPE" length="200" />
+		</property>
+
+		<!--指标名称(VARCHAR2:200)-->
+		<property name="vc2kpiname" type="java.lang.String">
+			<column name="VC2KPINAME" length="200" />
+		</property>
+
+		<!--指标编码(VARCHAR2:200)-->
+		<property name="vc2kpicode" type="java.lang.String">
+			<column name="VC2KPICODE" length="200" />
+		</property>
+
+		<!--告警公式定义(VARCHAR2:200)-->
+		<property name="vc2alarmdef" type="java.lang.String">
+			<column name="VC2ALARMDEF" length="200" />
+		</property>
+
+		<!--更新时间(DATE:7)-->
+		<property name="datupdatetime" type="java.util.Date">
+			<column name="DATUPDATETIME" length="7" />
+		</property>
+
+		<!--指标类型 基本指标、派生指标、告警指标(VARCHAR2:20)-->
+		<property name="vc2kpitype" type="java.lang.String">
+			<column name="VC2KPITYPE" length="20" />
+		</property>
+
+		<!--告警消息定义(VARCHAR2:200)-->
+		<property name="vc2alarmmsgdef" type="java.lang.String">
+			<column name="VC2ALARMMSGDEF" length="200" />
+		</property>
+
+		<!--指标(VARCHAR2:200)-->
+		<property name="vc2kpivaluetype" type="java.lang.String">
+			<column name="VC2KPIVALUETYPE" length="200" />
+		</property>
+
+	</class>
+</hibernate-mapping>
+  

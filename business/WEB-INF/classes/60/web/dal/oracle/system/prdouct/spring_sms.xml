@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="TlSmsSendtasklistDAO" class="com.lxt2.systemapp.dal.sms.TlSmsSendtasklistDAL"
+		scope="prototype">
+		<property name="saveSms">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					insert into tl_sms_sendtasklist(numseqid,numproductid,vc2messagecontent,vc2destmobile,
+					datsrcendtime,datsrcsendtime,
+					nummessageformat,nummessagepriority,numoperatorid,numsvcid,
+					nummessagetype,vc2servicecode,numdealflag) 
+					values(TLCSEQ_SENDTASKLIST.Nextval,{0},'{1}','{2}',
+					SYSDATE,SYSDATE,
+					0,0,0,0,
+					0,'servicecode',0)
+					"></property>
+			</bean>
+		</property>
+		<property name="saveAlertLogSms">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					insert into tl_sms_send_list
+					  (numsendlistid, vc2mobile, numcreateuser, datcreatetime, numcontentid)
+					values
+					  (TLSEQ_SMS_SEND_LIST.Nextval, '{0}', '{1}', sysdate, '{2}')
+					"></property>
+			</bean>
+		</property>
+	</bean>
+</beans> 

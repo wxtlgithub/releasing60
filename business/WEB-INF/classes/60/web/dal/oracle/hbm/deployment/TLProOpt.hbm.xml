@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.systemapp.model.deployment.TlProOpt" table="TL_PRO_OPT"
+		dynamic-insert="true" dynamic-update="true">
+
+		<id name="numOptId" type="java.lang.Integer">
+			<column name="NUMOPTID" precision="20" scale="0" />
+			<generator class="increment"></generator>
+		</id>
+
+		<property name="numProgramId" type="java.lang.Integer">
+			<column name="NUMPROGRAMID" length="20" />
+		</property>
+
+		<property name="numTypeId" type="java.lang.Integer">
+			<column name="NUMTYPEID" length="20" />
+		</property>
+
+		<property name="vc2OptName" type="java.lang.String">
+			<column name="VC2OPTNAME" length="200" />
+		</property>
+
+		<property name="vc2OptCommand" type="java.lang.String">
+			<column name="VC2OPTCOMMAND" length="200" />
+		</property>
+
+		<property name="numIsDefault" type="java.lang.Integer">
+			<column name="NUMISDEFAULT" length="20" />
+		</property>
+	</class>
+</hibernate-mapping>

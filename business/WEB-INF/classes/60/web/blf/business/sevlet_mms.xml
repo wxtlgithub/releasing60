@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<!-- 彩信发送查询 -->
+	<sevlet>
+		<servlet-name>MmsContentQuery</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsContentSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/send/mmscontentquery.ashx</url-pattern>
+	</sevlet>
+	
+	<!-- 宜信通彩信提交发送操作 -->
+	<sevlet>
+		<servlet-name>YXTMmsContentSubmitUpdate</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.mms.TlMmsSendSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/send/YXTmmscontentadd.ashx</url-pattern>
+	</sevlet>
+	<!-- 彩信提交发送操作 -->
+	<sevlet>
+		<servlet-name>MmsContentSubmitUpdate</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsContentSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/send/mmscontentadd.ashx</url-pattern>
+	</sevlet>
+	<!-- 修改发送内容操作 -->
+	<sevlet>
+		<servlet-name>MmsContentSaveUpdate</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsContentSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/send/mmscontentupdate.ashx</url-pattern>
+	</sevlet>
+	<!-- 宜信通修改发送内容操作 -->
+	<sevlet>
+		<servlet-name>YXTMmsContentSaveUpdate</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.mms.TlMmsSendSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/send/YXTmmscontentupdate.ashx</url-pattern>
+	</sevlet>
+	<!-- 删除发送任务操作 -->
+	<sevlet>
+		<servlet-name>MmsContentDeleteUpdate</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsContentSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/send/mmscontentdelete.ashx</url-pattern>
+	</sevlet>
+	<!-- 彩信审核查询 -->
+	<sevlet>
+		<servlet-name>MmsContentCheckQuery</servlet-name>
+		<servlet-class>
+			com.project.business.blf.mms.TlMmsCheckContentSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/check/MMScheckquery.ashx</url-pattern>
+	</sevlet>
+	<!-- 彩信审核相关客户组查询YXT -->
+	<sevlet>
+		<servlet-name>YXTMmsContentCheckQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.mms.TlMmsCheckContentSev
+		</servlet-class>		
+		<url-pattern>/URL/sendMMS/check/YXTMMScheckquery.ashx</url-pattern>
+	</sevlet>
+	<!-- 彩信审核更新 -->
+	<sevlet>
+		<servlet-name>MmsContentCheckUpdate</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsCheckContentSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/check/MMScheckUpdate.ashx</url-pattern>
+	</sevlet>
+	<!--彩信发送任务查询 -->
+	<sevlet>
+		<servlet-name>MmsSendQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.mms.TlMmsSendQuerySev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/Query/MMSquery.ashx</url-pattern>
+	</sevlet>
+	<!--彩信上行记录查询  -->
+	<sevlet>
+		<servlet-name>MmsMOQuery</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsSendQuerySev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/Query/MMSMOQuery.ashx</url-pattern>
+	</sevlet>
+	<!--彩信下行记录查询  -->
+	<sevlet>
+		<servlet-name>MmsMTQuery</servlet-name>
+		<servlet-class>
+			com.project.business.blf.mms.TlMmsSendQuerySev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/Query/MMSMTQuery.ashx</url-pattern>
+	</sevlet>
+	<!--	彩信资源查询-->
+	<sevlet>
+		<servlet-name>MmsQuery</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/MMS/mmsquerylist.ashx</url-pattern>
+	</sevlet>
+	<!--	获取彩信详细信息-->
+	<sevlet>
+		<servlet-name>MmsQueryDesc</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/MMS/mmsquerydesc.ashx</url-pattern>
+	</sevlet>
+	<!--获取彩信配置信息-->
+	<sevlet>
+		<servlet-name>MmsConfigInfo</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/MMS/mmsconfiginfo.ashx</url-pattern>
+	</sevlet>
+	<!--	添加彩信-->
+	<sevlet>
+		<servlet-name>MmsAdd</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/MMS/mmsadd.ashx</url-pattern>
+	</sevlet>
+	<!--	修改彩信-->
+	<sevlet>
+		<servlet-name>MmsUpdate</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/MMS/mmsupdate.ashx</url-pattern>
+	</sevlet>
+	<!--	删除彩信-->
+	<sevlet>
+		<servlet-name>MmsDelete</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/MMS/mmsdelete.ashx</url-pattern>
+	</sevlet>
+	<!--	修改帧-->
+	<sevlet>
+		<servlet-name>MmsFrameUpdate</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/MMS/mmsframeupdate.ashx</url-pattern>
+	</sevlet>
+	<!--	上传资源-->
+	<sevlet>
+		<servlet-name>MmsResourceUp</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsSev
+		</servlet-class>
+		<url-pattern>/URL/SendMMS/MMS/MMSResourceUp.ashx</url-pattern>
+	</sevlet>
+	<!--	获取彩信随机ID-->
+	<sevlet>
+		<servlet-name>MmsRandomMMSID</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsGetIDSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/MMS/getrandommmsid.ashx</url-pattern>
+	</sevlet>
+	<!--	获取彩信随机ID新增复制时获取随机码-->
+	<sevlet>
+		<servlet-name>MmsRandomMMSIDByCopy</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsGetIDSev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/MMS/getrandommmsidbycopy.ashx</url-pattern>
+	</sevlet>
+	<!--	发送任务查询-->
+	<sevlet>
+		<servlet-name>MmsSendQuery</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsSendQuerySev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/Query/MMSquery.ashx</url-pattern>
+	</sevlet>	
+	<!--	上行记录查询-->
+	<sevlet>
+		<servlet-name>MmsMoSendQuery</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.TlMmsSendQuerySev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/Query/MMSMOQuery.ashx</url-pattern>
+	</sevlet>	
+	<!--	宜信通上行记录查询-->
+	<sevlet>
+		<servlet-name>YXTMmsMoSendQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.mms.TlMmsSendQuerySev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/Query/YXTMMSMOQuery.ashx</url-pattern>
+	</sevlet>	
+	<!--	下行记录查询-->
+	<sevlet>
+		<servlet-name>MmsMtSendQuery</servlet-name>
+		<servlet-class>
+			com.project.business.blf.mms.TlMmsSendQuerySev
+		</servlet-class>
+		<url-pattern>/URL/sendMMS/Query/MMSMTQuery.ashx</url-pattern>
+	</sevlet>
+	<!-- 	彩信统计 -->
+	<sevlet>
+		<servlet-name>MMSStatisticMTQuerySev</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.MMSStatisticMTQuerySev
+		</servlet-class>
+		<url-pattern>URL/MMSStatistics/mt/MMSStatisticMTQuery.ashx</url-pattern>
+	</sevlet>
+	<!-- 彩信统计 -->
+	<sevlet>
+		<servlet-name>MmsStatisticMTQuery</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.mms.MMSStatisticMTQuerySev
+		</servlet-class>
+		<url-pattern>/URL/MMSStatistics/mt/MMSStatisticMTQuery.ashx</url-pattern>
+	</sevlet>
+	<!-- YXT彩信统计 -->
+	<sevlet>
+		<servlet-name>YXTMmsStatisticMTQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.mms.YXTMMSStatisticMTQuerySev
+		</servlet-class>
+		<url-pattern>/URL/MMSStatistics/mt/YXTMMSStatisticMTQuery.ashx</url-pattern>
+	</sevlet>	
+</sevlets>

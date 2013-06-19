@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!-- 用户鉴权信息配置，缩写nd(网元级配置) -->
+	<!-- API用户鉴权服务 -->
+	<bean id="ndClientVerify" class="com.lxt2.clientinfo.XmlClientVerifyService" init-method="init">
+		<property name="persistDir" value="${CLASSPATH}/${nodeID}/persistent"/>
+ 		<property name="systemConfig" ref="systemConfig"/> 
+ 		<property name="cmd" value="-U{0} -F{1} -Cgetapiuser"/> 
+	</bean>
+	<!-- API用户鉴权服务同步命令 -->
+	<bean id="ndClientVerifySyncCmd" class="com.lxt2.clientinfo.ClientVerifyCmd">
+		<property name="clientVerifyService" ref="ndClientVerify"/>
+	</bean>
+	<!-- API用户鉴权定时同步任务 -->
+	<bean id="ndClientVerifyTask" class="com.lxt2.clientinfo.ClientVerifyServiceTask">
+		<property name="id" value="101" />
+		<property name="name" value="用户鉴权信息同步"/>
+		<property name="verifyService" ref="ndClientVerify" />
+		<!-- 每小时执行一次客户端鉴权信息同步 -->
+		<property name="taskSchRule" value="@{cycle(60)}" />
+		<property name="commandMap">
+			<map>
+				<!-- 触发定时同步 -->
+				<entry key="sync" value-ref="ndClientVerifySyncCmd"/>
+			</map>
+		</property>
+	</bean>
+	<!-- EC用户鉴权信息配置   开始-->
+	<bean id="ndecClientVerify" class="com.lxt2.ec.XmlECClientVerifyService" init-method="init">
+		<property name="persistDir" value="${CLASSPATH}/${nodeID}/persistent"/>
+ 		<property name="systemConfig" ref="systemConfig"/> 
+ 		<property name="cmd" value="-U{0} -F{1} -Cgetsilingsignature"/> 
+	</bean>
+	<!-- API用户鉴权服务同步命令 -->
+	<bean id="ndecClientVerifySyncCmd" class="com.lxt2.ec.ECClientVerifyCmd">
+		<property name="clientVerifyService" ref="ndecClientVerify"/>
+	</bean>
+	<!-- API用户鉴权定时同步任务 -->
+	<bean id="ndecClientVerifyTask" class="com.lxt2.ec.ECClientVerifyServiceTask">
+		<property name="id" value="101" />
+		<property name="name" value="客户端鉴权"/>
+		<property name="verifyService" ref="ndecClientVerify" />
+		<!-- 每小时执行一次客户端鉴权信息同步 -->
+		<property name="taskSchRule" value="@{cycle(60)}" />
+		<property name="commandMap">
+			<map>
+				<!-- 触发定时同步 -->
+				<entry key="sync" value-ref="ndecClientVerifySyncCmd"/>
+			</map>
+		</property>
+	</bean>
+	<!-- EC用户鉴权信息配置   结束-->
+</beans>

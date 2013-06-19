@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="userGroupSelDao" class="com.yxt.business.dal.usergroup.TlUserGroupSelDAL"
+		scope="prototype">
+
+		<property name="userGroupAddAndDelSelOfProducts">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT INN.NUMPRODID, INN.VC2NAME FROM (SELECT DISTINCT NUMPRODID, VC2NAME FROM TLV_PRODUCTS_USER WHERE NUMDROLEID IN ({0}) UNION (SELECT NUMPRODID, VC2NAME FROM TL_PRODUCTS  WHERE vc2status = 1 and NUMUSERID = {1}  )) INN"></property>
+			</bean>
+		</property>
+	</bean>
+</beans>

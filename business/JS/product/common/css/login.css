@@ -1,0 +1,25 @@
+/*-- 全局--*/
+*{padding:0;margin:0;color: #FFFFFF;}
+body{font-family:"", Arial, Helvetica, 'lucida grande', tahoma, helvetica, arial, 'bitstream vera sans', sans-serif;font-size:12px;color: #01538c;background-color: #0a316f;}
+/*-- 全局--*/
+/*-- logoin--*/
+#container {clear: both;height: 100%; background-image: url(../Images/login_bg2.gif);background-repeat: no-repeat;margin-right: auto;margin-left: auto;width: 1024px;overflow:hidden;}
+#loginbar_a {float: left;height: 100px;width: 373px;background-repeat: no-repeat;overflow:hidden;padding-top: 250px;padding-left: 500px;}
+.cxt_border {height: 20px;width: 150px;border: 1px solid #32899e;line-height: 18px;float: left;margin-right: 5px;font-family: "宋体";font-size: 12px;color: #2b2b2b; background-color:#E4E9F4;}
+table#border{line-height: 30px;height: 30px;clear: both;width: 360px;margin-right: auto;margin-left: auto;}
+.ft_13 {font-family: "宋体";font-size: 13px;font-weight: bold;color: #FFFFFF;text-decoration: none; height:30px;}
+.ft_12 {font-family: "宋体";font-size: 12px;color: #FFFFFF;text-decoration: none; padding-left:5px;}
+.btn_bg {font-family: "宋体";font-size: 12px;font-weight: bold;color: #FFFFFF;text-decoration: none;height: 29px;width: 100px;background-image: url(../Images/btn_1.gif);background-repeat: no-repeat;background-position: 0px;clear: both;line-height: 29px;text-align: center;}
+
+.btn_bg a:link{font-family: "宋体";font-size: 12px;font-weight: bold;color: #FFFFFF;text-decoration: none;height: 29px;width: 100px;background-image: url(../Images/btn_1.gif);background-repeat: no-repeat;background-position: 0px;clear: both;line-height: 29px;text-align: center;display:block;
+}
+.btn_bg a:visited{font-family: "宋体";font-size: 12px;font-weight: bold;color: #FFFFFF;text-decoration: none;height: 29px;width: 100px;background-image: url(../Images/btn_1.gif);background-repeat: no-repeat;background-position: 0px;clear: both;line-height: 29px;text-align: center;display:block;}
+.btn_bg a:hover{font-family: "宋体";font-size: 12px;font-weight: bold;color: #FFFFFF;text-decoration: none;height: 29px;width: 100px;background-image: url(../Images/btn_2.gif);background-repeat: no-repeat;background-position: 0px;clear: both;line-height: 29px;text-align: center;display:block;}
+.btn_bg a:active{font-family: "宋体";font-size: 12px;font-weight: bold;color: #FFFFFF;text-decoration: none;height: 29px;width: 100px;background-image: url(../Images/btn_1.gif);background-repeat: no-repeat;background-position: 0px;clear: both;line-height: 29px;text-align: center;display:block;}
+
+#loginbar_b {float: left;width: 373px;overflow:hidden;padding-top: 60px;padding-left: 460px;font-family: "宋体";font-size: 12px;line-height: 22px;color: #8AAAD5;text-decoration: none;}
+#loginbar_c {float: left;width: 373px;overflow:hidden;padding-top: 60px;padding-left: 460px;font-family: "宋体";font-size: 12px;line-height: 22px;color: #8AAAD5;text-decoration: none;}
+
+a.bft_12link {font-family: "宋体";font-size: 12px;color: #FFFFFF;text-decoration: none;}
+a.bft_12link:visited {font-family: "宋体";font-size: 12px;color: #FFFFFF;text-decoration: none;}
+/*-- logoin--*/

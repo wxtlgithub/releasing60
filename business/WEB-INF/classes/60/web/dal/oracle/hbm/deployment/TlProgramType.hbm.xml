@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.systemapp.model.deployment.TlProgramType"
+		table="TL_PROGRAM_TYPE" dynamic-insert="true" dynamic-update="true">
+
+		<id name="numTypeId" type="java.lang.Integer">
+			<column name="NUMTYPEID" precision="20" scale="0" />
+			<generator class="increment"></generator>
+		</id>
+
+		<property name="vc2TypeName" type="java.lang.String">
+			<column name="VC2TYPENAME" length="200" />
+		</property>
+
+		<property name="vc2TypeDesc" type="java.lang.String">
+			<column name="VC2TYPEDESC" length="200" />
+		</property>
+	</class>
+</hibernate-mapping>

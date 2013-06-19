@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="TlEcInfoBLL" class="com.yxt.business.bll.ecmanage.TlEcInfoBLL"
+			init-method="main" scope="prototype">
+	</bean>
+	
+	<bean id="TlEcsigntureBLL" class="com.yxt.business.bll.ecmanage.TlEcsigntureBLL"
+			init-method="main" scope="prototype">
+	</bean>
+	<bean id="TlEcServicecodeBLL" class="com.yxt.business.bll.ecmanage.TlEcServicecodeBLL" init-method="main" scope="prototype">
+	</bean>
+	
+	<bean id="TlEcPrepaidBLL" class="com.yxt.business.bll.ecmanage.TlEcPrepaidBLL"
+		init-method="main" scope="prototype">
+	</bean>
+	<bean id="PrepaidControlerBLL" class="com.yxt.business.bll.ecmanage.PrepaidControlerBLL"
+		init-method="main" scope="prototype">
+         <property name="isSavePrepaidHis" value="true" />
+          <property name="iprepaidcommctrbll" ref="PrepaidCommCtrBLL" />
+	</bean>	
+	<bean id="PrepaidCommCtrBLL" class="com.yxt.business.bll.ecmanage.PrepaidCommCtrBLL"
+		scope="prototype">
+		<property name="ctrmoduleids" value="1022,1052,1021,1003,1053" />
+	</bean>	
+	<bean id="tlEcRoleBLL" class="com.yxt.business.bll.ecmanage.TlEcRoleBLL" init-method="main" scope="prototype" />
+</beans>

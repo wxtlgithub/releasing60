@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	
+	 <sevlet>
+		<servlet-name>UserGroupMemberUpdate</servlet-name>
+		<servlet-class>com.lxt2.business.blf.usergroup.TlUserGroupMemberSev</servlet-class>
+		<url-pattern>/URL/Customer/UserGroupMember/UserGroupMemberUpdate.ashx</url-pattern>
+	</sevlet>
+	
+	<sevlet>
+		<servlet-name>UserGroupMemberQuery</servlet-name>
+		<servlet-class>com.lxt2.business.blf.usergroup.TlUserGroupMemberSev</servlet-class>
+		<url-pattern>/URL/Customer/UserGroupMember/UserGroupMemberQuery.ashx</url-pattern>
+	</sevlet>
+	
+</sevlets>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	<bean id="OralceACM" class="com.lxt2.common.common.util.AppContextMaker">
+		<property name="ctxString" value="/60/web/dal/oracle/oracle.xml" />
+	</bean>
+	<!--
+		<bean id="MSSQLACM"
+		class="com.lxt2.business.common.util.AppContextMaker"> <property
+		name="ctxString" value="dal/mssql/mssql.xml" /> </bean>
+	
+	<bean id="SqliteACM" class="com.lxt2.business.common.util.AppContextMaker">
+		<property name="ctxString" value="dal/sqlite/sqlite.xml" />
+	</bean>
+-->
+	<bean id="BaseBll" class="com.lxt2.common.base.BaseBLL">
+		<property name="appContextMakerDefault">
+			<ref bean="OralceACM" />
+		</property>
+	</bean>
+	
+	<bean id="configHelper" class="com.lxt2.common.common.util.ConfigHelper" init-method="init" scope="singleton">
+		<property name="configPath" value="/60/config/config_*.xml" />
+	</bean>
+	
+	<import resource="./*/spring_*.xml" />
+	<import resource="./*/*/spring_*.xml" />
+ 	<aop:aspectj-autoproxy />
+	
+ 	<bean id="exceptionAdvice" class="com.lxt2.common.common.advice.ExceptionAdvice" init-method="init" />
+
+ 	<aop:config>
+		<aop:pointcut expression="execution(* com.*.business..*.*(..)) || execution(* com.*.system..*.*(..))" id="exceptionPoint" />
+	    <aop:advisor advice-ref="exceptionAdvice" pointcut-ref="exceptionPoint"  />
+	</aop:config>
+</beans>

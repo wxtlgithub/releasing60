@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.systemapp.model.alert.TlAlertLogData"
+		table="TL_ALERT_LOG_DATA">
+
+		<!--(NUMBER:22)-->
+		<id name="numdataid" type="java.lang.Integer">
+			<column name="NUMDATAID" precision="20" scale="0" />
+			<generator class="increment"></generator>
+		</id>
+
+		<!--报警编号(NUMBER:22)-->
+		<property name="numalertid" type="java.lang.Integer">
+			<column name="NUMALERTID" length="20" />
+		</property>
+		
+		<!--报警类型(NUMBER:22)-->
+		<property name="numalerttypeid" type="java.lang.Integer">
+			<column name="NUMALERTTYPEID" length="20" />
+		</property>
+		
+		<!--报警类型(NUMBER:22)-->
+		<property name="numgwid" type="java.lang.Integer">
+			<column name="NUMGWID" length="20" />
+		</property>
+
+		<!--(VARCHAR2:200)-->
+		<property name="vc2key" type="java.lang.String">
+			<column name="VC2KEY" length="200" />
+		</property>
+
+		<!--(VARCHAR2:200)-->
+		<property name="vc2value" type="java.lang.String">
+			<column name="VC2VALUE" length="200" />
+		</property>
+
+	</class>
+</hibernate-mapping>
+  

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"	
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+					    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+	<!-- 接口服务的Bean前缀是ps -->
+	<!-- 定时发送检查器2.0版 -->
+	<bean id="psTimerSendChecker1060" class="com.lxt2.proxyservice.cbip20.SendTimeTypeChecker"/>
+    <!-- 彩信 -->
+	<bean id="psTimerSendMmsChecker1060" class="com.lxt2.proxyservice.cbip20.SendTimeTypeMmsChecker"/>
+
+    <!-- 接口服务Submit接收Bean 2.0 开始 -->
+    <bean id="priorityFill1060" class="com.lxt2.proxyservice.throughput.PriorityFill"/>
+
+    <bean id="ps20SubmitReceiver1060" class="com.lxt2.proxyservice.cbip20.Cbip20SmsMtReceiver">
+        <property name="verifyService" ref="ndClientVerify"/>
+        <property name="mobileValidator" ref="ndMobileValidator"/>
+        <property name="psModule" ref="psModule1060"/>
+        <property name="sid" ref="ndSid"/>
+        <property name="sendTimeType" ref="psTimerSendChecker1060"/>
+        <property name="timeQueue" ref="psTimerQueue1060"/>
+       <!--  <property name="sendTaskList" ref="sendTaskListDaoLog"/> -->
+        <property name="priorityFill" ref="priorityFill1060"/>
+        <property name="control" ref="prepayControlHandler1060"/>
+    </bean>
+    <!--彩信内容  -->
+	<bean id="ps20MmsMtReceiver1060" class="com.lxt2.proxyservice.cbip20.Cbip20MmsMtReceiver">
+		<property name="verifyService" ref="ndClientVerify"/>
+		<property name="mobileValidator" ref="ndMobileValidator"/>
+		<property name="psModule" ref="psModule1060"/>
+		<property name="sid" ref="ndSid"/>
+		<property name="sendTimeType" ref="psTimerSendMmsChecker1060"/>
+		<property name="timeQueue" ref="psTimerQueue1060"/>
+		<property name="resCenter" ref="commonResourceCenter"/>
+		<property name="sendTaskList" ref="sendTaskListDaoLog"/> 
+		<property name="priorityFill" ref="priorityFill1060"/>
+	</bean>
+
+	<!-- 接口服务Submit接收Bean 2.0 结束 -->
+	<!-- 接口服务Submit接收Bean 1.0 -->
+	<bean id="ps10SubmitReceiver1060" class="com.lxt2.proxyservice.cbip10.Cbip10SmsMtReceiver">
+		<property name="verifyService" ref="ndClientVerify"/>
+		<property name="mobileValidator" ref="ndMobileValidator"/>
+		<property name="psModule" ref="psModule1060"/>
+		<property name="sid" ref="ndSid"/>
+	</bean>
+	<!-- Common Handler -->
+	<bean id="psComHandler1060" class="com.lxt2.protocol.codec.common.CommonHandler" />
+    <bean id="cbip20MmsContentMtReceiver" class="com.lxt2.proxyservice.cbip20.Cbip20MmsContentMtReceiver">
+        <property name="commonResCenter" ref="commonResourceCenter"/>
+        <property name="verifyService" ref="ndClientVerify"/>
+    </bean>
+    <bean id="cbip10MmsContentMtReceiver"  class="com.lxt2.proxyservice.cbip10.Cbip10MmsContentMtReceiver">
+        <property name="commonResCenter" ref="commonResourceCenter"/>
+        <property name="verifyService" ref="ndClientVerify"/>
+    </bean>
+    <bean id="ps10MmsMtReceiver1060" class="com.lxt2.proxyservice.cbip10.Cbip10MmsMtReceiver">
+        <property name="verifyService" ref="ndClientVerify"/>
+		<property name="mobileValidator" ref="ndMobileValidator"/>
+		<property name="psModule" ref="psModule1060"/>
+		<property name="sid" ref="ndSid"/>
+		<property name="resCenter" ref="commonResourceCenter"/>
+		<property name="sendTaskList" ref="sendTaskListDaoLog"/>
+		<property name="priorityFill" ref="priorityFill1060"/>
+    </bean>
+
+</beans>

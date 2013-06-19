@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.systemapp.model.routestra.TlRoutestraBalance"
+		table="TL_ROUTESTRA_BALANCE">
+
+		<!-- 负载均衡策略Id。 -->
+		<id name="numid" type="java.lang.Integer">
+			<column name="NUMID" precision="20" scale="0" />
+			<generator class="sequence">
+				<param name="sequence">TLSEQ_ROUTESTRA_BALANCE</param>
+			</generator>
+		</id>
+	
+		<!-- 策略编号。 -->
+		<property name="numstraid" type="java.lang.Integer">
+			<column name="NUMSTRAID" length="22" />
+		</property>
+		
+		<!-- 通道编号。 -->
+		<property name="numsvcid" type="java.lang.Integer">
+			<column name="NUMSVCID" length="22" />
+		</property>
+
+		<!-- 百分比。 -->
+		<property name="numpercentage" type="java.lang.Integer">
+			<column name="NUMPERCENTAGE" length="22" />
+		</property>
+
+	</class>
+</hibernate-mapping>
+  

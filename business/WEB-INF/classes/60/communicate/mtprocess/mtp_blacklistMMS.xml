@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	<!-- 黑名单的前缀:blk -->
+	<!-- 系统黑名单文件 -->
+	<bean id="blkSysFileMMS" class="com.standardsm.blacklist.ec.EcBlackFile">
+		<constructor-arg>
+			<value>${WORKDIR}../../../data/biz/blackFileMMS</value>
+		</constructor-arg>
+	</bean>
+	<!-- 系统黑名单内存 -->
+	<bean id="blkSysMemoryMMS" class="com.standardsm.blacklist.ec.EcBlackMemory" />
+	<!-- 系统黑名单DAO -->	 
+	<bean id="blkSysDAOMMS" class="com.standardsm.blacklist.ec.mms.EcMmsBlackListDAO">
+		<property name="tlBlackListDAO" ref="tlBlackListDAO" />
+		<property name="numsvcid" value="true" />
+	</bean>
+	<!-- 系统黑名单校验抽象类 -->
+	<bean id="blkSysAbstractDbFMBlackListMMS" abstract="true"
+		class="com.techcenter.blacklist.dbfilememory.AbstractDbFMBlackList">
+		<property name="dbBlackFile" ref="blkSysFileMMS" />
+		<property name="dbBlackMemory" ref="blkSysMemoryMMS" />
+		<property name="blackName" value="系统彩信黑名单"/>
+		<property name="blackDAO" ref="blkSysDAOMMS" />
+	</bean>
+	<!-- 系统黑名单校验类 -->
+	<bean id="blkSysBlackListMMS" parent="blkSysAbstractDbFMBlackListMMS"
+		class="com.standardsm.blacklist.ec.StandardBlackList" init-method="init" />
+
+	<!-- 命令开始 -->
+	<!-- 控制命令：黑名单同步(需要配置在模块上) -->
+	<bean id="blkSyncMMS" class="com.standardsm.blacklist.ec.BlackListSyncCmd">
+		<property name="systemBlackList" ref="blkSysBlackListMMS"/>
+	</bean>
+	<!-- 控制命令：判断手机是否在黑名单中(需要配置在模块上) -->
+	<bean id="blkMobileChkCmdMMS" class="com.standardsm.blacklist.ec.MobileBlackChkCmd">
+		<property name="systemBlackList" ref="blkSysBlackListMMS" />
+	</bean>
+	<!-- 命令结束 -->
+	<!-- 任务开始 -->
+	<!-- 系统黑名单全量同步任务 -->
+    <bean id="blkSystemSyncAllCmdMMS" class="com.standardsm.blacklist.ec.BlackListSyncAllCmd">
+        <property name="tractDbFMBlackList" ref="blkSysBlackListMMS"/>
+    </bean>
+	<bean id="blkSyncAllTaskMMS" class="com.standardsm.blacklist.ec.BlackListSyncAllTask">
+		<property name="id" value="116"/>
+		<property name="name" value="系统彩信黑名单全量同步"/>
+		<property name="tractDbFMBlackList" ref="blkSysBlackListMMS"/>
+        <property name="commandMap">
+            <map>
+                <entry key="sync" value-ref="blkSystemSyncAllCmdMMS"/>
+            </map>
+        </property>
+		<!-- 每天凌晨2点执行 -->
+		<property name="taskSchRule" value="@{sch(0,2)}"/>
+	</bean>
+	<!-- 系统黑名单增量加载任务 -->
+     <bean id="blkSystemIncrementSyncCmdMMS" class="com.standardsm.blacklist.ec.BlackListIncrementSyncCmd">
+        <property name="tractDbFMBlackList" ref="blkSysBlackListMMS"/>
+    </bean>
+	<bean id="blkSyncIncTaskMMS" class="com.standardsm.blacklist.ec.BlackListMemTask">
+		<property name="id" value="117"/>
+		<property name="name" value="系统彩信黑名单增量同步"/>
+		<property name="tractDbFMBlackList" ref="blkSysBlackListMMS"/>
+         <property name="commandMap">
+            <map>
+                <entry key="sync" value-ref="blkSystemIncrementSyncCmdMMS"/>
+            </map>
+        </property>
+		<!-- 每小时的0点10分执行 -->
+		<property name="taskSchRule" value="@{sch(15)}"/> 
+	</bean>
+	<!-- 任务结束 -->
+</beans>

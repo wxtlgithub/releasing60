@@ -1,0 +1,13 @@
+<smil xmlns='http://www.w3.org/2000/SMIL20/CR/Language'>
+                                 <head>
+                                  <tittle>1</tittle>
+                                  <layout>
+                                   <root-layout height='208' width='176' />
+                                   <region id='Image' top='0' left='0' height='50' width='100' fit='hidden'/>
+                                   <region id='Text' top='50' left='0' height='50' width='100' fit='hidden'/>
+                                  </layout>
+                                 </head>
+                                 <body>
+                                  <par dur='5'><text src='resources\temp\2729164e5ff04697a9361ef31b80d7e3\20100423045311_FN4V.txt' region='text' /></par><par dur='5'><text src='resources\temp\2729164e5ff04697a9361ef31b80d7e3\20100423045316_8RJH.txt' region='text' /></par>
+                                </body>
+                                </smil>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<!-- 状态报告查询页面查询 -->
+	<sevlet>
+		<servlet-name>Query</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.statisticandquery.QuerySev
+		</servlet-class>
+		<url-pattern>/URL/Business/StatisticAndQuery/Query.ashx</url-pattern>
+	</sevlet>
+	<!--短彩信汇总统计查询导出页面-->
+	<sevlet>
+		<servlet-name>projectstatistics</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.statisticandquery.StatisticSev
+		</servlet-class>
+		<url-pattern>/URL/StatisticAndQuery/Statistic.ashx</url-pattern>
+	</sevlet>
+</sevlets>

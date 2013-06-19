@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="501" name="default" desc="默认配置文件">
+	<component id="alertCmdConfig" name="" desc="监控中心命令配置">
+		<item key="alertCmd" value="-U60 -F802 -Creload" desc="命令"/>
+	</component>
+	<component id="alertGetDataCmd" name="" desc="监控中心根据不同网元获取数据">
+		<item key="alertCmd" value="-U%s -Cviewall"/>
+		<item key="networkUnits" value="35,36,37,53,21,23,22,24,26,27,28" desc="网元"/>
+	</component>
+	<component id="templatePath" name="配置生成路径" desc="配置生成路径">
+		<item key="TEMPLATE_PATH" value="/60/web/templates/" desc="模板文件根路径"/>
+		<item key="MOROUTE" value="deliver_routers.xml.ftl" desc="上行路由配置模板文件"/>
+		<item key="PRODUCT" value="config_product.xml.ftl" desc="通道组鉴权配置文件"/>
+		<item key="FILINGSIGNTURE" value="config_filingsignture.xml.ftl" desc="报备签名模板配置文件"/>
+		<item key="ECPREPAID" value="config_prepaid.xml.ftl" desc="EC预付费模板配置文件"/>
+	</component>
+	<component id="networkElement" name="网元配置部署" desc="可视化网元配置">
+		<item key="elementPath" value="${WORKDIR}WEB-INF/classes/web/element/" desc="网元文件根路径"/>
+		<item key="dynamicsPath" value="${WORKDIR}WEB-INF/classes/60/web/element/dynamics/" desc="网元生成路径"/>
+		<item key="templatePath" value="/60/web/templates" desc="模板路径"/>
+		<item key="templateFileName" value="config_systemconfig.xml.ftl" desc="模板文件名"/>
+		<item key="configFileName" value="system_config.xml" desc="配置文件名"/>
+		<item key="projectName" value="communication" desc="项目名称"/>
+		<item key="projectNameMain" value="yxt" desc="主控项目名称"/>
+	</component>
+	<component id="rptdataPath" name="rpt数据配置" desc="获取RPT数据">
+		<item key="rptdataPath" value="${WORKDIR}WEB-INF/classes/Service/Tasks/RptSvc/rptdata" desc="网元文件根路径"/>
+		<item key="tempCountFilePath" value="${WORKDIR}WEB-INF/classes/Service/Tasks/RptSvc/rpt.properties" desc="临时记录数据处理位置序列ID文件"/>
+		<item key="fileMaxLength" value="1000" desc="单个文件存储记录数，如果超出重新生成新文件"/>
+		<item key="time" value="5" desc="取数据的时间断，默认1小时"/>
+		<item key="queryMaxNum" value="1000" desc="每次查询的最大记录数"/>
+	</component>
+</function>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- 敏感词的前缀:dw -->
+	<!-- 敏感词应用 -->
+	<bean id="dwDirtyWord" class="com.lxt2.keywordfilter.BitDirtyFileWord" init-method="loadDirty">
+		<property name="persistDir" value="${WORKDIR}../../../data/biz/"/>
+	</bean>
+	<bean id="dirtyWordSqlDB"  class="com.techcenter.dbcore.dbbase.jdbc.JdbcSimpleFindDAO" parent="abstractDAO">
+		<constructor-arg type="java.lang.Class" value="com.lxt2.keywordfilter.DirtyWordEntity"/>
+		<property name="sql">
+			<value><![CDATA[select w.vc2dirtyword as dirtyWord from tl_dirtyword w where w.numflag = 1]]></value>
+		</property>
+	</bean> 
+	<bean id="dirtyWord" class="com.lxt2.keywordfilter.BitDirtyWord" init-method="loadDirty">
+		<property name="dirtySqlDB" ref="dirtyWordSqlDB"/>
+		<property name="persistDir" value="${WORKDIR}../../../data/biz/"/>
+	</bean>
+	<!-- 敏感词全量加载命令 -->
+	<bean id="dwDirtyWordSyncCmd" class="com.lxt2.keywordfilter.DirtyWordLoadCmd">
+		<property name="dirtyWord" ref="dirtyWord"/>
+	</bean>
+	<!-- 敏感词全量加载任务 -->
+	<bean id="dwDirtyWordTask" class="com.lxt2.keywordfilter.DirtyWordLoadTask">
+		<property name="id" value="106"/>
+		<property name="name" value="敏感词全量加载"/>
+		<property name="taskSchRule" value="@{sch(50,0)}"/>
+		<property name="dirtyWord" ref="dirtyWord"/>
+		<property name="commandMap">
+			<map>
+				<!-- 触发敏感词全量加载 -->
+				<entry key="sync" value-ref="dwDirtyWordSyncCmd"/>
+			</map>
+		</property>
+	</bean>
+
+</beans>

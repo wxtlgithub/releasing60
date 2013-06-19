@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.systemapp.model.deployment.TlProOptItem"
+		table="TL_PRO_OPT_ITEM" dynamic-insert="true" dynamic-update="true">
+
+		<id name="numOptItemId" type="java.lang.Integer">
+			<column name="NUMOPTITMID" precision="20" scale="0" />
+			<generator class="increment"></generator>
+		</id>
+
+		<property name="numOptId" type="java.lang.Integer">
+			<column name="NUMOPTID" length="20" />
+		</property>
+
+		<property name="numTypeId" type="java.lang.Integer">
+			<column name="NUMTYPEID" length="20" />
+		</property>
+
+		<property name="vc2Key" type="java.lang.String">
+			<column name="VC2KEY" length="20" />
+		</property>
+
+		<property name="vc2Value" type="java.lang.String">
+			<column name="VC2VALUE" length="200" />
+		</property>
+
+		<property name="vc2Name" type="java.lang.String">
+			<column name="VC2NAME" length="200" />
+		</property>
+
+		<property name="vc2Desc" type="java.lang.String">
+			<column name="VC2DESC" length="200" />
+		</property>
+
+		<property name="vc2Range" type="java.lang.String">
+			<column name="VC2RANGE" length="200" />
+		</property>
+
+		<property name="numCountType" type="java.lang.Integer">
+			<column name="NUMCOUNTTYPE" length="20" />
+		</property>
+	</class>
+</hibernate-mapping>

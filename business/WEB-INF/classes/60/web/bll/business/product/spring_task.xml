@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<!-- 黑名单自动删除 -->
+	<bean id="blackListAutoDelTaskBLL" class="com.lxt2.business.bll.task.BlackListAutoDelTaskBLL" init-method="main" scope="prototype">
+	</bean>
+	
+	<!-- 客户组sqlldr入库服务 -->
+	<bean id="CustomerTaskBLL" class="com.lxt2.business.bll.task.CustomerTaskBLL" init-method="main" scope="prototype" />
+		
+	<!-- 客户组文件处理服务 -->
+	<bean id="customerOperateTaskBLL" class="com.lxt2.business.bll.task.CustomerOperateTaskBLL" init-method="main" scope="prototype" />
+		
+	<!-- 白名单失败重传服务 -->
+	<bean id="whiteListErrorTaskBLL" class="com.lxt2.business.bll.task.WhiteListErrorTaskBLL" init-method="main" scope="prototype" />
+		
+	<!-- ftp 上传服务 -->
+	<bean id="whiteListFTPBLL" class="com.lxt2.business.bll.task.WhiteListFTPBLL" scope="prototype">
+	</bean>
+	
+	<!--共享黑名单  ftp 资源服务 -->
+	<bean id="shareBlackListFTPBLL" class="com.lxt2.business.bll.task.ShareBlackListFTPBLL" scope="prototype">
+	</bean>
+	
+	<!-- 黑白名单入库服务 -->
+	<bean id="blackWhiteListTaskBLL" class="com.lxt2.business.bll.task.BlackWhiteListTaskBLL" init-method="main" scope="prototype">
+	</bean>
+	
+	<!-- 黑白名单处理服务 -->
+	<bean id="blackWhiteListOperateTaskBLL" class="com.lxt2.business.bll.task.BlackWhiteListOperateTaskBLL" init-method="main" scope="prototype">
+	</bean>	
+	
+	<!-- 彩信文件处理服务 -->
+	<bean id="TLMmsCheckListTaskBLL" class="com.lxt2.business.bll.task.MMSCheckListOperateTaskBLL" init-method="main" scope="prototype">
+	</bean>
+	
+	<!-- 短信文件处理服务 -->
+	<bean id="TLSmsCheckListTaskBLL" class="com.lxt2.business.bll.task.SMSCheckListOperateTaskBLL" init-method="main" scope="prototype" />	
+		
+	<!-- 白名单接口服务 -->
+	<bean id="WhiteListInterfaceTaskBLL" class="com.lxt2.business.bll.task.WhiteListInterfaceTaskBLL" init-method="main" scope="prototype" />	
+		
+	<!-- 邮件服务   现在找不到 WhiteListEmailTaskBLL 这个类  lishuai 
+	<bean id="whiteListEmailTaskBLL" class="com.lxt2.business.bll.email.WhiteListEmailTaskBLL"
+		 scope="prototype">
+	</bean>
+	 -->
+		
+	<!-- 共享黑白名单服务 -->
+	<bean id="shareBlackListBLL" class="com.lxt2.business.bll.task.ShareBlackListBLL" init-method="main" scope="prototype">
+	</bean>
+	
+	<!-- 共享黑白名单初始化 -->
+	<bean id="blackListDataToKcBLL" class="com.lxt2.business.bll.task.BlackListDataToKcBLL" init-method="main" scope="prototype">
+	</bean>
+	
+	<!--白名单数据同步 -->
+	<bean id="ZQSBWhiteListBLL" class="com.yxt.business.bll.task.ZQSBWhiteListBLL"  init-method="main"  scope="prototype" />
+</beans>

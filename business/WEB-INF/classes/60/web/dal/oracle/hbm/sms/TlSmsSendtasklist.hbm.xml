@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.systemapp.model.sms.TlSmsSendtasklist"
+		table="TL_SMS_SENDTASKLIST">
+
+		<!--序列号(NUMBER:22)-->
+		<id name="numseqid" type="java.lang.Integer">
+			<column name="NUMSEQID" precision="22" scale="0" />
+			<generator class="increment"></generator>
+		</id>
+
+		<!--创建时间(DATE:7)-->
+		<property name="datcreatetime" type="java.util.Date">
+			<column name="DATCREATETIME" length="7" />
+		</property>
+
+		<!--源系统要求的发送时间留痕(DATE:7)-->
+		<property name="datsrcsendtime" type="java.util.Date">
+			<column name="DATSRCSENDTIME" length="7" />
+		</property>
+
+		<!--源系统要求的发送超时时间(DATE:7)-->
+		<property name="datsrcendtime" type="java.util.Date">
+			<column name="DATSRCENDTIME" length="7" />
+		</property>
+
+		<!--信息源ID（来源编号）0，web(NUMBER:22)-->
+		<property name="numsrcclientid" type="java.lang.Integer">
+			<column name="NUMSRCCLIENTID" length="22" />
+		</property>
+
+		<!--信息源目的ID，网关ID(NUMBER:22)-->
+		<property name="numdestclientid" type="java.lang.Integer">
+			<column name="NUMDESTCLIENTID" length="22" />
+		</property>
+
+		<!--消息的编码格式   15 GBK编码 30 彩信 31 wappush 32 长短信 33个性彩信(NUMBER:22)-->
+		<property name="nummessageformat" type="java.lang.Integer">
+			<column name="NUMMESSAGEFORMAT" length="22" />
+		</property>
+
+		<!--消息的优先级 0 最低 3 最高(NUMBER:22)-->
+		<property name="nummessagepriority" type="java.lang.Integer">
+			<column name="NUMMESSAGEPRIORITY" length="22" />
+		</property>
+
+		<!--目的手机号（必添字段）(VARCHAR2:60)-->
+		<property name="vc2destmobile" type="java.lang.String">
+			<column name="VC2DESTMOBILE" length="60" />
+		</property>
+
+		<!--下发的源号码（默认填写 ""），长号码(VARCHAR2:21)-->
+		<property name="vc2srcnumber" type="java.lang.String">
+			<column name="VC2SRCNUMBER" length="21" />
+		</property>
+
+		<!--下行临时订购关系（默认填写 ""）(VARCHAR2:20)-->
+		<property name="vc2linkid" type="java.lang.String">
+			<column name="VC2LINKID" length="20" />
+		</property>
+
+		<!--消息的内容（必添字段）(VARCHAR2:2000)-->
+		<property name="vc2messagecontent" type="java.lang.String">
+			<column name="VC2MESSAGECONTENT" length="2000" />
+		</property>
+
+		<!--是否需要状态报告  0 不需要 1 需要(NUMBER:22)-->
+		<property name="numreporttype" type="java.lang.Integer">
+			<column name="NUMREPORTTYPE" length="22" />
+		</property>
+
+		<!--保留字段（默认填写 ""）(VARCHAR2:200)-->
+		<property name="vc2reserve1" type="java.lang.String">
+			<column name="VC2RESERVE1" length="200" />
+		</property>
+
+		<!--保留字段（默认填写 ""）(VARCHAR2:200)-->
+		<property name="vc2reserve2" type="java.lang.String">
+			<column name="VC2RESERVE2" length="200" />
+		</property>
+
+		<!--运营商编号  1 移动 2 联通 3 电信(NUMBER:22)-->
+		<property name="numoperatorid" type="java.lang.Integer">
+			<column name="NUMOPERATORID" length="22" />
+		</property>
+
+		<!--产品编号(NUMBER:22)-->
+		<property name="numproductid" type="java.lang.Integer">
+			<column name="NUMPRODUCTID" length="22" />
+		</property>
+
+		<!--渠道编号（默认填写 0）(NUMBER:22)-->
+		<property name="numchannelid" type="java.lang.Integer">
+			<column name="NUMCHANNELID" length="22" />
+		</property>
+
+		<!--省编号（默认填写 0）(NUMBER:22)-->
+		<property name="numprovinceid" type="java.lang.Integer">
+			<column name="NUMPROVINCEID" length="22" />
+		</property>
+
+		<!--市编号（默认填写 0）(NUMBER:22)-->
+		<property name="numcityid" type="java.lang.Integer">
+			<column name="NUMCITYID" length="22" />
+		</property>
+
+		<!--县编号（默认填写 0）（发送类型）(NUMBER:22)-->
+		<property name="numcountyid" type="java.lang.Integer">
+			<column name="NUMCOUNTYID" length="22" />
+		</property>
+
+		<!--下发批次（默认填写 0）(NUMBER:22)-->
+		<property name="numsendgroupid" type="java.lang.Integer">
+			<column name="NUMSENDGROUPID" length="22" />
+		</property>
+
+		<!--客户系统下行的唯一序列号（默认填写 0）客户系统的流水号(NUMBER:22)-->
+		<property name="numsrcseqid" type="java.lang.Integer">
+			<column name="NUMSRCSEQID" length="22" />
+		</property>
+
+		<!--运营商业务编号(NUMBER:22)-->
+		<property name="numsvcid" type="java.lang.Integer">
+			<column name="NUMSVCID" length="22" />
+		</property>
+
+		<!--"消息的下发类型 0 免费下发 1 按条下发 2 包月下发 3 订阅请求4 取消请求 5 包月扣费"(NUMBER:22)-->
+		<property name="nummessagetype" type="java.lang.Integer">
+			<column name="NUMMESSAGETYPE" length="22" />
+		</property>
+
+		<!--下行的业务代码（默认填写 ""）(VARCHAR2:20)-->
+		<property name="vc2servicecode" type="java.lang.String">
+			<column name="VC2SERVICECODE" length="20" />
+		</property>
+
+		<!--对用户的收费类型  0 免费 1 按条 2 包月 3 封顶(NUMBER:22)-->
+		<property name="numfeetype" type="java.lang.Integer">
+			<column name="NUMFEETYPE" length="22" />
+		</property>
+
+		<!--下发消息的资费信息（默认填写 0），单位：分(NUMBER:22)-->
+		<property name="numfeevalue" type="java.lang.Integer">
+			<column name="NUMFEEVALUE" length="22" />
+		</property>
+
+		<!--处理时间(DATE:7)-->
+		<property name="datdealtime" type="java.util.Date">
+			<column name="DATDEALTIME" length="7" />
+		</property>
+
+		<!--发送状态 0 1 2(NUMBER:22)-->
+		<property name="numdealflag" type="java.lang.Integer">
+			<column name="NUMDEALFLAG" length="22" />
+		</property>
+
+		<!--由上行触发的下行，对应上行的编号(NUMBER:22)-->
+		<property name="nummoseqid" type="java.lang.Integer">
+			<column name="NUMMOSEQID" length="22" />
+		</property>
+
+		<!--内部系统序列号(NUMBER:22)-->
+		<property name="numsysseqid" type="java.lang.Integer">
+			<column name="NUMSYSSEQID" length="22" />
+		</property>
+
+		<!--手机号码组成员数量，默认为1(NUMBER:22)-->
+		<property name="numcountmobile" type="java.lang.Integer">
+			<column name="NUMCOUNTMOBILE" length="22" />
+		</property>
+
+	</class>
+</hibernate-mapping>
+  

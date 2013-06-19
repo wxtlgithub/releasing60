@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<!-- RESOURCE DEFINITIONS -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:oracle.properties</value>
+			</list>
+		</property>
+	</bean>
+	<!--
+		<bean id="dataSource"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource"> <property
+		name="driverClass" value="${jdbc.driverclass}" /> <property
+		name="jdbcUrl" value="${jdbc.url}" /> <property name="user"
+		value="${jdbc.user}" /> <property name="password"
+		value="${jdbc.password}" /> <property name="minPoolSize"
+		value="${jdbc.minpoolsize}" /> <property name="maxPoolSize"
+		value="${jdbc.maxpoolsize}" /> </bean> <bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource"> <ref bean="dataSource" /> </property>
+		<property name="hibernateProperties"> <props> <prop
+		key="hibernate.dialect">${hibernate.dialect}</prop> <prop
+		key="hibernate.show_sql">${hibernate.show_sql}</prop> <prop
+		key="hibernate.format_sql">${hibernate.format_sql}</prop> </props>
+		</property> <property name="mappingResources"> <list>
+		<value>/hbm/business/TlProducts.hbm.xml</value>
+		<value>/hbm/business/TlGateway.hbm.xml</value>
+		<value>/hbm/business/TlMytest.hbm.xml</value> </list> </property>
+		</bean>
+	-->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverclass}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="minPoolSize" value="${jdbc.minpoolsize}" />
+		<property name="maxPoolSize" value="${jdbc.maxpoolsize}" />
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+			</props>
+		</property>
+		<property name="mappingLocations">
+			<list>
+				<value>/dal/mssql/hbm/*/*.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="dbsession" class="com.lxt2.business.dal.HibernateSession"
+		scope="prototype">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<import resource="spring_*.xml" />
+</beans>

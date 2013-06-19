@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="991" name="business_task_blackwhitelistoperator" desc="黑白名单添加操作配置文件">
+	<item key="isLoadFileLog" value="1" desc="是否导出文件日志.0不导出，1导出" />
+	<item key="backUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListFileBackUp/"
+		desc="文件备份目录" />
+	<item key="managerId" value="900000" desc="默认用户" />
+	<item key="departId" value="1"	desc="默认部门" />
+	<item key="emailDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/Email/file/MobileListFile/" desc="email备份路径" />
+	<item key="loadLogFileDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListLoadLogFile/" 
+		desc="黑白名单入库日志目录"/>
+	<item key="loadLogBackUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListLoadLogBackUp/" 
+		desc="黑白名单入库日志备份目录"/>
+	<component id="SMSMAS" name="SMSMAS" desc="SMSMAS">
+		<item key="dir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpMasWithSMS/file/UpLoadFile/" desc="短信MAS上传目录" />
+		<item key="ecid" value="1000" desc="ECID" />
+		<item key="serviceCode" value="Z9999" desc="ServiceCode" />
+		<item key="bizCode" value="1065999" desc="BizCode" />
+	</component>
+	<component id="SMSEC" name="SMSEC" desc="SMSEC">
+		<item key="dir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpEcWithSMS/file/UpLoadFile/" desc="短信EC上传目录" />
+		<item key="ecid" value="2000" desc="ECID" />
+		<item key="serviceCode" value="J12345" desc="ServiceCode" />
+		<item key="bizCode" value="1065888" desc="BizCode" />
+	</component>
+	<component id="MMSMAS" name="MMSMAS" desc="MMSMAS">
+		<item key="dir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpMasWithMMS/file/UpLoadFile/" desc="彩信MAS上传目录" />
+		<item key="ecid" value="1000" desc="ECID" />
+		<item key="serviceCode" value="Z9999" desc="ServiceCode" />
+		<item key="bizCode" value="1065999" desc="BizCode" />
+	</component>
+	<component id="MMSEC" name="MMSEC" desc="MMSEC">
+		<item key="dir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpEcWithMMS/file/UpLoadFile/" desc="彩信EC上传目录" />
+		<item key="ecid" value="2000" desc="ECID" />
+		<item key="serviceCode" value="J12345" desc="ServiceCode" />
+		<item key="bizCode" value="1065888" desc="BizCode" />
+	</component>
+	<item key="isneedinit" value="true" desc="服务Session失效时候是否重新加载" />
+</function>

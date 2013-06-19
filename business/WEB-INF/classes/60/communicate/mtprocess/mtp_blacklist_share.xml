@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<!--  -->
+	<bean id="fileShare" class="com.standardsm.blacklist.share.ShareBlackListFile">
+		<constructor-arg>
+			<value>${WORKDIR}../../../data/gwShareBlkFiles/</value>
+		</constructor-arg>
+	</bean>
+	<!-- 网关通道共享黑名单校验类 -->
+	<bean id="gwShareBlackList" class="com.standardsm.blacklist.share.ShareBlackList" init-method="init">
+		<property name="fileShare" ref="fileShare" />
+		<constructor-arg>
+			<value>${WORKDIR}../../../data/biz/</value>
+		</constructor-arg>
+	</bean>
+	
+	<!-- 网关通道共享黑名单文件同步加载任务 -->
+    <bean id="gwSyncShareBlkFileCmd" class="com.standardsm.blacklist.share.BlackListIncrementShareCmd">
+        <property name="shareBlackListSync" ref="gwShareBlackList"/>
+    </bean>
+	<bean id="gwSyncShareBlkFileTask" class="com.standardsm.blacklist.share.BlackListIncrementShareTask">
+		<property name="id" value="128"/>
+		<property name="name" value="通道共享黑名单文件同步加载"/>
+		<property name="shareBlackListSync" ref="gwShareBlackList"/>
+        <property name="commandMap">
+            <map>
+                <entry key="sync" value-ref="gwSyncShareBlkFileCmd"/>
+            </map>
+        </property>
+		<!-- 每小时的第10分执行 -->
+		<property name="taskSchRule" value="@{sch(10)}"/>
+	</bean>
+	<!-- 任务结束 -->
+	
+</beans>

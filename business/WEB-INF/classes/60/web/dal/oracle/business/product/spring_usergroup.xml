@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="TlUsergroupDAO" class="com.lxt2.business.dal.usergroup.TlUsergroupDAL"
+		scope="prototype">
+		<!-- 通过页面输入条件分页查询客户组信息列表 -->
+		<property name="getUserGroupByArgsSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+						value="
+						select * from (select rownum numrowasdf, 
+			                adsfsds.* from (
+							SELECT A.NUMUSERGROUPID,
+							       A.NUMPRODID,
+							       A.VC2USERGROUPNAME,
+							       A.VC2USERGROUPDESC,
+							       TO_CHAR(A.DATCREATTIME, 'YYYY-MM-DD HH24:MI:SS') DATCREATTIME,
+							       TO_CHAR(A.DATMODIFYTIME, 'YYYY-MM-DD HH24:MI:SS') DATMODIFYTIME,
+							       A.NUMUSERID,
+							       A.NUMDEPARTID,
+							       A.VC2VALIDFLAG,
+							       A.NUMTYPE,
+							       C.VC2USERNAME,
+							       C.NUMUSERID DSERID,
+							       D.VC2NAME VC2PRODNAME,
+							       B.VC2DEPARTNAME,
+							       NVL(A.NUMMEMBERCNT, 0) MEMBERCOUNT
+							  FROM TL_USERGROUP A, TL_DEPARTMENT B, TL_USER C, TL_PRODUCTS D,tlv_usergroup_user E
+							 WHERE A.NUMDEPARTID = B.NUMDEPARTID(+)
+							  	AND A.NUMUSERID = C.NUMUSERID(+)
+							   	AND A.NUMPRODID = D.NUMPRODID(+)
+  								AND A.NUMUSERGROUPID = E.NUMUSERGROUPID(+)
+							   	AND A.VC2VALIDFLAG = '1' 
+							#0# ORDER BY a.DATCREATTIME DESC,a.NUMUSERGROUPID desc
+						 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="SELECT count(1)
+							  FROM TL_USERGROUP A, TL_DEPARTMENT B, TL_USER C, TL_PRODUCTS D ,tlv_usergroup_user E
+							 WHERE A.NUMDEPARTID = B.NUMDEPARTID(+)
+							   AND A.NUMUSERID = C.NUMUSERID(+)
+							   AND A.NUMPRODID = D.NUMPRODID(+)
+  								AND A.NUMUSERGROUPID = E.NUMUSERGROUPID(+)
+                			 AND A.VC2VALIDFLAG = '1' #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 部门编号 -->
+						<value>A.NUMDEPARTID in (-1,{0}) </value>		
+						<!-- 客户组名称 -->	
+						<value>A.vc2usergroupname like '%{0}%'</value>
+						<!-- 创建人名称 -->
+						<value>C.vc2username like '%{0}%'</value>
+						<!-- 创建人编号 -->
+						<value>A.Numuserid = {0}</value>		
+						<value> {0}</value>	
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<property name="queryByNameSS">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">HQL</value>
+				</property>
+				<property name="theSQL"
+					value="from TlUsergroup t where t.vc2usergroupname ='{0}'
+					 and t.numdepartid='{1}' and t.numuserid='{2}' and t.vc2validflag='1'"></property>
+			</bean>
+		</property>
+		<property name="updateUserGroupByIdsSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="update tl_usergroup set VC2VALIDFLAG='-1' where NUMUSERGROUPID in({0})"></property>
+			</bean>
+		</property>
+		<!--查询客户组成员操作详情-->
+		
+		
+		
+		
+		
+		<!-- 系统管理 通过手机号查询客户组 -->
+		<property name="queryUserGroupByMobileSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+						value="
+						select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+							select numusergroupid,vc2mobile,numtype,vc2usergroupname,
+          						to_char(datcreattime,'yyyy-mm-dd hh24:mi:ss') datcreattime,
+          						numuserid,numdepartid,vc2username,vc2departname,numprodid,vc2name
+							 FROM TLV_CUSTOMER_GROUP  #0#
+						 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*) FROM TLV_CUSTOMER_GROUP  #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 手机号码 -->
+						<value>VC2MOBILE='{0}'</value>		
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 部门管理 通过手机号查询客户组 -->
+		<property name="queryUserGroupByMobile_ManagerSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+						value="
+						select * from (select rownum numrowasdf, 
+			                adsfsds.* from (
+							select numusergroupid,vc2mobile,numtype,vc2usergroupname,
+          						to_char(datcreattime,'yyyy-mm-dd hh24:mi:ss') datcreattime,
+          						numuserid,numdepartid,vc2username,vc2departname,numprodid,vc2name
+							FROM TLV_CUSTOMER_GROUP  #0#
+						 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*) FROM TLV_CUSTOMER_GROUP  #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 手机号码 -->
+						<value>VC2MOBILE='{0}'</value>	
+						<!-- 部门编号 -->
+						<value>numusergroupid in (select numusergroupid from tl_usergroup
+						 where (vc2validflag = 1 and numusergroupid in
+						(select numdataid from tl_dpermission
+						 where numtypeid=3 and numdroleid in
+						 (select numroleid from  tl_department_role
+						 where numdepartid = {0})) or numdepartid in ({1})))
+						</value>		
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 普通用户 通过手机号查询客户组 -->
+		<property name="queryUserGroupByMobile_UserSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+						value="
+						select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+								select numusergroupid,vc2mobile,numtype,vc2usergroupname,
+          						to_char(datcreattime,'yyyy-mm-dd hh24:mi:ss') datcreattime,
+          						numuserid,numdepartid,vc2username,vc2departname,numprodid,vc2name
+          						FROM TLV_CUSTOMER_GROUP  #0#
+						 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*) FROM TLV_CUSTOMER_GROUP  #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 手机号码 -->
+						<value>VC2MOBILE='{0}'</value>	
+						<!-- 部门编号 -->
+						<value>numusergroupid in (select numusergroupid from tl_usergroup
+						   where (vc2validflag = 1 and numusergroupid in
+						(select numdataid from tl_dpermission
+						 where numtypeid=3 and numdroleid in
+						 (select numroleid from tl_user_role
+						  where numuserid = {0})) or numuserid = {1}))
+						</value>		
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		
+		<property name="queryUserGroupByUserIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+									value="select *
+				  from (select distinct numusergroupid,vc2usergroupname  
+				          from tlv_usergroup_user
+				         where numdroleid IN ({0})
+				        union (select numusergroupid,vc2usergroupname  
+				                from tl_usergroup ug
+				               where ug.vc2validflag = 1
+				                 and NUMUSERID = {1})) T
+				"></property>
+			</bean>
+		</property>
+		
+		<property name="queryUserSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value=" select NUMUSERGROUPID as numusergroupid, VC2USERGROUPNAME as vc2usergroupname from tl_usergroup where vc2validflag = 1 and NUMUSERID = {0} order by numusergroupid"></property>
+			</bean>
+		</property>
+		<property name="queryRoleSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select distinct NUMUSERGROUPID as numusergroupid, VC2USERGROUPNAME as vc2usergroupname from 
+				tlv_usergroup_user where numdroleid in({0}) order by numusergroupid"></property>
+			</bean>
+		</property>
+	
+		<property name="queryUserGroupByDepartIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+									value="select distinct numusergroupid,vc2usergroupname  
+									          from tlv_usergroup_user where numdroleid IN ({0})
+									        union (select numusergroupid,vc2usergroupname  
+							                from tl_usergroup ug where ug.vc2validflag = 1 and ug.numdepartId = {1}) "></property>
+			</bean>
+		</property>
+		
+	<!-- 根据客户组编号集合得到去重后用户数 -->
+	<property name="countUseryGroupMembersByGroupIdsSQL">
+		<bean class="com.lxt2.common.common.model.SimpleSQL">
+			<property name="sqlType">
+				<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+			</property>
+			<property name="theSQL"
+					  value="select count(*) from (
+					  			select distinct  VC2MOBILE,0 as NUMPROVID 
+					  				from TL_USERGROUP_MEMBER where NUMUSERGROUPID in ({0})
+					  	)
+				"></property>
+		</bean>
+	</property>
+	
+		<!-- 根据客户组编号集合得到去重后用户数不通过vc2typelist取值 -->
+	<property name="countSMSUseryGroupMembersByGroupIdsSQL">
+		<bean class="com.lxt2.common.common.model.SimpleSQL">
+			<property name="sqlType">
+				<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+			</property>
+			<property name="theSQL"
+					  value="select count(*) from (
+					  			select distinct  VC2MOBILE,0 as NUMPROVID 
+					  				from TL_USERGROUP_MEMBER UM ,tl_sms_sendgroup ss where UM.NUMUSERGROUPID =  ss.NUMUSERGROUPID AND ss.NUMCONTENTID= {0}
+					  	)"></property>
+		</bean>
+	</property>
+	
+		<property name="queryLogDetail"
+			value="select VC2MOBILE,VC2STATE from TLV_DETAILS_COLUMN where NUMLOGID ={0} 
+			and datcreatetime >(select trunc(datcreattime) from tl_log_column where numlogid ={0})
+			and datcreatetime &lt; (select trunc(datcreattime) from tl_log_column where numlogid ={0})+1
+			">
+		</property>
+		<property name="queryLogDetailFailed"
+			value="select VC2MOBILE,VC2STATE from TLV_DETAILS_COLUMN where NUMLOGID ={0} and NUMSTATE &lt;> 5 and NUMSTATE &lt;> 6
+			and datcreatetime >(select trunc(datcreattime) from tl_log_column where numlogid ={0})
+			and datcreatetime &lt; (select trunc(datcreattime) from tl_log_column where numlogid ={0})+1
+			">
+		</property>
+		<property name="queryLogDetailSuccess"
+			value="select VC2MOBILE,VC2STATE from TLV_DETAILS_COLUMN where NUMLOGID ={0} and (NUMSTATE = 5 or NUMSTATE = 6)
+			and datcreatetime >(select trunc(datcreattime) from tl_log_column where numlogid ={0})
+			and datcreatetime &lt; (select trunc(datcreattime) from tl_log_column where numlogid ={0})+1
+			">
+		</property>
+		<property name="queryUserGroupMembersSQL"
+			value="select {0} from tl_usergroup_member um where um.numusergroupid ={1}">
+		</property>
+		
+		<!-- 普通用户 通过手机号查询客户组 -->
+		<property name="queryMemberByArgsSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+						value="
+						select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+								SELECT numlogid,numdataid,numtotalnum,numsuccessnum,numfailed,numuserid,
+	               					to_char(datcreattime,'yyyy-mm-dd hh24:mi:ss') datcreattime,numdepartid,
+	               					numprodid,numsvcid,numtype,numstate,vc2columnname,vc2departname,vc2svcname,vc2username
+								from TLV_LOG_COLUMNGROUP #0#
+						 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(1) from TLV_LOG_COLUMNGROUP #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 操作类型 -->
+						<value>numtype in (-1,{0}) </value>		
+						<!-- 开始时间 -->	
+						<value>DATCREATTIME > date '{0}'</value>
+						<!-- 结束时间 -->
+						<value>DATCREATTIME &lt; date '{0}'+1</value>	
+						<!-- 部门编号 -->
+						<value>NUMDEPARTID in (-1,{0})</value>	
+						<!-- 客户组编号 -->
+						<value>NUMDATAID ={0}</value>	
+						<!-- 用户编号 -->
+						<value>NUMUSERID ={0}</value>	
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		
+		
+		<!-- 根据手机号查询白名单 -->
+		<property name="queryUserGroupWhiteByMobileSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+						value="
+						select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+							select VC2MOBILE,to_char(DATCREATETIME,'yyyy-mm-dd hh24:mi:ss') DATCREATETIME,NUMSVCID,VC2SVCNAME from tlv_whitelist_service  #0#
+						 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(0) from tlv_whitelist_service #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 手机号码 -->
+						<value>vc2mobile='{0}'</value>	
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 根据手机号查询黑名单 -->
+		<property name="queryUserGroupBlackByMobileSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+						value="
+						select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+							SELECT numseqid, 
+numsvcid, 
+vc2mobile, 
+to_char(datcreate,'yyyy-mm-dd hh24:mi:ss') datcreate, 
+numtype, 
+numlogid FROM tl_black_list where (numtype=1 or numtype=2) #0#
+						 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="SELECT COUNT(*) FROM tl_black_list where (numtype=1 or numtype=2) #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 手机号码 -->
+						<value>VC2MOBILE='{0}'</value>	
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<property name="queryUserGroupNumsSQL"
+			value="
+			SELECT dg.*,dp.vc2departname,nvl(mc.membercount,0) membercount,nvl(bc.blackcount,0) blackcount
+ 			FROM tlv_usergroup_depart_bysearch dg,tl_department dp,
+			(select numusergroupid, count(*) membercount from tl_usergroup_member group by numusergroupid) mc,
+			(select numusergroupid,count(*) blackcount  from tl_black_list_usergroup group by numusergroupid) bc
+			WHERE dp.numdepartid = dg.NUMDEPARTID and dg.NUMUSERGROUPID = mc.numusergroupid(+) and dg.NUMUSERGROUPID = bc.numusergroupid(+) 
+			{0}
+			"></property>
+	</bean>
+</beans>

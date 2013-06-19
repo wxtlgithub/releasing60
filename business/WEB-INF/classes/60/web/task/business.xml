@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<bean id="business_task_customer" class="com.yxt.business.task.BusinessCustomerTask">
+		<property name="id" value="900" />
+		<property name="name" value="客户组成员入库" />
+		<property name="taskSchRule" value="@{cycle(5)}"></property>
+	</bean>
+
+	<bean id="business_task_customeroperate" class="com.yxt.business.task.BusinessCustomerOperateTask">
+		<property name="id" value="990" />
+		<property name="name" value="客户组成员处理" />
+		<property name="taskSchRule" value="@{cycle(5)}"></property>
+	</bean>
+
+	<bean id="business_task_blackwhitelist" class="com.project.business.task.BusinessWhiteListTask">
+		<property name="id" value="903" />
+		<property name="name" value="黑白名单入库" />
+		<property name="taskSchRule" value="@{cycle(5)}" />
+	</bean>
+
+	<bean id="business_task_blackwhitelistoperate" class="com.yxt.business.task.BusinessWhiteListOperateTask">
+		<property name="id" value="991" />
+		<property name="name" value="黑白名单处理" />
+		<property name="taskSchRule" value="@{cycle(5)}"></property>
+	</bean>
+	
+ 	<bean id="business_task_shareblacklist" class="com.lxt2.business.task.ShareBlackListTask">
+		<property name="id" value="993" />
+		<property name="name" value="共享黑名单" />
+		<property name="taskSchRule" value="@{cycle(5)}" />
+	</bean>
+
+	<bean id="business_task_shareblacklistftp" class="com.lxt2.business.task.ShareBlackListFTPTask">
+		<property name="id" value="994" />
+		<property name="name" value="共享黑名单FTP上传" />
+		<property name="taskSchRule" value="@{cycle(5)}" />
+	</bean>
+	
+	<bean id="business_task_blacklistautodelete" class="com.lxt2.business.task.BlackListAutoDelTask">
+		<property name="id" value="906" />
+		<property name="name" value="黑名单删除数据" />
+		<property name="taskSchRule" value="@{sch(0,14)}"/>
+	</bean>
+	
+	<bean id="business_task_zqsbwhiteblacklist" class="com.yxt.business.task.ZQSBWhiteListTask">
+		<property name="id" value="996" />
+		<property name="name" value="白名单数据同步" />
+		<property name="taskSchRule" value="@{cycle(5)}" />
+	</bean>
+	
+	<bean id="business_task_smssendfileoperate" class="com.project.business.task.SMSCheckListSvrOpationTask">
+		<property name="id" value="907" />
+		<property name="name" value="短信发送信息入库" />
+		<property name="taskSchRule" value="@{cycle(5)}" />
+	</bean>
+
+	<bean id="business_task_mmssendfileoperate" class="com.project.business.task.MMSCheckListSvrOpationTask">
+		<property name="id" value="915" />
+		<property name="name" value="彩信发送信息入库" />
+		<property name="taskSchRule" value="@{cycle(5)}" />
+	</bean>
+
+	<bean id="business_task_ftp" class="com.lxt2.business.task.BusinessWhiteListFTPTask">
+		<property name="id" value="902" />
+		<property name="name" value="白名单上传(ftp)" />
+		<property name="taskSchRule" value="@{cycle(5)}" />
+	</bean>
+
+	<bean id="business_task_whitelisterror" class="com.yxt.business.task.BusinessWhiteListErrorTask">
+		<property name="id" value="992" />
+		<property name="name" value="白名单失败重传" />
+		<property name="taskSchRule" value="@{cycle(5)}" />
+	</bean>
+	
+	<bean id="business_task_prepaidoperate" class="com.yxt.business.task.BusinessPrePaidOperaterTask">
+		<property name="id" value="966" />
+		<property name="name" value="EC预付费配置" />
+		<property name="taskSchRule" value="@{cycle(5)}" />
+	</bean>
+</beans>

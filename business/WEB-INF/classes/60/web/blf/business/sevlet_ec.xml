@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<!-- EC管理列表页面查询 -->
+	<sevlet>
+		<servlet-name>EcListQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.ecmanage.TlEcInfoSev
+		</servlet-class>
+		<url-pattern>/URL/Business/ECmanage/EcListQuery.ashx</url-pattern>
+	</sevlet>
+	<!-- EC管理更新页面 -->
+	<sevlet>
+		<servlet-name>EcListQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.ecmanage.TlEcInfoSev
+		</servlet-class>
+		<url-pattern>/URL/Business/ECmanage/EcUpdate.ashx</url-pattern>
+	</sevlet>
+	<!-- EC管理业务列表页面查询 -->
+	<sevlet>
+		<servlet-name>EcServiceListQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.ecmanage.TlEcServicecodeSev
+		</servlet-class>
+		<url-pattern>/URL/Business/ECservice/EcServiceInfo.ashx</url-pattern>
+	</sevlet>
+	<!-- EC管理业务删除页面 -->
+	<sevlet>
+		<servlet-name>EcServiceDelete</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.ecmanage.TlEcServicecodeSev
+		</servlet-class>
+		<url-pattern>/URL/Business/ECservice/EcServiceDelete.ashx</url-pattern>
+	</sevlet>
+	<!-- EC管理业务修改页面-->
+	<sevlet>
+		<servlet-name>EcServiceUpdate</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.ecmanage.TlEcServicecodeSev
+		</servlet-class>
+		<url-pattern>/URL/Business/ECmanage/EcServiceUpdate.ashx</url-pattern>
+	</sevlet>
+	<!-- EC报备签名管理修改页面-->
+	<sevlet>
+		<servlet-name>EcSignture</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.ecmanage.TlEcsigntureSev
+		</servlet-class>
+		<url-pattern>/URL/Business/ECmanage/EcSignture.ashx</url-pattern>
+	</sevlet>
+	<!-- EC预付费管理修改页面-->
+	<sevlet>
+		<servlet-name>EcPrePaid</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.ecmanage.TlEcPrepaidSev
+		</servlet-class>
+		<url-pattern>/URL/Business/ECmanage/EcPrePaid.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>ECRoleQuery</servlet-name>
+		<servlet-class>com.yxt.business.blf.ecmanage.TlEcRoleSev
+		</servlet-class>
+		<url-pattern>/URL/ECRole/ECRole.ashx</url-pattern>
+	</sevlet>
+</sevlets>

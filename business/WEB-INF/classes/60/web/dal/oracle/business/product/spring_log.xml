@@ -1,0 +1,760 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="TlLogColumnDAO" class="com.lxt2.business.dal.log.TlLogColumnDAL"
+		scope="prototype">
+		<property name="judgeRepeatMobileSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property> 
+				<property name="theSQL"
+					value="update  TL_USERGROUP_MEMBER_CH_TEMP 
+						   set resultflag = 1
+						 where rowid in (select rowidtmp
+						                   from (select rowid rowidtmp,
+						                                row_number() over(partition by vc2mobile, numlogid order by vc2mobile) rn
+						                           from  TL_USERGROUP_MEMBER_CH_TEMP 
+						                          where numlogid = {0})
+						                  where rn > 1)"></property>
+			</bean>
+		</property> 
+		<property name="queryNumsFromTEMPByLogIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property> 
+				<property name="theSQL"
+					value="select count(0) from  TL_USERGROUP_MEMBER_CH_TEMP  t where t.NUMSTATUS=0 and t.numlogid={0}"></property>
+			</bean>
+		</property> 
+		<property name="queryLoadLogSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property> 
+				<property name="theSQL"
+					value="select t.vc2backuppath,t.numlogid from tl_log_column t where t.numstate=2"></property>
+			</bean>
+		</property> 
+		<property name="getUserIdAndDepartIdByLog">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property> 
+				<property name="theSQL"
+					value="SELECT LC.NUMUSERID, LC.NUMDEPARTID FROM  TL_USERGROUP_MEMBER_CH_TEMP  T, TL_LOG_COLUMN LC WHERE T.NUMLOGID = LC.NUMLOGID AND T.NUMOPERATORID = {0}"></property>
+			</bean>
+		</property> 
+		<property name="queryUserGroupOperateStateSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select numlogid from TL_LOG_COLUMN where 
+					lower(VC2BACKUPPATH)=lower('{0}') and NUMSTATE=0 and NUMDATAID={1} "></property>
+			</bean>
+		</property>
+		<property name="updateUserGroupOperateStateSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="update tl_log_column t set t.numstate={0} where t.numlogid={1}"></property>
+			</bean>
+		</property>
+		<property name="queryUserGroupTempNumsByStateSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select count(0) from  TL_USERGROUP_MEMBER_CH_TEMP  where NUMSTATUS={0}"></property>
+			</bean>
+		</property>
+		<property name="queryUserGroupTempNumsByStateGUOJINSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select count(0) from TL_GJ_USERGROUP_MEMBER_TEMP where NUMSTATUS={0}"></property>
+			</bean>
+		</property>
+		<property name="updateUserGroupTempFlagSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="UPDATE  TL_USERGROUP_MEMBER_CH_TEMP   SET NUMSTATUS=2 ,NUMOPERATORID='{0}' WHERE NUMSTATUS=0 "></property>
+			</bean>
+		</property>
+		<property name="updateUserGroupTempFlagGJSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="UPDATE TL_GJ_USERGROUP_MEMBER_TEMP  SET NUMSTATUS=2 ,NUMOPERATORID='{0}' WHERE NUMSTATUS=0 "></property>
+			</bean>
+		</property>
+		<property name="updateUserGroupTempFlagMaxSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="UPDATE  TL_USERGROUP_MEMBER_CH_TEMP  SET NUMSTATUS=2 ,NUMOPERATORID='{0}' WHERE NUMSTATUS=0 AND ROWNUM &lt;{1}+1"></property>
+			</bean>
+		</property>
+
+		<property name="updateUserGroupTempFlagMaxGJSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="UPDATE TL_GJ_USERGROUP_MEMBER_TEMP SET NUMSTATUS=2 ,NUMOPERATORID='{0}' WHERE NUMSTATUS=0 AND ROWNUM &lt;{1}+1"></property>
+			</bean>
+		</property>
+		<property name="updateUserGroupTempDataOperateSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+
+				<property name="theSQL"
+					value="
+					begin
+					update  TL_USERGROUP_MEMBER_CH_TEMP  set resultflag='0' where not  REGEXP_LIKE(vc2mobile, '{1}') and NUMOPERATORID ='{0}';
+					update  TL_USERGROUP_MEMBER_CH_TEMP  set resultflag = '1'  where rowid in (select rowidtmp from (select rowid rowidtmp, row_number() over(partition by vc2mobile,numlogid  order by vc2mobile) rn from  TL_USERGROUP_MEMBER_CH_TEMP   where resultflag != '0' and numoperatorid ='{0}') where rn > 1) ;
+					UPDATE  TL_USERGROUP_MEMBER_CH_TEMP  TP SET RESULTFLAG = '3' WHERE tp.resultflag NOT IN(0,1) AND TP.NUMOPERATORID ='{0}' AND tp.uploadtype='0' AND EXISTS (SELECT 1 FROM TL_USERGROUP_MEMBER TP1  WHERE tp1.vc2mobile = TP.vc2mobile  AND tp1.numusergroupid = TP.numusergroupid and tp.numoperatorid='{0}');
+					UPDATE  TL_USERGROUP_MEMBER_CH_TEMP  TP SET RESULTFLAG = '4' WHERE tp.resultflag NOT IN(0,1,3) AND TP.NUMOPERATORID ='{0}' AND tp.uploadtype='1'  AND NOT  exists (SELECT 1 FROM  tl_usergroup_member TP1 WHERE tp1.vc2mobile = TP.vc2mobile  AND  tp1.numusergroupid = TP.numusergroupid AND tp.numoperatorid='{0}');
+					UPDATE  TL_USERGROUP_MEMBER_CH_TEMP  TP SET RESULTFLAG = '2' WHERE RESULTFLAG NOT IN(0,1,3,4) AND TP.NUMOPERATORID ='{0}' AND tp.uploadtype='0'  and exists ( select 1 from TL_BLACK_LIST where  tp.vc2mobile=TL_BLACK_LIST.vc2mobile and (TL_BLACK_LIST.numtype != -3 or TL_BLACK_LIST.numtype != -4));
+					UPDATE  TL_USERGROUP_MEMBER_CH_TEMP  TP SET RESULTFLAG = '5' WHERE tp.resultflag NOT IN(0,1,2,3,4) AND TP.NUMOPERATORID ='{0}' AND  EXISTS (SELECT 1 FROM tl_white_list tw where TP.vc2mobile=tw.vc2mobile);
+					UPDATE  TL_USERGROUP_MEMBER_CH_TEMP  SET RESULTFLAG='6' WHERE RESULTFLAG='-1' AND NUMOPERATORID='{0}';
+					UPDATE  TL_USERGROUP_MEMBER_CH_TEMP  SET numstatus='1' WHERE NUMOPERATORID='{0}';
+					END; 
+					"></property>
+			</bean>
+		</property>
+
+
+		<property name="updateUserGroupTempDataOperateGJSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<!--
+					国金非法号码过滤 0 自身过滤 1 添加客户组时，客户组成员重复3 退出客户组时，客户组成员不存在4 黑名单过湿 白名单过湿
+					成功瘿 标识操作完成
+				-->
+				<property name="theSQL"
+					value="
+					begin
+					update TL_GJ_USERGROUP_MEMBER_TEMP set resultflag='0' where not  REGEXP_LIKE(vc2mobile, '{1}') and NUMOPERATORID ='{0}';
+					update TL_GJ_USERGROUP_MEMBER_TEMP set resultflag = '1'  where rowid in (select rowidtmp from (select rowid rowidtmp, row_number() over(partition by vc2mobile,numlogid  order by vc2mobile) rn from TL_GJ_USERGROUP_MEMBER_TEMP  where resultflag != '0' and numoperatorid ='{0}') where rn > 1) ;
+					UPDATE TL_GJ_USERGROUP_MEMBER_TEMP TP SET RESULTFLAG = '3' WHERE tp.resultflag NOT IN(0,1) AND TP.NUMOPERATORID ='{0}' AND tp.uploadtype='0' AND EXISTS (SELECT 1 FROM TL_GJ_USERGROUP_MEMBER TP1  WHERE tp1.vc2mobile = TP.vc2mobile  AND tp1.numusergroupid = TP.numusergroupid and tp.numoperatorid='{0}');
+					UPDATE TL_GJ_USERGROUP_MEMBER_TEMP TP SET RESULTFLAG = '4' WHERE tp.resultflag NOT IN(0,1,3) AND TP.NUMOPERATORID ='{0}' AND tp.uploadtype='1'  AND NOT  exists (SELECT 1 FROM  tl_gj_usergroup_member TP1 WHERE tp1.vc2mobile = TP.vc2mobile  AND  tp1.numusergroupid = TP.numusergroupid AND tp.numoperatorid='{0}');
+					UPDATE TL_GJ_USERGROUP_MEMBER_TEMP TP SET RESULTFLAG = '2' WHERE RESULTFLAG NOT IN(0,1,3,4) AND TP.NUMOPERATORID ='{0}' AND tp.uploadtype='0'  and exists ( select 1 from TL_BLACK_LIST where  tp.vc2mobile=TL_BLACK_LIST.vc2mobile and TL_BLACK_LIST.NUMTYPE!=-3 ) ;
+					UPDATE TL_GJ_USERGROUP_MEMBER_TEMP TP SET RESULTFLAG = '5' WHERE tp.resultflag NOT IN(0,1,2,3,4) AND TP.NUMOPERATORID ='{0}' AND  EXISTS (SELECT 1 FROM tl_white_list tw where TP.vc2mobile=tw.vc2mobile);
+					UPDATE TL_GJ_USERGROUP_MEMBER_TEMP SET RESULTFLAG='6' WHERE RESULTFLAG='-1' AND NUMOPERATORID='{0}';
+					UPDATE TL_GJ_USERGROUP_MEMBER_TEMP SET numstatus='1' WHERE NUMOPERATORID='{0}';
+					END; 
+					"></property>
+			</bean>
+		</property>
+
+		<property name="updateUserGroupAddMemberSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="INSERT INTO TL_USERGROUP_MEMBER(NUMUSERGROUPMEMBERID,NUMUSERGROUPID,VC2MOBILE,DATCREATTIME,DATMODIFYTIME,NUMUSERID,NUMLOGID,NUMOPID) SELECT TLSEQ_COLUMN_MEMBER.NEXTVAL,TP.NUMUSERGROUPID,TP.VC2MOBILE,SYSDATE,SYSDATE,TP.NUMUSERID,TP.NUMLOGID,TP.NUMOPID FROM  TL_USERGROUP_MEMBER_CH_TEMP  TP WHERE TP.NUMOPERATORID='{0}' AND NUMSTATUS=1 AND RESULTFLAG IN(5,6) AND UPLOADTYPE=0"></property>
+			</bean>
+		</property>
+
+
+		<property name="updateUserGroupAddMemberGJSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="INSERT INTO TL_GJ_USERGROUP_MEMBER(NUMUSERGROUPMEMBERID,NUMUSERGROUPID,VC2MOBILE,VC2CUSTOMER,DATCREATTIME,DATMODIFYTIME,NUMUSERID,NUMLOGID,NUMOPID) SELECT TLSEQ_COLUMN_MEMBER.NEXTVAL,TP.NUMUSERGROUPID,TP.VC2MOBILE,TP.VC2CUSTOMER,SYSDATE,SYSDATE,TP.NUMUSERID,TP.NUMLOGID,TP.NUMOPID FROM TL_GJ_USERGROUP_MEMBER_TEMP TP WHERE TP.NUMOPERATORID='{0}' AND NUMSTATUS=1 AND RESULTFLAG IN(5,6) AND UPLOADTYPE=0"></property>
+			</bean>
+		</property>
+
+
+		<property name="updateUserGroupDelMemberSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="DELETE FROM TL_USERGROUP_MEMBER TUME WHERE EXISTS (SELECT 1 FROM  TL_USERGROUP_MEMBER_CH_TEMP  TUMT WHERE TUME.NUMUSERGROUPID = TUMT.NUMUSERGROUPID AND TUME.VC2MOBILE = TUMT.VC2MOBILE AND TUMT.UPLOADTYPE = 1  AND TUMT.RESULTFLAG IN (2, 5, 6)  AND TUMT.NUMOPERATORID = '{0}')"></property>
+			</bean>
+		</property>
+
+
+
+		<property name="updateUserGroupDelMemberGJSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="DELETE FROM TL_GJ_USERGROUP_MEMBER TUME WHERE EXISTS (SELECT 1 FROM TL_GJ_USERGROUP_MEMBER_TEMP TUMT WHERE TUME.NUMUSERGROUPID = TUMT.NUMUSERGROUPID AND TUME.VC2MOBILE = TUMT.VC2MOBILE AND TUMT.UPLOADTYPE = 1  AND TUMT.RESULTFLAG IN (2, 5, 6)  AND TUMT.NUMOPERATORID = '{0}')"></property>
+			</bean>
+		</property>
+
+<!--DELETE FROM TL_GJ_USERGROUP_MEMBER TUME WHERE EXISTS (SELECT 1 FROM TL_GJ_USERGROUP_MEMBER_TEMP TUMT WHERE TUME.NUMUSERGROUPID = TUMT.NUMUSERGROUPID AND TUME.VC2MOBILE = TUMT.VC2MOBILE AND TUME.VC2CUSTOMER = TUMT.VC2CUSTOMER AND TUMT.UPLOADTYPE = 1  AND TUMT.RESULTFLAG IN (2, 5, 6)  AND TUMT.NUMOPERATORID = '{0}')-->
+		<property name="updateUserGroupLogDetailSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="INSERT INTO tl_details_column (numdetailsid,numlogid,vc2mobile,vc2state) SELECT TLSEQ_DETAILS_COLUMN.NEXTVAL,tp.numlogid,tp.vc2mobile,tp.resultflag FROM  TL_USERGROUP_MEMBER_CH_TEMP  tp WHERE tp.numoperatorid='{0}' AND tp.numstatus=1"></property>
+			</bean>
+		</property>
+
+
+		<property name="updateUserGroupLogDetailGJSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="INSERT INTO tl_details_column (numdetailsid,numlogid,vc2mobile,vc2state) SELECT TLSEQ_DETAILS_COLUMN.NEXTVAL,tp.numlogid,tp.vc2mobile,tp.resultflag FROM tl_gj_usergroup_member_temp tp WHERE tp.numoperatorid='{0}' AND tp.numstatus=1"></property>
+			</bean>
+		</property>
+
+
+
+		<property name="queryUserGroupSuccessNumsSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT tumt.numlogid, COUNT(1) AS successnums from  TL_USERGROUP_MEMBER_CH_TEMP  tumt WHERE tumt.resultflag in(5,6) AND tumt.numstatus=1 AND tumt.numoperatorid='{0}'  GROUP BY tumt.numlogid"></property>
+			</bean>
+		</property>
+
+
+		<property name="queryUserGroupSuccessNumsGJSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT tumt.numlogid, COUNT(1) AS successnums from tl_gj_usergroup_member_temp tumt WHERE tumt.resultflag in(5,6) AND tumt.numstatus=1 AND tumt.numoperatorid='{0}'  GROUP BY tumt.numlogid"></property>
+			</bean>
+		</property>
+
+
+		<property name="updateUserGroupSuccessNumsSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="UPDATE tl_log_column tlc SET numsuccessnum = nvl(numsuccessnum,0) +{0} WHERE tlc.numlogid = {1}"></property>
+			</bean>
+		</property>
+
+
+		<property name="updateUserGroupSuccessNumsGJSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="UPDATE tl_log_column tlc SET numsuccessnum = nvl(numsuccessnum,0) +{0} WHERE tlc.numlogid = {1}"></property>
+			</bean>
+		</property>
+
+
+		<property name="queryUserGroupTempLogOperateSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT tumt.numlogid from  TL_USERGROUP_MEMBER_CH_TEMP  tumt WHERE tumt.numstatus=1 AND tumt.numoperatorid='{0}'  GROUP BY tumt.numlogid"></property>
+			</bean>
+		</property>
+
+
+		<property name="queryUserGroupTempLogOperateGJSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT tumt.numlogid from tl_gj_usergroup_member_temp tumt WHERE tumt.numstatus=1 AND tumt.numoperatorid='{0}'  GROUP BY tumt.numlogid"></property>
+			</bean>
+		</property>
+
+
+		<property name="queryUserGroupTempLogOtherNumsSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT COUNT(1) as nums FROM  TL_USERGROUP_MEMBER_CH_TEMP  tumt WHERE tumt.numlogid={0}  and tumt.numoperatorid!='{1}'"></property>
+			</bean>
+		</property>
+
+
+		<property name="queryUserGroupTempLogOtherNumsGJSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT COUNT(1) as nums FROM tl_gj_usergroup_member_temp tumt WHERE tumt.numlogid={0}  and tumt.numoperatorid!='{1}'"></property>
+			</bean>
+		</property>
+
+
+		<property name="updateUserGroupTempStateSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="UPDATE tl_log_column tlc SET NUMSTATE = 1 where tlc.numlogid={0}"></property>
+			</bean>
+		</property>
+
+
+		<property name="updateUserGroupTempStateGJSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="UPDATE tl_log_column tlc SET NUMSTATE = 1 where tlc.numlogid={0}"></property>
+			</bean>
+		</property>
+
+		<property name="updateUserGroupTempDelSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="delete from   TL_USERGROUP_MEMBER_CH_TEMP  where NUMSTATUS=1 and numoperatorid='{0}'"></property>
+			</bean>
+		</property>
+
+
+		<property name="updateUserGroupTempDelGJSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="delete from  tl_gj_usergroup_member_temp where NUMSTATUS=1 and numoperatorid='{0}'"></property>
+			</bean>
+		</property>
+
+
+		<property name="queryUserGroupTempAddWhiteSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT tp.vc2mobile FROM  TL_USERGROUP_MEMBER_CH_TEMP  tp WHERE tp.numoperatorid='{0}' and numstatus=1 and resultflag = 6 AND UPLOADTYPE = 0"></property>
+			</bean>
+		</property>
+
+		<property name="queryUserGroupTempAddWhiteGJSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT tp.vc2customer,tp.vc2mobile FROM tl_gj_usergroup_member_temp tp WHERE tp.numoperatorid='{0}' and numstatus=1 and resultflag = 6 AND UPLOADTYPE = 0"></property>
+			</bean>
+		</property>
+
+	</bean>
+
+
+	<bean id="TlLogBwlistDAO" class="com.lxt2.business.dal.log.TlLogBwlistDAL"
+		scope="prototype">
+		<!-- queryLoadFinishedLogSQL 查询入库完成并且未处理的数据 -->
+		<property name="queryLoadFinishedLogSQL"	
+				 value="select b.numlogid, b.vc2backuppath
+			             from tl_log_bwlist b
+			            where b.numstate = 2 and numlisttype not in (6, 7)" />
+		<!-- queryNumsFromTEMPByLogIdSQL 根据logid 查询temp表未处理数据数量 -->
+		<property name="queryNumsFromTEMPByLogIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" select count(0) from  TL_WHITE_CH_TEMP  where NUMSTATUS=0  and logid={0}"></property>
+			</bean>
+		</property>
+		<!-- judgeRepeatMobileSQL 根据logid temp表去重处玿-->
+		<property name="judgeRepeatMobileSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="UPDATE  TL_WHITE_CH_TEMP 
+						   SET RESULTFLAG = 1
+						 WHERE ROWID IN (SELECT ROWIDTMP
+						                   FROM (SELECT ROWID ROWIDTMP,
+						                                ROW_NUMBER() OVER(PARTITION BY VC2MOBILE ORDER BY VC2MOBILE, NUMID) RN
+						                           FROM  TL_WHITE_CH_TEMP 
+						                          WHERE LOGID = {0})
+						                  WHERE RN > 1)">
+				</property>
+			</bean>
+		</property>
+		<!-- updateTEMPStateByMaxNumAndLogIdSQL 根据logid 更新temp表处理状徿-->
+		<property name="updateTEMPStateByMaxNumAndLogIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="update  TL_WHITE_CH_TEMP  set NUMSTATUS=2 where logid={0} and NUMSTATUS=0 and rownum &lt;{1}+1 "></property>
+			</bean>
+		</property>		
+		
+		<property name="queryByNameSS">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">HQL</value>
+				</property>
+				<property name="theSQL"
+					value="from TlLogBwlist t where t.vc2testname like '%{0}%'"></property>
+			</bean>
+		</property>
+
+		<!-- select numlogid from tl_log_bwlist where lower(vc2backuppath)=lower('{0}') and numstate=0 -->
+		<property name="queryLogIdByPath">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT LB.NUMLOGID AS LOGID, LB.NUMSTATE AS STATE, LB.NUMTOTALNUM AS TOTAL
+							 FROM TL_LOG_BWLIST LB
+							WHERE LOWER(VC2BACKUPPATH) = LOWER('{0}')
+					"></property>
+			</bean>
+		</property>
+		<property name="queryByArgsPS">
+			<bean class="com.lxt2.common.common.model.PageSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="countSQL" value="select count(*) from TlLogBwlist"></property>
+				<property name="pageSQL" value="select * from TlLogBwlist" />
+			</bean>
+		</property>
+		<property name="updateSS">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="update tl_mytest set TlLogBwlist='{0}',DATCREATTIME='{1}' where NUMTESTID={2}"></property>
+			</bean>
+		</property>
+		<property name="queryNumsFromTemp"
+			value="select count(0) from  TL_WHITE_CH_TEMP  where NUMSTATUS=0" />
+		<property name="queryNumsStateFromTemp" 
+			value="select count(0) from  TL_WHITE_CH_TEMP  where NUMSTATUS=0 or NUMSTATUS=2 and logid = {0}" />
+		<property name="updateTempState"
+			value="update  TL_WHITE_CH_TEMP   set NUMSTATUS=2 where NUMSTATUS=0 " />
+		<property name="updateTempStateByMaxNum"
+			value="update  TL_WHITE_CH_TEMP  set NUMSTATUS=2 where NUMSTATUS=0 and rownum &lt;{0} " />
+		<property name="queryDistinct"
+			value="select distinct uploadtype,uploadmode from  TL_WHITE_CH_TEMP  where numstatus=2 and logid is null" />
+		<property name="updateTempStateByArgs"
+			value="update  TL_WHITE_CH_TEMP  set logid={0} where NUMSTATUS=2  and uploadtype={1} and uploadmode={2} and logid is null" />
+		<property name="queryUnion"
+			value="select distinct  logid ,b.VC2BACKUPPATH,a.uploadtype, a.uploadmode from  TL_WHITE_CH_TEMP  a,tl_log_bwlist b where  a.logid = b.numlogid and  NUMSTATUS=2 " />
+		<property name="queryAllMobile"
+			value="select vc2mobile from  TL_WHITE_CH_TEMP  where NUMSTATUS=2  and uploadtype={0} and uploadmode={1} and logid is null" />
+
+		<property name="queryTempByLogID"
+			value=" select count(0) from  TL_WHITE_CH_TEMP  where logid={0} and NUMSTATUS=0" />
+		<property name="updateBWLogList1"
+			value="update tl_log_bwlist set  datmodifytime=sysdate, numtotalnum=(select count(0) from tl_details_bwlist where numlogid={0}),numsuccessnum=(select count(0) from tl_details_bwlist where numlogid={0} and vc2state='999'),numstate={1} where numlogid={0}" />
+		<property name="updateBWLogList2"
+			value="update tl_log_bwlist set  datmodifytime=sysdate, numtotalnum=(select count(0) from tl_details_bwlist where numlogid={0}),numsuccessnum=(select count(0) from tl_details_bwlist where numlogid={0} and vc2state='999') where numlogid={0}" />
+
+		<property name="deleteTmpByLogID"
+			value="delete from   TL_WHITE_CH_TEMP  where NUMSTATUS=2 and logid={0}" />
+		<property name="forceAddwhitelistSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<!--
+						force加白
+				-->
+				<property name="theSQL"
+					value="
+					begin
+					update  TL_WHITE_CH_TEMP  set resultflag = '1'  where rowid in (select rowidtmp from (select rowid rowidtmp, row_number() over(partition by vc2mobile order by vc2mobile) rn from  TL_WHITE_CH_TEMP   where resultflag ='-1' and numstatus=2 and  logid={0} ) where rn > 1);
+					update  TL_WHITE_CH_TEMP  set resultflag='2' where trim(vc2mobile) in (select vc2mobile from tl_black_list where numtype=1)   and resultflag='-1' and numstatus=2  and  logid={0};
+					update  TL_WHITE_CH_TEMP  a set resultflag ='3' where trim(vc2mobile) in   (select vc2mobile from tl_white_list  )   and a.resultflag='-1' and numstatus=2    and  logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='4' where    resultflag='-1' and numstatus=2 and logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='999' where resultflag='4' and numstatus=2 and logid={0};   insert into tl_white_list (numtrustlistid,numsvcid,vc2mobile,datcreatetime,numlogid) select tlseq_white_list.nextval,1,vc2mobile,sysdate,logid from  TL_WHITE_CH_TEMP  where  logid={0} and numstatus=2 and resultflag='999';
+					update  TL_WHITE_CH_TEMP  set resultflag='999' where resultflag='3' and numstatus=2 and logid={0}; 
+					END; 
+					"></property>
+			</bean>
+		</property>
+
+		<property name="addwhitelistSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<!--
+					加白（加白不验证黑名单） update  TL_WHITE_CH_TEMP  set resultflag='2' where
+					trim(vc2mobile) in (select vc2mobile from tl_black_list where
+					numtype=1) and resultflag='-1' and numstatus=2 and logid={0};
+				-->
+				<property name="theSQL"
+					value="
+					begin
+					update  TL_WHITE_CH_TEMP  set resultflag = '1'  where rowid in (select rowidtmp from (select rowid rowidtmp, row_number() over(partition by vc2mobile order by vc2mobile) rn from  TL_WHITE_CH_TEMP   where resultflag ='-1' and numstatus=2 and  logid={0} ) where rn > 1);
+					update  TL_WHITE_CH_TEMP  a set resultflag ='3' where trim(vc2mobile) in   (select vc2mobile from tl_white_list  )   and a.resultflag='-1' and numstatus=2    and  logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='4' where    resultflag='-1' and numstatus=2 and logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='999' where resultflag='4' and numstatus=2 and logid={0};   insert into tl_white_list (numtrustlistid,numsvcid,vc2mobile,datcreatetime,numlogid) select tlseq_white_list.nextval,1,vc2mobile,sysdate,logid from  TL_WHITE_CH_TEMP  where  logid={0} and numstatus=2 and resultflag='999';
+					END; 
+					"></property>
+			</bean>
+		</property>
+		<property name="splitOperatorsSQL"
+			value="update  TL_WHITE_CH_TEMP  set numopid=(case when  REGEXP_LIKE(vc2mobile, '{0}') then '1' when REGEXP_LIKE(vc2mobile, '{1}') then '2' when REGEXP_LIKE(vc2mobile, '{2}') then '3' end) where numstatus=2 and resultflag=-1  and  logid={3}" />
+		<property name="illegalFilterSQL"
+			value="update  TL_WHITE_CH_TEMP  set resultflag=0 where not  REGEXP_LIKE(vc2mobile, '{0}') and numstatus=2 and resultflag=-1 and logid={1}" />
+
+		<property name="exitWhiteListSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<!--
+						exit whitelist
+				-->
+				<property name="theSQL"
+					value="
+					begin
+					update  TL_WHITE_CH_TEMP  set resultflag = '1'  where rowid in (select rowidtmp from (select rowid rowidtmp, row_number() over(partition by vc2mobile order by vc2mobile) rn from  TL_WHITE_CH_TEMP   where resultflag ='-1' and numstatus=2 and  logid={0} ) where rn > 1);
+					update  TL_WHITE_CH_TEMP  a set resultflag ='3' where trim(vc2mobile) in   (select vc2mobile from tl_white_list  )   and a.resultflag='-1' and numstatus=2    and  logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='4' where    resultflag='-1' and numstatus=2 and logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='999' where (resultflag='3' or resultflag='2') and numstatus=2 and logid={0};  delete from tl_White_list t1 where exists (select 1 from  TL_WHITE_CH_TEMP  t2 where t1.vc2mobile=t2.vc2mobile and   resultflag='999' and numstatus=2 and logid={0});
+					END; 
+					"></property>
+			</bean>
+		</property>
+
+		<property name="forceExitWhiteListSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<!--
+						force exit whitelist
+				-->
+				<property name="theSQL"
+					value="
+					begin
+					update  TL_WHITE_CH_TEMP  set resultflag = '1'  where rowid in (select rowidtmp from (select rowid rowidtmp, row_number() over(partition by vc2mobile order by vc2mobile) rn from  TL_WHITE_CH_TEMP   where resultflag ='-1' and numstatus=2 and  logid={0} ) where rn > 1);
+					update  TL_WHITE_CH_TEMP  a set resultflag ='3' where trim(vc2mobile) in   (select vc2mobile from tl_white_list  )   and a.resultflag='-1' and numstatus=2    and  logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='4' where    resultflag='-1' and numstatus=2 and logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='999' where  resultflag='4' and numstatus=2 and logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='999' where (resultflag='3' or resultflag='2') and numstatus=2 and logid={0};  delete from tl_White_list t1 where exists (select 1 from  TL_WHITE_CH_TEMP  t2 where t1.vc2mobile=t2.vc2mobile and   resultflag='999' and numstatus=2 and logid={0});
+					END; 
+					"></property>
+			</bean>
+		</property>
+
+		<property name="addBlackListSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<!--
+						add black list
+				-->
+				<property name="theSQL"
+					value="
+					begin
+					update  TL_WHITE_CH_TEMP  set resultflag = '1'  where rowid in (select rowidtmp from (select rowid rowidtmp, row_number() over(partition by vc2mobile order by vc2mobile) rn from  TL_WHITE_CH_TEMP   where resultflag ='-1' and numstatus=2 and  logid={0} ) where rn > 1);
+					update  TL_WHITE_CH_TEMP  set resultflag='2' where trim(vc2mobile) in (select vc2mobile from tl_black_list where numtype=1)   and resultflag='-1' and numstatus=2  and  logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='4' where    resultflag='-1' and numstatus=2 and logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='999' where (resultflag='3' or resultflag='4') and numstatus=2 and logid={0};  insert into tl_black_list (numseqid,numsvcid,vc2mobile,numtype,numlogid) select tlseq_black_list.nextval,'0',vc2mobile,1,{0} from  TL_WHITE_CH_TEMP  where  resultflag='999' and numstatus=2 and logid={0};
+					END; 
+					"></property>
+			</bean>
+		</property>
+
+		<property name="exitBlackListSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<!--
+						exit black list
+				-->
+				<property name="theSQL"
+					value="
+					begin
+					update  TL_WHITE_CH_TEMP  set resultflag=2 where trim(vc2mobile) in (select vc2mobile from tl_black_list where numtype=1)   and resultflag=-1 and numstatus=2  and  logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag=4 where    resultflag=-1 and numstatus=2 and logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag=999 where resultflag=2 and numstatus=2 and logid={0}; 
+					insert into tl_black_list (numseqid,numsvcid,vc2mobile,numtype,numlogid) select tlseq_black_list.nextval,0,vc2mobile,-3,{0} from  TL_WHITE_CH_TEMP  where  resultflag=999 and numstatus=2 and logid={0};  
+					delete from tl_black_list t1 where exists (select 1 from  TL_WHITE_CH_TEMP  t2 where t1.vc2mobile=t2.vc2mobile and   resultflag=999 and numstatus=2 and logid={0}) and  numtype=1;
+					insert into tl_details_bwlist (numdetailsid,numlogid,vc2mobile,vc2state) select tlseq_details_bwlist.nextval,logid,vc2mobile,resultflag from  TL_WHITE_CH_TEMP  where NUMSTATUS=2 and logid={0};
+					END; 
+					"></property>
+			</bean>
+		</property>
+
+		<property name="mmsaddBlackListSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<!--
+						add black list
+				-->
+				<property name="theSQL"
+					value="
+					begin
+					update  TL_WHITE_CH_TEMP  set resultflag = '1'  where rowid in (select rowidtmp from (select rowid rowidtmp, row_number() over(partition by vc2mobile order by vc2mobile) rn from  TL_WHITE_CH_TEMP   where resultflag ='-1' and numstatus=2 and  logid={0} ) where rn > 1);
+					update  TL_WHITE_CH_TEMP  set resultflag='2' where trim(vc2mobile) in (select vc2mobile from tl_black_list where numtype=2 )   and resultflag='-1' and numstatus=2  and  logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='4' where    resultflag='-1' and numstatus=2 and logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='999' where (resultflag='3' or resultflag='4') and numstatus=2 and logid={0}; insert into tl_black_list (numseqid,numsvcid,vc2mobile,numtype,numlogid) select tlseq_black_list.nextval,'1',vc2mobile,2,{0} from  TL_WHITE_CH_TEMP  where resultflag='999' and numstatus=2 and logid={0};
+					END; 
+					"></property>
+			</bean>
+		</property>
+
+		<property name="mmsexitBlackListSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<!--
+						exit black list
+				-->
+				<property name="theSQL"
+					value="
+					begin
+					update  TL_WHITE_CH_TEMP  set resultflag = '1'  where rowid in (select rowidtmp from (select rowid rowidtmp, row_number() over(partition by vc2mobile order by vc2mobile) rn from  TL_WHITE_CH_TEMP   where resultflag ='-1' and numstatus=2 and  logid={0} ) where rn > 1);
+					update  TL_WHITE_CH_TEMP  set resultflag='2' where trim(vc2mobile) in (select vc2mobile from tl_black_list where numtype=2 )   and resultflag='-1' and numstatus=2  and  logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='4' where    resultflag='-1' and numstatus=2 and logid={0};
+					update  TL_WHITE_CH_TEMP  set resultflag='999' where resultflag='2' and numstatus=2 and logid={0}; insert into tl_black_list (numseqid,numsvcid,vc2mobile,numtype,numlogid) select tlseq_black_list.nextval,'1',vc2mobile,-4,{0} from  TL_WHITE_CH_TEMP  where  resultflag='999' and numstatus=2 and logid={0}; delete from tl_black_list t1 where exists (select 1 from  TL_WHITE_CH_TEMP  t2 where t1.vc2mobile=t2.vc2mobile and   resultflag='999' and numstatus=2 and logid={0}) and  numtype=2;
+					END; 
+					"></property>
+			</bean>
+		</property>
+
+
+		<!-- 备份详细日志 -->
+		<property name="backupDetailLogSQL"
+			value="insert into tl_details_bwlist (numdetailsid,numlogid,vc2mobile,vc2state) select tlseq_details_bwlist.nextval,logid,vc2mobile,resultflag from  TL_WHITE_CH_TEMP  where NUMSTATUS=2 and logid={0} " />
+		<property name="successWhiteListQuerySQL"
+			value="select vc2mobile from   TL_WHITE_CH_TEMP  where resultFlag='999' and NUMSTATUS=2   and logid={0}" />
+		<property name="otherWhiteListQuerySQL"
+			value="select vc2mobile, resultFlag from  TL_WHITE_CH_TEMP  where NUMSTATUS=2 and logid={0}" />
+
+		<property name="newMobileAdd2WhiteListSQL"
+			value="select vc2mobile from  TL_WHITE_CH_TEMP  where numstatus=2 and resultflag='999' and logid={0} and numopid=1" />
+		<property name="exitFromWhiteListSQL"
+			value="select vc2mobile from  TL_WHITE_CH_TEMP  where numstatus=2 and resultflag='999' and logid={0} and numopid=1" />
+
+		<property name="whiteListInterfaceUndisposedRecordsSQL"
+			value="select count(0) from tl_log_bwlist where numuserid='-99' and datcreattime >= trunc(sysdate) " />
+
+		<property name="autoDeleteBlackListSQL"
+			value="
+			begin
+			delete from tl_black_list where (numtype = -3 or numtype = -4) and datcreate &lt;(sysdate-1);
+			delete from tl_black_list_gw where (numtype = -3) and datcreate &lt;(sysdate-1);
+			end;
+			" />
+
+		<property name="errorWhiteListRecordsSQL"
+			value="select count(0) from tl_log_bwlist where numuserid='-98' and datcreattime >= trunc(sysdate) " />
+
+		<property name="deleteWhiteTempByLogIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="DELETE  TL_WHITE_CH_TEMP  WT WHERE WT.LOGID = {0}"></property>
+			</bean>
+		</property>		
+
+		<property name="updateBWLogStateSQL" value="update tl_log_bwlist set numstate = {1} where numlogid = {0}" />
+			
+		<property name="updateBWLogSendNumSQL" value="update tl_log_bwlist set numtotalnum = {1} ,numsuccessnum = {2} where numlogid = {0}" />
+		
+		<property name="insertToBWLogGWSQL" value="insert into tl_log_bwlist_gw (numlogid,numgwid,numstatus,datinsert) values({0},{1},0,sysdate)" />
+		
+		<property name="updateBWLogGWSendNumSQL" value="update tl_log_bwlist_gw set numtotalnum = {2} ,numsuccessnum = {3} ,numstatus = 1 where numlogid = {0} and numgwid = {1}" />
+	
+		<property name="getResultOfBwListGwSQL" value="select count(0) numcount from (select numgwid from tl_log_bwlist_gw where numstatus = 1 and numlogid = {0} minus select numgwid from tl_log_bwlist_gw where numlogid = {0})" />
+	
+		<property name="updateBWLogSendNumByGWLogSQL" 
+		value="update tl_log_bwlist set numtotalnum =  
+         (select sum(numtotalnum)
+                  from tl_log_bwlist_gw
+                 where numlogid = {0}),
+            numsuccessnum =   (select sum(numsuccessnum)
+                  from tl_log_bwlist_gw
+                 where numlogid = {0})  ,numstate= 1 where numlogid = {0} " />
+	
+	</bean>
+
+	<bean id="shareBlackListDao" class="com.lxt2.business.dal.task.ShareBlackListDAL">
+		<!-- queryLoadSvcFinishedLogSQL 查询入库完成并且未处理的通道黑名单批檿-->
+		<property name="queryLoadSvcFinishedLogSQL"	
+				 value="select b.numlogid, b.vc2backuppath,b.numtotalnum from tl_log_bwlist b where b.numstate = 2 and numlisttype in (6, 7)" />
+		
+			<!-- queryGwIdsByLogIdSQL 查询入库完成并且未处理的同一批次的黑名单网关 -->
+			<property name="queryGwIdsByLogIdSQL"	
+				 value="select b.numgwid from tl_log_bwlist_gw b where b.numstatus = 0 and numlogid = {0}" />
+	</bean>
+
+		<bean id="blackListDataToKcDao" class="com.lxt2.business.dal.task.BlackListDataToKcDAL">
+	<!-- 	queryLoadSvcFinishedLogSQL 分页查询正是表中数据  -->
+		<property name="queryLoadSvcListSQL"	
+				 value="
+				 select * from (select rownum numrowasdf, 
+			                	  adsfsds.*
+								from (
+									select vc2mobile,numgwid,vc2gwlist  from tl_black_list_gw
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}	" />
+		<!-- 	queryLoadSvcListSQL 查询正是表数据总数  -->
+		<property name="queryTotalBlackSQL"	
+				 value="	 select count(*) count from tl_black_list_gw" />
+	</bean>
+</beans>

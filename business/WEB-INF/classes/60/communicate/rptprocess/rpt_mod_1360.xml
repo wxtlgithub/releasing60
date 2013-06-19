@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!--
+		改为系统管理控制，需要注意的配置有：
+		rspReceiveQueue: 取消init-method
+		rptReceiveQueue: 取消init-method
+	-->
+	<!-- RPT处理模块begin -->
+	<bean id="rptModule1360" class="com.lxt2.rptprocess.module.RptProcessModule">
+		<property name="id" value="1360" />
+		<property name="name" value="状态处理"/>
+		<property name="hub" ref="hubImpl" />
+		<property name="threadCount" value="1" />
+		<property name="respQueue" ref="rptRspQueue1360"/>
+		<property name="reportQueue" ref="rptRptQueue1360"/>
+		<property name="verifyService" ref="ndClientVerify"/>
+		<property name="remeltHandle" ref="remeltHandle1360"/>
+		<property name="beforeHour" value="1"/>
+		<property name="saveLogger" ref="saveLogger"/>
+		<property name="path" value="${CLASSPATH}/${nodeID}/persistent/statistics/rpt1360.properties"/>
+		<!-- 命令集合 -->
+		<property name="controlCmdMap">
+			<map>
+				<entry key="qePerf" value-ref="rptQueueCmd1360"/>
+				<entry key="view" value-ref="rptViewCmd1360"/>
+			</map>
+		</property>
+		<!-- 指标集合 -->
+		<property name="kpiList">
+			<list>
+				<ref bean="rptRspQueueKPI1360"/>
+				<ref bean="rptRptQueueKPI1360"/>
+                <ref bean="rptModuleKPI1360"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="remeltHandle1360" class="com.lxt2.rptprocess.module.RemeltHandle">
+		<property name="hub" ref="hubImpl"/> 
+	</bean>
+	
+	<!-- 模块的指标配置 -->
+	<!-- Response队列指标 -->
+	<bean id="rptRspQueueKPI1360" class="com.lxt2.queuekc.QueueKPI">
+		<property name="queue" ref="rptRspQueue1360"/>
+	</bean>
+	<!-- 状态报告队列指标 -->
+	<bean id="rptRptQueueKPI1360" class="com.lxt2.queuekc.QueueKPI">
+		<property name="queue" ref="rptRptQueue1360"/>
+	</bean>
+	<!-- 模块的命令配置 -->
+	<!-- RPT处理模块上的队列指标查询命令 -->
+	<bean id="rptQueueCmd1360" class="com.lxt2.queuekc.QueuePerfCmd">
+		<property name="kpiQueueList">
+			<list>
+				<ref bean="rptRspQueueKPI1360"/>
+				<ref bean="rptRptQueueKPI1360"/>
+			</list>
+		</property>
+	</bean>
+
+	<!-- RESPONSE接收队列 -->
+	<bean id="rptRspQueue1360" class="com.lxt2.queuekc.SubmitForRptMapQueue" destroy-method="destroy">
+		<property name="cache">
+			<bean class="ihandy.lxt20.persist.cache.SubmitForRptMap"/>
+		</property>
+		<property name="queueName" value="rspReceive1360"/>
+	</bean>	
+	<!-- RPT接收队列 -->
+	<bean id="rptRptQueue1360" class="com.lxt2.queuekc.RptWaitMapQueue" destroy-method="destroy">
+		<property name="cache">
+			<bean class="ihandy.lxt20.persist.cache.RptWaitMap"/>
+		</property>
+		<property name="queueName" value="rptReceive1360"/>
+	</bean>
+	
+	<!-- 模块的指标配置begin -->
+	<!-- 模块指标信息 -->
+    <bean id="rptModuleKPI1360" class="com.lxt2.rptprocess.module.RptProcessModuleKPI">
+        <property name="rspReceiveQueue" ref="rptRspQueue1360"/>
+        <property name="module" ref="rptModule1360"/>
+    </bean>
+	<!-- 模块的指标配置end -->
+	
+    <!-- 模块的命令配置begin -->
+    <!-- 查找模块指标信息命令 -->
+    <bean id="rptViewCmd1360" class="com.lxt2.base.module.ModuleKPICmd">
+		<property name="kpi" ref="rptModuleKPI1360"/>
+	</bean>
+    <!-- 模块的命令配置end -->
+   <bean id="clearRespTask" class="com.lxt2.rptprocess.module.ClearRespTask">
+		<property name="id" value="118" />
+		<property name="name" value="Response数据清理" />
+		<property name="taskSchRule" value="@{sch(0,2)}" />
+		<property name="verifyService" ref="ndClientVerify"/>
+		<property name="hub" ref="hubImpl" />
+		<property name="respQueue" ref="rptRspQueue1360"/>
+		<property name="sid" ref="ndSid"/>
+		<property name="clearDays" value="3"/>
+		<property name="saveLogger" ref="saveLogger"/>
+	</bean>  
+</beans>

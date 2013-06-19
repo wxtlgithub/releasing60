@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<class name="com.yxt.business.model.otherec.TlOtherecInfo" table="TL_OTHEREC_INFO">
+      <id name="numseqid" type="java.lang.Integer">
+      <column name="NUMSEQID" length="22"/>
+      	<generator class="sequence">
+      		<param name="sequence">TLSEQ_OTHEREC_INFO</param>
+      	</generator>
+      </id>
+      <property name="vc2ecid" type="java.lang.String">
+      <column name="VC2ECID" length="10"/>
+      </property>
+      <property name="vc2ecfullname" type="java.lang.String">
+      <column name="VC2ECFULLNAME" length="200"/>
+      </property>
+      <property name="vc2shortname" type="java.lang.String">
+      <column name="VC2SHORTNAME" length="50"/>
+      </property>
+      <property name="vc2ismas" type="java.lang.String">
+      <column name="VC2ISMAS" length="3"/>
+      </property>
+      <property name="vc2industry" type="java.lang.String">
+      <column name="VC2INDUSTRY" length="10"/>
+      </property>
+      <property name="vc2custype" type="java.lang.String">
+      <column name="VC2CUSTYPE" length="20"/>
+      </property>
+      <property name="vc2gwtype" type="java.lang.String">
+      <column name="VC2GWTYPE" length="20"/>
+      </property>
+      <property name="vc2status" type="java.lang.String">
+      <column name="VC2STATUS" length="150"/>
+      </property>
+      <property name="vc2opname" type="java.lang.String">
+      <column name="VC2OPNAME" length="10"/>
+      </property>
+      <property name="vc2servcode" type="java.lang.String">
+      <column name="VC2SERVCODE" length="30"/>
+      </property>
+      <property name="vc2manager" type="java.lang.String">
+      <column name="VC2MANAGER" length="20"/>
+      </property>
+     <property name="numcuslevel" type="java.lang.Integer">
+      <column name="NUMCUSLEVEL" length="22"/>
+      </property>
+      <property name="vc2feemode" type="java.lang.String">
+      <column name="VC2FEEMODE" length="10"/>
+      </property>
+      <property name="vc2subcode" type="java.lang.String">
+      <column name="VC2SUBCODE" length="20"/>
+      </property>
+      <property name="vc2conperson" type="java.lang.String">
+      <column name="VC2CONPERSON" length="30"/>
+      </property>
+      <property name="vc2contact" type="java.lang.String">
+      <column name="VC2CONTACT" length="100"/>
+      </property>
+      <property name="numlimit" type="java.lang.Integer">
+      <column name="NUMLIMIT" length="22"/>
+      </property>
+      <property name="numfeearea" type="java.lang.Integer">
+      <column name="NUMFEEAREA" length="22"/>
+      </property>
+      <property name="numbusarea" type="java.lang.Integer">
+      <column name="NUMBUSAREA" length="22"/>
+      </property>
+      <property name="vc2svc" type="java.lang.String">
+      <column name="VC2SVC" length="20"/>
+      </property>
+      <property name="vc2feetype" type="java.lang.String">
+      <column name="VC2FEETYPE" length="40"/>
+      </property>
+      <property name="vc2feerule" type="java.lang.String">
+      <column name="VC2FEERULE" length="600"/>
+      </property>
+      <property name="vc2putintime" type="java.lang.String">
+      <column name="VC2PUTINTIME" length="20"/>
+      </property>
+      <property name="vc2gwputin" type="java.lang.String">
+      <column name="VC2GWPUTIN" length="30"/>
+      </property>
+      <property name="vc2gwfeerule" type="java.lang.String">
+      <column name="VC2GWFEERULE" length="600"/>
+      </property>
+      <property name="vc2validflag" type="java.lang.String">
+      <column name="VC2VALIDFLAG" length="2"/>
+      </property>
+      <property name="vc2signname" type="java.lang.String">
+      <column name="VC2SIGNNAME" length="30"/>
+      </property>
+</class>
+</hibernate-mapping>

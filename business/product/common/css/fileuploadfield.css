@@ -1,0 +1,133 @@
+/*!
+ * Ext JS Library 3.1.1
+ * Copyright(c) 2006-2010 Ext JS, LLC
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+/*
+ * FileUploadField component styles
+ */
+.x-form-file-wrap {
+    position: relative;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file {
+	position: absolute;
+	right: 0;
+	-moz-opacity: 0;
+	filter:alpha(opacity: 0);
+	opacity: 0;
+	z-index: 2;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file-btn {
+	position: absolute;
+	right: 0;
+	z-index: 1;
+}
+.x-form-file-wrap .x-form-file-text {
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    color: #777;
+}
+
+
+
+/*********************************************************************************
+ * ���ļ��ϴ��ؼ���ʽ
+ *********************************************************************************/
+ .ext-ux-uploaddialog-addbtn
+{
+	background: url('../Images/icons/copy.png') no-repeat left center !important;
+}
+
+ .ext-ux-uploaddialog-renamebtn
+{
+	background: url('../Images/icons/edit.png') no-repeat left center !important;
+}
+
+.ext-ux-uploaddialog-removebtn
+{
+	background: url('../Images/reset.gif') no-repeat left center !important;
+}
+
+.ext-ux-uploaddialog-resetbtn
+{
+	background: url('../Images/icons/refresh.png') no-repeat left center !important;
+}
+
+.ext-ux-uploaddialog-uploadstartbtn
+{
+	background: url('../Images/upload-start.gif') no-repeat left center !important;
+}
+
+.ext-ux-uploaddialog-uploadstopbtn
+{
+	background: url('../Images/upload-stop.gif') no-repeat left center !important;
+}
+
+.ext-ux-uploaddialog-indicator-stoped
+{
+	width: 16px;
+	height: 16px;
+	background: url('../Images/done.gif') no-repeat center center;
+}
+
+.ext-ux-uploaddialog-indicator-processing
+{
+	width: 16px;
+	height: 16px;	
+	background: url('../Images/indicator.gif') no-repeat center center;
+}
+
+.ext-ux-uploaddialog-state
+{
+	text-align: center;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+/* Queued */
+.ext-ux-uploaddialog-state-0
+{
+	background-image: url('../Images/uncheck.gif');
+}
+
+/* Finished */
+.ext-ux-uploaddialog-state-1
+{
+	background-image: url('../Images/check.gif');
+}
+
+/* Failed */
+.ext-ux-uploaddialog-state-2
+{
+	background-image: url('../Images/failed.gif');
+}
+
+/* Processing */
+.ext-ux-uploaddialog-state-3
+{
+	background-image: url('../Images/file-uploading.gif');	
+}
+
+/* Progress bar fix */
+.ext-ie7 .ext-ux-uploaddialog-dialog .x-progress-bar .x-progress-text div
+{
+	display: none;
+}
+
+.ext-ie7 .ext-ux-uploaddialog-dialog .x-progress-text-back
+{
+	position: absolute;
+	left: 0px;
+	right: 0px;
+}
+
+.ext-ie7 .ext-ux-uploaddialog-dialog .x-progress-text-back div
+{
+	width: auto !important;
+	white-space: nowrap;
+}
+/*********************************************************************************/

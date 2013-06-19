@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+<!--	<bean id="TlGatewayBLL" class="com.lxt2.systemapp.bll.business.TlGatewayBLL"-->
+<!--		init-method="main" scope="prototype">-->
+<!--	</bean>-->
+
+<!--	<bean id="TlGatewayItemBLL" class="com.lxt2.systemapp.bll.business.TlGatewayItemBLL"-->
+<!--		init-method="main" scope="prototype">-->
+<!--	</bean>-->
+
+<!--	<bean id="TlGatewayTypeBLL" class="com.lxt2.systemapp.bll.business.TlGatewayTypeBLL"-->
+<!--		init-method="main" scope="prototype">-->
+<!--	</bean>-->
+
+	<!-- 通道管理。 -->
+	<bean id="TlServicecodeBLL" class="com.lxt2.systemapp.bll.business.TlServicecodeBLL"
+		init-method="main" scope="prototype">
+	</bean>
+
+	<!-- 通道组管理。 -->
+	<bean id="TlProductsBLL" class="com.lxt2.systemapp.bll.business.TlProductsBLL"
+		init-method="main" scope="prototype">
+	</bean>
+
+	<!-- 程序管理。 -->
+	<bean id="TlClientBLL" class="com.lxt2.systemapp.bll.client.TlClientBLL"
+		init-method="main" scope="prototype">
+	</bean>
+
+	<!-- 路由管理。 -->
+	<bean id="TlRouteBLL" class="com.lxt2.systemapp.bll.business.TlRouteBLL"
+		init-method="main" scope="prototype">
+	</bean>
+
+	<!-- 监控管理。 -->
+	<bean id="TLSystemMonitorBLL" class="com.lxt2.systemapp.bll.monitor.TLSystemMonitorBLL"
+		init-method="main" scope="prototype">
+	</bean>
+
+	<!-- 简单用户登录。 -->
+	<bean id="TlUserBLLSimple" class="com.lxt2.systemapp.bll.simplepurview.TlUserBLL"
+		init-method="main" scope="prototype">
+	</bean>
+
+<!-- 菜单加载。 -->
+	<bean id="TlRightBLLSimple" class="com.lxt2.systemapp.bll.simplepurview.TlRightBLL"
+		init-method="main" scope="prototype">
+		<property name="appContextMaker">
+			<ref bean="SqliteACM" />
+		</property>
+	</bean> 
+
+	<!-- 运营商。 -->
+	<bean id="TlOperatorBLL" class="com.lxt2.systemapp.bll.business.TlOperatorBLL"
+		init-method="main" scope="prototype">
+	</bean>
+
+	<!-- 部门。 -->
+	<bean id="TlInstBLL" class="com.lxt2.systemapp.bll.business.TlInstBLL"
+		init-method="main" scope="prototype">
+	</bean>
+	<!--  specialmobile routes -->
+	<bean id="TlSpecialMobileBLL" class="com.lxt2.systemapp.bll.business.TlSpecialMobileBLL"
+		init-method="main" scope="prototype" />
+	<!--
+		gate way config ,gate way item ,gate way ,gate way type configuration
+	-->
+	<bean id="TlGateWayBLL" class="com.lxt2.systemapp.bll.business.TlGatewayBLL"
+		init-method="main" scope="prototype" />
+		
+	<!-- 网元分布式配置 -->
+	<bean id="TlSystemConfigNodeBLL" class="com.lxt2.systemapp.bll.business.TlSystemconfigNodeBLL"
+		init-method="main" scope="prototype">
+	</bean>
+		<!-- RPT数据 -->
+	<bean id="TlRptDataBLL" class="com.lxt2.systemapp.bll.business.TlRptDataBLL"
+		init-method="main" scope="prototype">
+	</bean>	
+</beans>

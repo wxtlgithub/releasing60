@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="992" name="business_task_whitelisterror" desc="白名单错误上传配置文件">
+	<item key="scanTime" value="14" desc="每天定时扫描时间"/>
+	<item key="interval" value="60" desc="扫描间隔时间(秒)"/>
+	<item key="ftperrorDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListFile/" desc="白名单处理目录" />
+</function>

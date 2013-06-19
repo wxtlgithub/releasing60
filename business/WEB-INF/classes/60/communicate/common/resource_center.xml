@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<!-- 彩信资源中心配置 -->
+	<!-- 网关本地资源中心配置 -->
+	<!-- IBus对象，数据存储同步 -->
+	<bean id="busImplRc" class="ihandy.lxt20.bus.BusImpl">
+		<property name="busPath" value="${WORKDIR}../../../rcdata/" />
+	</bean>
+
+	<bean id="mmsgLocalResourceCenter" class="com.lxt2.rescenter.ResCenter" init-method="open">
+		<property name="busImpl" ref="busImplRc" />
+        <property name="resourceIDType" value="DIY"/>
+	</bean>
+
+    
+	<!-- 网关整个资源中心配置 -->
+    <bean id="resClearTask" class="com.lxt2.rescenter.task.ResClearTask">
+		<property name="id" value="115" />
+		<property name="name" value="资源中心数据清理" />
+		<property name="taskSchRule" value="@{cycle(100)}" />
+        <property name="resCenter" ref="mmsgLocalResourceCenter"/>
+    </bean>
+	<bean id="commonResourceCenter" class="com.lxt2.rescenter.CommonResourceCenter">
+		<property name="localResourceCenter" ref="mmsgLocalResourceCenter"/>
+        <property name="wsResCenter" ref="wsResCenterClient"/>
+	</bean>
+	
+	<bean id="wsResourceCenter12" class="com.lxt2.resourcecenter.wsclient.WsclientResourceCenter12">
+		<property name="serverUrl" value="${resource_center.remoteout}"/>
+	</bean>
+	
+	<bean id="wsResCenterClient" class="com.lxt2.resourcecenter.wsclient.WsclientResourceCenter">
+        <property name="resourceSize" value="51200"/>
+	 	<property name="serverUrl" value="${resource_center.remotein}"/>
+    </bean>
+	
+	<bean id="wsResourceCenterOut" class="com.lxt2.rescenter.WsResourceCenter">
+		<property name="resourceCenter" ref="wsResourceCenter12"/>
+	</bean>
+
+<!--	<bean id="wsResourceCenterIn" class="com.lxt2.gateway.cbip.resourcecenter.WsGatewayResourceCenter">-->
+<!--		<property name="resourceCenter" ref="wsResCenterClient"/>-->
+<!--	</bean>-->
+	
+	<bean id="wsResourceCenterIn" class="com.lxt2.rescenter.LocalResourceCenter">
+		<property name="resourceCenter" ref="mmsgLocalResourceCenter"/>
+	</bean>
+
+</beans>

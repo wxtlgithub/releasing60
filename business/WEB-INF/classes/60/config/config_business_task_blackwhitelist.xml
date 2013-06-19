@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="903" name="business_task_blackwhitelist" desc="黑白名单添加配置文件">
+	<item key="comandArg"
+		value="yxtec/yxtec@yxtec control={0} data={1}  rows=50000  bindsize=2000000"
+		desc="sqlloader数据库配置" />
+	<item key="commandFile" value="sqlldr"
+		desc="sqlloader执行文件地址" />
+	<item key="crlBLTemp" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/LoadWhiteTemp.ctl"
+		desc="黑白名单控制文件" />
+	<item key="backUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListFileBackUp/"
+		desc="黑白名单备份文件目录" />
+	<item key="whiteUploadDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListFileWhiteUpload/"
+		desc="白名单上传文件目录" />
+	<item key="errorDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListFileError/"
+		desc="黑白名单错误文件目录" />
+	<item key="uploadDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListFile/" desc="黑白名单导入文件路径"/>
+	<item key="loadLogFileDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListLoadLogFile/" 
+		desc="黑白名单入库日志目录"/>
+	<item key="loadLogBackUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListLoadLogBackUp/" 
+		desc="黑白名单入库日志备份目录"/>
+	<item key="sqlLoaderMaxNum" value="2" desc="sqlloader最大并发数" />
+	<item key="isneedinit" value="true" desc="服务Session失效时候是否重新加载" />
+	<item key="badFileDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListBadFile/" 
+		desc="sqlldr入库bad产生的文件" />
+</function>

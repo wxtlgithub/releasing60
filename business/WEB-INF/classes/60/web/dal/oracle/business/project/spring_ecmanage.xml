@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="TlEcInfoDAO" class="com.yxt.business.dal.ecmanage.TlEcInfoDAL" scope="prototype">
+		<property name="queryByNameSS">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select * from Tl_Ec_Info t where t.VC2ECNAME='{0}'"></property>
+			</bean>
+		</property>
+		<property name="queryByFullName">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select * from Tl_Ec_Info t where t.VC2FULLNAME ='{0}'"></property>
+			</bean>
+		</property>
+		<property name="queryByNameAndID">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select * from Tl_Ec_Info t where numecid ={0} and t.VC2ECNAME ='{1}'"></property>
+			</bean>
+		</property>
+		<property name="queryByFullNameAndID">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select * from Tl_Ec_Info t where numecid ={0} and t.VC2FULLNAME ='{1}'"></property>
+			</bean>
+		</property>
+
+		<!-- 根据查询条件参数得到列表 -->
+		<property name="queryECListSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+						select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+								select distinct ec.numecid numecid, vc2ecid, vc2ecname, ec.numstatus, numdepartid, numismas, numindustry, numsvctype,
+								vc2manager, numcustype,numlimited, vc2chargetype, vc2fullname, 
+								vc2oapic, vc2conperson, vc2contact, ec.datinsert ecdatinsert,numlevel,vc2area,
+								(select vc2branchcompany from tl_branchcompany_list where numbranchcompany = vc2area) as vc2area1,
+								(case numsvctype when 1 then '短信'||numlevel when 2 then '彩信'||numlevel when 3 then '短彩信'||numlevel end) as vclevel,
+								numsigntype, ec.numsigntypeid numsigntypeid, est.vc2typename vc2typename
+								from tl_ec_info ec,(
+								select distinct ecs.numecid,ecs.numopid,ecs.NUMSUBCODE,numsigntype
+								  from tl_ec_servicecode ecs, tl_servicecode sc, tl_gateway gw
+								 where ecs.NUMSVCID = sc.NUMSVCID and sc.NUMGWID = gw.NUMGWID
+								) rt, tl_ecsignture_type est
+								 where ec.numsigntypeid=est.numtypeid and ec.numecid = rt.numecid(+)
+                                 #0#
+                                 order by numecid desc 
+						 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(1) 
+							from ( select distinct ec.numecid numecid, vc2ecid, vc2ecname, ec.numstatus, numdepartid, numismas, numindustry, numsvctype,
+								vc2manager, numcustype,numlimited, vc2chargetype, vc2fullname, 
+								vc2oapic, vc2conperson, vc2contact, ec.datinsert ecdatinsert,numlevel,vc2area,
+								(select vc2branchcompany from tl_branchcompany_list where numbranchcompany = vc2area) as vc2area1,
+								(case numsvctype when 1 then '短信'||numlevel when 2 then '彩信'||numlevel when 3 then '短彩信'||numlevel end) as vclevel,
+								numsigntype
+								from tl_ec_info ec,(
+								select distinct ecs.numecid,ecs.numopid,ecs.NUMSUBCODE,numsigntype
+								  from tl_ec_servicecode ecs, tl_servicecode sc, tl_gateway gw
+								 where ecs.NUMSVCID = sc.NUMSVCID and sc.NUMGWID = gw.NUMGWID
+								) rt
+								 where ec.numecid = rt.numecid(+)
+                                 #0#
+                                ) t" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>ec.vc2ecid = '{0}'</value>
+						<value>ec.vc2ecname like '%{0}%'</value>
+						<value>ec.NUMSVCTYPE = {0}</value>
+						<value>rt.numopid ={0}</value>
+						<value>rt.NUMSUBCODE ='{0}'</value>
+<!-- 						<value>ec.numdepartid in (-1,{0})</value> -->
+					</list>
+				</property>
+			</bean>
+		</property>
+		<!-- EC数据源 -->
+		<property name="queryByECSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="  select numecid,vc2ecname, vc2fullname from tl_ec_info where numstatus =1 and numdepartid in(-1,{0})"></property>
+			</bean>
+		</property>
+		<property name="queryListByDepartmentidByparentid"
+			value=" select numdepartid from TlDepartment t where numtype = 1 and numparentdepart = '{0}' "></property>
+	</bean>
+
+	<!--EC业务管理 -->
+	<bean id="TlEcServicecodeDAO" class="com.yxt.business.dal.ecmanage.TlEcServicecodeDAL" scope="prototype">
+<!-- 		<property name="queryByECInfoId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select ECSER.*, TLP.numprodid, GW.vc2spnum || SER.vc2longcode longcode,
+								     SER.vc2svcname, GW.vc2gatewayname
+								from tl_ec_servicecode ECSER, tl_servicecode SER, tl_gateway GW, TL_PRODUCTS TLP
+								WHERE ECSER.numsvcid = SER.numsvcid(+) and SER.numgwid = GW.numgwid(+) 
+								     AND ECSER.numecid = TLP.numecid(+) AND ECSER.numecid = '{0}'">
+      			</property>
+			</bean>
+		</property> -->
+
+		<property name="queryByECInfoId">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                	  adsfsds.*
+								from (select ECSER.*,GW.vc2spnum || SER.vc2longcode longcode,
+									     	SER.vc2svcname, GW.vc2gatewayname, OPE.vc2name,GW.numpftype, SER.numsigntype
+										from tl_ec_servicecode ECSER, tl_servicecode SER, tl_gateway GW, TL_OPERATOR OPE
+										WHERE ECSER.numsvcid = SER.numsvcid(+) and SER.numgwid = GW.numgwid(+) 
+									    and ECSER.numopid = OPE.NUMOPID(+) #0#  
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*)  from tl_ec_servicecode ECSER, tl_servicecode SER, tl_gateway GW
+										WHERE ECSER.numsvcid = SER.numsvcid(+) and SER.numgwid = GW.numgwid(+) 
+									     #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value> ECSER.numecid = '{0}'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+
+		<property name="deleteEcServicecode" value="update tl_ec_servicecode set NUMSTATUS = 0 where numseqid in ({0})"></property>
+
+	    <property name="deleteEcProductsServiceSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+			    <property name="sqlType">
+			    	<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+			    </property>
+				<property name="theSQL" value=" delete from tl_routestra_base tlrb
+					where tlrb.numstraid in (select tlr.numstraid
+					                           from tl_products tlp, tl_routestra tlr
+					                          where tlp.numprodid = tlr.numprodid(+)
+					                            and tlp.numecid = '{0}')
+					  and tlrb.numsvcid = '{1}'">
+				</property>
+			</bean>
+		</property>
+		<!-- EC业务是否被使用 -->
+		<property name="queryServiceCode">
+		<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select numseqid from tl_ec_servicecode where numsvcid = {0}"></property>
+			</bean>
+		</property>
+	</bean>
+	<!-- 报备签名管理 -->
+	<bean id="TlEcsigntureDAO" class="com.yxt.business.dal.ecmanage.TlEcsigntureDAL" scope="prototype">
+		<!-- EC报备签名类型数据源 -->
+		<property name="queryAllSignType">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="  
+						SELECT NUMTYPEID,VC2TYPENAME FROM TL_ECSIGNTURE_TYPE
+					"></property>
+			</bean>
+		</property>
+		<!-- 根据ECID和签名类型查询签名内容 -->
+		<property name="querySignByEcidAndTypeId">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                	  adsfsds.*
+								from (SELECT s.numid,
+											e.numecid,
+										    e.vc2ecid,
+										    e.vc2ecname,
+										    s.vc2signture,
+										    s.numtypeid,
+										    t.vc2typename
+										  FROM TL_EC_INFO e, TL_ECSIGNTURE s, TL_ECSIGNTURE_TYPE t
+										 WHERE e.numecid = s.numecid
+										   and s.numtypeid = t.numtypeid #0#  
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*)  FROM TL_EC_INFO e, TL_ECSIGNTURE s, TL_ECSIGNTURE_TYPE t
+										 WHERE e.numecid = s.numecid
+										   and s.numtypeid = t.numtypeid   #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value> s.NUMECID = '{0}'</value>
+						<value> s.NUMTYPEID = '{0}'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<!-- 根据id删除一条或多条记录 -->
+		<property name="deleteEcSignByIds" 
+			value=" delete from tl_ecsignture where numid in ({0})">
+		</property>
+		<!-- 新增时根据ECID和类型判断签名是否存在 -->
+		<property name="queryIsExistSignByEcIdAndType">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="  
+						select * from tl_ecsignture where numecid={0} and numtypeid={1} and vc2signture='{2}' 
+					"></property>
+			</bean>
+		</property>
+		<!-- 修改时根据ECID和类型判断签名是否存在 -->
+		<property name="queryIsExistSignByECAndTypeUpdate">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="  
+						select * from tl_ecsignture where numecid={0} and numtypeid={1} and vc2signture='{2}' and numid !={3}
+					"></property>
+			</bean>
+		</property>
+		<!-- 根据ECID和类型ID查询签名内容（无分页） -->
+		<property name="querySignByECAndType">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="  
+						select * from tl_ecsignture where numecid={0} and numtypeid={1}
+					"></property>
+			</bean>
+		</property>
+		
+		<!-- 根据通道组ID查询签名内容 -->
+		<property name="querySignByProdId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="  
+						select p.numprodid,
+						       ec.numecid,
+						       ec.vc2ecid,
+						       ec.numsigntypeid,
+						       es.numtypeid,
+						       es.vc2signture
+						  from tl_products p, tl_ec_info ec, tl_ecsignture es
+						 where p.numecid = ec.numecid
+						   and ec.numecid = es.numecid
+						   and ec.numsigntypeid = es.numtypeid
+						   and p.numprodid = {0}
+					"></property>
+			</bean>
+		</property>
+		
+	</bean>
+	<!--DAL EC预付费-->
+	<bean id="TlEcPrepaidDAO" class="com.yxt.business.dal.ecmanage.TlEcPrepaidDAL"
+		scope="prototype">
+		<!-- 根据ECid和状态（是否超量）查询 -->
+		<property name="queryByArgsPS">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                	  adsfsds.*
+								from (SELECT A.NUMSEQID,
+										       A.NUMECID,
+										       A.NUMTYPE,
+										       A.NUMSENDMAX,
+										       A.NUMSENT,
+										       (A.NUMSENDMAX - A.NUMSENT) NUMSURPLUS,
+										       A.NUMOVER,
+										       B.VC2ECID,
+										       B.VC2ECNAME,
+										       (select NVL(sum(numsent),0)
+												  from tl_ec_prepaid p
+												 where p.NUMSEQID = A.NUMSEQID  
+										and datupdatetime > date'{2}' and datupdatetime &lt; date '{3}'
+ 											) LASTWEEKSENT,
+ 											 to_char(A.DATUPDATETIME, 'yyyy-mm-dd hh24:mi:ss') DATUPDATETIME,
+ 											 (SELECT NVL(SUM(F.NUMCOUNT),0) FROM tl_ec_prepaidhis F WHERE   A.NUMECID = F.NUMECID ) NUMCOUNT
+										  FROM TL_EC_PREPAID A, TL_EC_INFO B 
+										 WHERE A.NUMECID = B.NUMECID 
+										  #0#  
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*)  FROM TL_EC_PREPAID A, TL_EC_INFO B 
+										 WHERE A.NUMECID = B.NUMECID   #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value> A.NUMECID = '{0}'</value>
+						<value> A.NUMOVER = '{0}'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="queryDetailByArgs">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from (select rownum numrowasdf, 
+			                	  adsfsds.*
+								from (	select distinct t5.vc2ecname numecid,
+							       t1.numtype numtype,
+							       t1.numprepaidcount numprepaidcount,
+							       t1.numlastsend numlastsend ,
+							       to_char(t1.datcreattime ,'yyyy-mm-dd hh24:mi:ss') as datcreattime,
+							       t1.numuserid numuserid,
+      							 t2.vc2username vc2username,
+      							 t1.vc2remark vc2remark
+							  from Tl_Ec_Prepaid_Log t1,Tl_User t2,tl_user_role t3,tl_dpermission t4,
+							       tl_ec_info t5
+							 where t5.numecid = t1.numecid
+							   and t1.numuserid=t2.numuserid
+							   and t3.numuserid=t2.numuserid
+							   and t4.numdroleid=t3.numroleid
+							   #0#
+   							order by datcreattime desc) adsfsds where
+   							 rownum &lt;	 {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select count(1) from (select distinct t5.vc2ecname numecid,
+							       t1.numtype numtype,
+							       t1.numprepaidcount numprepaidcount,
+							       t1.numlastsend numlastsend ,
+							       to_char(t1.datcreattime ,'yyyy-mm-dd hh24:mi:ss') as datcreattime,
+							       t1.numuserid numuserid,
+      							 t2.vc2username vc2username,
+      							 t1.vc2remark vc2remark
+							  from Tl_Ec_Prepaid_Log t1,Tl_User t2,tl_user_role t3,tl_dpermission t4,
+							       tl_ec_info t5
+							 where t5.numecid = t1.numecid
+							   and t1.numuserid=t2.numuserid
+							   and t3.numuserid=t2.numuserid
+							   and t4.numdroleid=t3.numroleid
+							   #0#)
+							  " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+					   <value> t1.datcreattime>date'{0}'</value>
+					   <value> t1.datcreattime &lt; date'{0}'+1</value>
+					   <value> t2.vc2username like '%{0}%' </value>
+					   <value> t1.numecid={0}</value>
+					   <value> t3.numroleid={0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 根据ECID查询EC预付费信息 -->
+		<property name="queryByECId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="  
+						select * from TL_EC_PREPAID where numecid={0}
+					"></property>
+			</bean>
+		</property>
+		<property name="queryByRoleKeySQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                	  adsfsds.*
+								from (SELECT A.NUMSEQID,
+										       A.NUMECID,
+										       A.NUMTYPE,
+										       A.NUMSENDMAX,
+										       A.NUMSENT,
+										       (A.NUMSENDMAX - A.NUMSENT) NUMSURPLUS,
+										       A.NUMOVER,
+										       B.VC2ECID,
+										       B.VC2ECNAME,
+										       (select NVL(sum(numsent),0)
+												  from tl_ec_prepaid p
+												 where p.NUMSEQID = A.NUMSEQID  
+										and datupdatetime > date'{2}' and datupdatetime &lt; date '{3}'
+ 											) LASTWEEKSENT,
+ 											 to_char(A.DATUPDATETIME, 'yyyy-mm-dd hh24:mi:ss') DATUPDATETIME,
+ 											 (SELECT NVL(SUM(F.NUMCOUNT),0) FROM tl_ec_prepaidhis F WHERE   A.NUMECID = F.NUMECID ) NUMCOUNT
+										  FROM TL_EC_PREPAID A, TL_EC_INFO B , TL_USER_ROLE   C,TL_DPERMISSION D, TL_ROLE   E
+										 WHERE A.NUMECID = B.NUMECID  AND C.NUMROLEID = E.NUMROLEID
+  										AND C.NUMROLEID = D.NUMDROLEID  AND A.NUMECID = D.NUMDATAID
+  										AND E.NUMROLETYPE = 3 
+										  #0#  
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*)  FROM TL_EC_PREPAID A, TL_EC_INFO B , TL_USER_ROLE   C,TL_DPERMISSION D, TL_ROLE   E
+										 WHERE A.NUMECID = B.NUMECID  AND C.NUMROLEID = E.NUMROLEID
+  										AND C.NUMROLEID = D.NUMDROLEID  AND A.NUMECID = D.NUMDATAID
+  										AND E.NUMROLETYPE = 3	 #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value> A.NUMECID = '{0}'</value>
+						<value> A.NUMOVER = '{0}'</value>
+						<value> C.NUMUSERID = '{0}'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="queryByEcKeySQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                	  adsfsds.*
+								from (SELECT A.NUMSEQID,
+										       A.NUMECID,
+										       A.NUMTYPE,
+										       A.NUMSENDMAX,
+										       A.NUMSENT,
+										       (A.NUMSENDMAX - A.NUMSENT) NUMSURPLUS,
+										       A.NUMOVER,
+										       B.VC2ECID,
+										       B.VC2ECNAME,
+										       (select NVL(sum(numsent),0)
+												  from tl_ec_prepaid p
+												 where p.NUMSEQID = A.NUMSEQID  
+										and datupdatetime > date'{2}' and datupdatetime &lt; date '{3}'
+ 											) LASTWEEKSENT,
+ 											 to_char(A.DATUPDATETIME, 'yyyy-mm-dd hh24:mi:ss') DATUPDATETIME,
+ 											 (SELECT  NVL(SUM(F.NUMCOUNT),0) FROM tl_ec_prepaidhis F WHERE A.NUMECID = F.NUMECID ) NUMCOUNT
+										  FROM TL_EC_PREPAID A, TL_EC_INFO B WHERE A.NUMECID = B.NUMECID
+										  #0#  
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*)  FROM TL_EC_PREPAID A , TL_EC_INFO B
+										 WHERE A.NUMECID = B.NUMECID  #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value> A.NUMECID = '{0}'</value>
+						<value> A.NUMOVER = '{0}'</value>
+						<value> B.NUMDEPARTID = '{0}'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+  	<!--EC短信预付费 -->
+	<bean id="PrepaidControlerDAO" class="com.yxt.business.dal.ecmanage.PrepaidControlerDAL" scope="prototype">
+		<property name="queryAllPrepaidEC">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select * from tl_ec_prepaid"></property>
+			</bean>
+		</property>	
+		<property name="updatePrepaidByECID">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="update tl_ec_prepaid set numsent={1} , numover={2} where numecid={0}"></property>
+			</bean>
+		</property>			
+		<property name="queryPrepaidHisSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="    select f.numsendmax - (select NVL(sum(numcount),0) from tl_ec_prepaidhis t where t.numecid = f.numecid) numcount
+						          from tl_ec_prepaid f
+						         where  f.numecid ={0}"></property>
+			</bean>
+		</property>
+	</bean>	
+	<bean id="tlEcRoleDAO" class="com.yxt.business.dal.ecmanage.TlEcRoleDAL" scope="prototype">
+		<property name="queryEcRoleByArgsSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                	  adsfsds.* from (
+									 select numroleid, vc2rolename,numdepartid, vc2departname, numcreator, vc2creatorname, vc2roledesc,
+									        to_char(datcreatetime,'yyyy-mm-dd hh24:mi:ss') datcreatetime, numlastmodifyuser, vc2lastmodifyname,
+									        to_char(datlastmodifytime,'yyyy-mm-dd hh24:mi:ss') datlastmodifytime
+									from tlv_rolelist
+									where numroletype = 3 #0# 
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*) from tlv_rolelist r where r.numroletype = 3 #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>vc2rolename like '%{0}%'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+</beans>

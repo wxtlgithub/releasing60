@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<!-- 接口服务模块(初始化工作由网元负责完成) -->
+
+	<bean id="clumpedModule1560" class="com.lxt2.clumped.module.ClumpedModule">
+		<property name="id" value="1560" />
+		<property name="name" value="分布式通讯模块" />
+		<property name="hub" ref="hubImpl" />
+		<property name="packageMaxSize" value="100"/> 
+		<!-- 每个分布式网元的连接任务数 -->
+		<property name="taskCount" value="0"></property>
+		<property name="server" ref="server1560"></property>
+		<!-- 命令集合 -->
+		<property name="controlCmdMap">
+			<map>
+				<entry key="client" value-ref="ClumpedTaskCmd1560"/>
+				<entry key="getsystemconfig" value-ref="loadXmlConfigCmd"/>
+				<entry key="viewsystemconfig" value-ref="viewSysemconfigCmd"/>
+				<entry key="effectsystemconfig" value-ref="loadNodeListCmd"/>
+				<entry key="resumesystemconfig" value-ref="GoBackConfigCmd"/>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="server1560" class="com.lxt2.clumped.server.ThreadServer">
+		<property name="taskType" value="STATIC"/>
+		<property name="port" value="28860" />
+		<!-- 分布式服务端最小线程池设置 -->
+		<property name="minThreadCount" value="30" />
+		<!-- 分布式任务最大线程池设置 -->
+		<property name="maxTHreadCount" value="45" />
+		<property name="id" value="200" />
+		<property name="handler" ref="handler1560"></property>
+		<property name="name" value="分布式服务端启动" />
+	</bean>
+
+	<bean id="handler1560" class="com.lxt2.clumped.thrift.MessageServiceHandler">
+		<property name="hub" ref="hubImpl"></property>
+	</bean>
+
+	<bean id="ClumpedTaskCmd1560" class="com.lxt2.clumped.command.ClumpedTaskCmd">
+		<property name="clumpedModule" ref="clumpedModule1560"></property>
+	</bean>
+	<bean id="PerformanceLoggerTask" class="com.lxt2.clumped.task.PerformanceLoggerTask">
+		<property name="id" value="113" />
+		<property name="name" value="队列日志任务" />
+		<property name="taskSchRule" value="@{cycle(10)}" />
+	</bean>
+</beans>

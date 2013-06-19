@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<!-- 其他数据管理 -->
+	<sevlet>
+		<servlet-name>OtherData</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.otherec.OtherDataSev
+		</servlet-class>
+		<url-pattern>/URL/Business/OtherEC/OtherData.ashx</url-pattern>
+	</sevlet>
+	<!--其他平台客户管理 -->
+	<sevlet>
+  		<servlet-name>TlOtherecInfo</servlet-name>
+  		<servlet-class>
+    		com.yxt.business.blf.otherec.TlOtherecInfoSev
+  		</servlet-class>
+  		<url-pattern>/URL/Business/OtherEC/tlotherecinfo.ashx</url-pattern>
+	</sevlet>
+</sevlets>

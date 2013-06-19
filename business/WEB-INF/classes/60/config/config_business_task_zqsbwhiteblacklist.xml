@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="996" name="business_task_zqsbwhiteblacklist" desc="白名单数据同步">
+	<item key="localFilePathDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListZQSBFile/" desc="白名单数据同步目标文件路径"/>
+	<item key="backPathDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/WhiteListFileBackup/" desc="白名单备份文件目录" />
+	<item key="moteFilePathDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListFile/" desc="共享黑名单入库日志目录"/>
+	<item key="errorDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/SMSListSvr/file/SMSListFileBackUpError/" desc="共享黑名单错误文件目录" />
+</function>

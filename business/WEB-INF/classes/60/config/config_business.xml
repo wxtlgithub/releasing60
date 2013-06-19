@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="11" name="default" desc="默认配置文件">
+	<item key="test1" value="test1" desc="测试1" />
+	<item key="test2" value="test2" desc="测试2" />
+	<item key="test3" value="test3" desc="测试3" />
+	<item key="numnodeid" value="60" desc="网元编号" />
+	<item key="noticeFilePathDir" value="${WORKDIR}../data/notice/" desc="公告提醒文件夹" />
+	<component id="0" name="default" desc="系统默认配置">
+		<item key="mMSProduct" value="1" desc="默认彩信通道组" />
+		<item key="sMSProduct" value="2" desc="默认短信通道组" />
+		<item key="svrID" value="1" desc="默认运营商业务ID" />
+		<item key="roleId" value="1" desc="默认系统权限ID" />
+		<item key="departId" value="1" desc="默认总部ID" />
+		<item key="managerId" value="900000" desc="默认系统管理员用户ID" />
+	</component>
+	<component id="1" name="taskPath" desc="后台服务处理上传路径">
+		<item key="userMemberUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/UserGroups/file/UserGroups/"
+			desc="用户组成员导入文件路径" />
+		<item key="sMSListUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/SMSListSvr/file/SMSListFile/"
+			desc="短信文件导入路径" />
+		<item key="mMSListUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/MMSListSvr/file/MMSListFile/"
+			desc="彩信文件导入路径" />
+	</component>
+	<component id="2" name="checkConfig" desc="平台系统审核级别配置">
+		<item key="systemLevelConfig" value="2"
+			desc="平台系统审核级别配置(0 不审核 1一审审核通过 2二审审核通过)" />
+		<item key="isUserLevelConfig" value="0"
+			desc="平台是否限制用户审核级别配置修改(0 使用用户级别 1只使用系统级别配置)" />
+	</component>
+	<component id="3" name="bigFileConfig" desc="大文件上传路径配置">
+		<item key="tempDir" value="\\resources\\bigtemp\\"
+			desc="大文件上传默认上传根路经" />
+		<item key="maxServerFileSize" value="204800000"
+			desc="上传大文件最大值控制（200M）" />
+	</component>
+	
+	<component id="4" name="mmsFilePathConfig" desc="彩信资源路径配置">
+		<item key="resourcesDir" value="resources" desc="站点资源存储根路径" />
+		<item key="interfaceDir" value="interface" desc="接口彩信资源存放路径" />		
+		<item key="smilDir" value="/smil" desc="smil文件相对根的路径" />
+		<item key="resourcesCurDir" value="/cur" desc="彩信编辑保存路径" />
+		<item key="resourcesCurTempDir" value="/temp/cur" desc="彩信编辑过程保存的临时路径" />
+		<item key="resourcesHisDir" value="/his" desc="彩信批次包保存路径" />
+		<item key="resourcesHisTempDir" value="/temp/his" desc="历史彩信资源编辑过程中何存的临时路径" />
+		<item key="imageFileType" value="jpg,gif,png,bmp,jpeg" desc="彩信发送类型" />
+	</component>
+		
+	<component id="5" name="urlPathConfig" desc="URL地址配置">
+		<item key="mMSResourceUrl" value="http://192.168.4.65:8080/communication/resourcecenter-new/resourceCenter.wsdl"
+			desc="彩信资源Webservice上传地址" />
+		<item key="gatewayMonitorUrl" value="/Manager?handle=gatewayMonitor" 
+			desc="网关端监控地址" />
+		<item key="mMSGatewayMonitorUrl" value="/MmsGateway/Manager?handle=gatewayMonitor" 
+			desc="网关端监控地址" />
+	</component>
+	
+	<component id="6" name="mmsFileSizeConfig" desc="彩信资源大小配置">
+		<item key="imageSize" value="25600" desc="彩信图片大小" />
+		<item key="imageWidth" value="240" desc="彩信图片尺寸宽度" />
+		<item key="imageHeight" value="320" desc="彩信图片尺寸高度" />
+		<item key="musicSize" value="25600" desc="彩信音乐大小" />
+		<item key="mmsTotalSize" value="51200" desc="彩信资源信息总计大小" />
+	</component>
+	
+	<component id="7" name="extractNumber" desc="码提取文件存储路径配置">
+		<item key="extractNumberFileDir" value="${WORKDIR}resources/extractnumber/" desc="号码提取文件临时存储目录" />
+		<item key="extractNumberMaxCount" value="10000" desc="号码提取文件临时存储目录" />
+	</component>
+	
+	<component id="bwlist" name="blackwhitelist" desc="黑白名单配置">
+		<item key="BWListUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListFile/" desc="黑白名单导入文件路径"/>
+		<item key="bigFileUploadMax" value="204800000" desc="获取大文件上传最大值控制"/>
+	</component>
+	
+	<component id="shareblacklist" name="blacklist" desc="共享黑名单配置">
+		<item key="BlackListUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/ShareBlackListSvr/file/BlackListFile/" desc="共享黑名单导入文件路径"/>
+		<item key="bigFileUploadMax" value="204800000" desc="获取大文件上传最大值控制"/>
+	</component>
+	
+	<component id="ecupload" name="ecmanageupload" desc="EC上传文件配置">
+		<item key="EcOAPicUpDir" value="${WORKDIR}ecfile/img/" desc="EC上传文件的路径"/>
+		<item key="EcOADBDir" value="ecfile/img/" desc="EC保存到数据库中的路径"/>
+	</component>
+	
+	<component id="templatePath" name="template_path" desc="模板文件配置">
+		<item key="TEMPLATE_PATH" value="/60/web/templates/" desc="模板文件根路径"/>
+		<item key="GATEWAY" value="config_gateway.xml.ftl" desc="网关模板配置文件"/>
+		<item key="ROUTESTRA" value="submit_routers.xml.ftl" desc="下行路由模板配置文件"/>
+		<item key="FILINGSIGNTURE" value="config_filingsignture.xml.ftl" desc="报备签名模板配置文件"/>
+		<item key="ECPREPAID" value="config_prepaid.xml.ftl" desc="EC预付费模板配置文件"/>
+	</component>
+	<component id="smsAndMmsStatus" name="default" desc="短彩信处理状态">
+		<item key="status" value="77" desc="短彩" />
+	</component>
+	
+		<component id="clientCheckCmd" name="" desc="监控中心命令配置">
+		<item key="alertclientCheckCmd" value="-U{0} -Ckcupdate -F10{1} -P{2}" desc="命令"/>
+	</component>
+		<component id="clientSmsTimeOut" name="" desc="接口短信超时间隔">
+		<item key="TimeOut" value="8" desc="超时间隔"/>
+	</component>
+	<component id="logName" name="" desc="使用logger">
+		<item key="business" value="businessLogger" desc="业务管理logger"/>
+		<item key="system" value="systemLogger" desc="系统管理logger"/>
+		<item key="taskError" value="taskErrorLogger" desc="服务Errorlogger"/>
+		<item key="taskInfo" value="taskInfoLogger" desc="服务Infologger"/>
+	</component>
+</function>

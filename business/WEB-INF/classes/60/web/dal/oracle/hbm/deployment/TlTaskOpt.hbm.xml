@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.systemapp.model.deployment.TlTaskOpt"
+		table="TL_TASK_OPT">
+
+		<id name="numoptid" type="java.lang.Integer">
+			<column name="NUMOPTID" precision="20" scale="0" />
+			<generator class="increment"></generator>
+		</id>
+
+		<property name="numtaskid" type="java.lang.Integer">
+			<column name="NUMTASKID" length="20" />
+		</property>
+
+		<property name="numtypeid" type="java.lang.Integer">
+			<column name="NUMTYPEID" length="20" />
+		</property>
+
+		<property name="vc2optname" type="java.lang.String">
+			<column name="VC2OPTNAME" length="200" />
+		</property>
+
+		<property name="vc2optcommand" type="java.lang.String">
+			<column name="VC2OPTCOMMAND" length="200" />
+		</property>
+
+		<property name="numisdefault" type="java.lang.Integer">
+			<column name="NUMISDEFAULT" length="20" />
+		</property>
+
+	</class>
+</hibernate-mapping>
+  

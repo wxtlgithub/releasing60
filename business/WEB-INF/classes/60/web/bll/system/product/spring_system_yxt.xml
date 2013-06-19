@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="TlGateWayYxtBLL" class="com.yxt.systemapp.bll.business.TlGatewayYxtBLL"
+		init-method="main" scope="prototype" />
+	<!-- 通道管理。 -->
+	<bean id="TlServicecodeYxtBLL" class="com.yxt.systemapp.bll.business.TlServicecodeYxtBLL"
+		init-method="main" scope="prototype">
+	</bean>
+	<!-- 通道组管理。 -->
+	<bean id="TlProductsYxtBLL" class="com.yxt.systemapp.bll.business.TlProductsYxtBLL"
+		init-method="main" scope="prototype">
+	</bean>
+	<!-- 客户端管理 -->
+	<bean id="TlClientYxtBLL" class="com.yxt.systemapp.bll.client.TlClientBLL"
+		init-method="main" scope="prototype">
+	</bean>
+	
+	<!-- ec报备签名配置加载 -->
+	<bean id="TlECSignatureYxtBLL" class="com.yxt.systemapp.bll.business.TlECSignatureYxtBLL"
+		init-method="main" scope="prototype">
+	</bean>
+	
+	<!-- ec预付费配置加载 -->
+	<bean id="TLECPrePaidYxtBLL" class="com.yxt.systemapp.bll.business.TLECPrePaidYxtBLL"
+		init-method="main" scope="prototype">
+	</bean>
+</beans>

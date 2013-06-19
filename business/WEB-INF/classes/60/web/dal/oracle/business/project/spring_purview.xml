@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="YXTTlUserDAL" class="com.project.business.dal.purview.TlUserDAL" scope="prototype">
+		<!-- 根据部门Id获得客户信息 -->
+		<property name="queryUserComboByDepartIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select * from tl_user where numdepartid in({0})
+					"></property>
+			</bean>
+		</property>	
+		<property name="queryUserByArgs">
+			<bean class="com.lxt2.common.common.model.PageSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="countSQL"
+					value="select count(1) from (SELECT U1.*,D.VC2DEPARTNAME,U2.Vc2username vc2creatorname,
+			U2.VC2USERNAME vc2lastmodifyname FROM 
+			((TL_USER U1 INNER JOIN TL_USER U2 ON U1.NUMCREATOR = U2.NUMUSERID AND U1.NUMSTATE = 1) 
+			LEFT JOIN TL_DEPARTMENT D ON U1.NUMDEPARTID = D.NUMDEPARTID)
+	        LEFT JOIN TL_USER U3 ON U1.NUMLASTMODIFYUSER = U3.NUMUSERID WHERE U1.VC2USERNAME LIKE '%{0}%' {1}) "></property>
+				<property name="pageSQL"
+					value="
+					select * from (select rownum numrowasdf, 
+			adsfsds.* from (SELECT U1.*,D.VC2DEPARTNAME,U2.Vc2username vc2creatorname,
+			U2.VC2USERNAME vc2lastmodifyname FROM 
+			((TL_USER U1 INNER JOIN TL_USER U2 ON U1.NUMCREATOR = U2.NUMUSERID AND U1.NUMSTATE = 1) 
+			LEFT JOIN TL_DEPARTMENT D ON U1.NUMDEPARTID = D.NUMDEPARTID)
+	        LEFT JOIN TL_USER U3 ON U1.NUMLASTMODIFYUSER = U3.NUMUSERID WHERE U1.VC2USERNAME LIKE '%{0}%' {1}  
+	        order by U1.Datcreatetime desc,U1.Numuserid desc) adsfsds where rownum &lt; {2}+{3}+1) where numrowasdf > {3}
+					
+					
+					
+					" />
+			</bean>
+		</property>
+		<property name="queryUserInfoByDepartmentIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					select numuserid,vc2username,vc2email from
+					 (SELECT U.* FROM TL_DEPARTMENT D INNER JOIN TL_USER U ON D.NUMDEPARTID=U.NUMDEPARTID AND D.NUMSTATE=1) 
+					 where numdepartid = {0} and numstate = 1 AND (NUMTYPE=2 or NUMTYPE=4) and NUMUSERID!={1} order by vc2username,numuserid
+					"></property>
+			</bean>
+		</property>	
+		<property name="getAuthorizeByDepartIdWithRoleIdSQL"
+			value="select {0} from (SELECT U.*  FROM TL_USER U 
+			INNER JOIN TL_USER_ROLE UR ON U.Numuserid = UR.NUMUSERID  
+			AND U.NUMDEPARTID = {1} AND U.NUMSTATE=1  AND UR.NUMROLEID = {2}) ">
+		</property>	
+		<property name="getNoAuthorizeByDepartIdWithRoleIdSQL"
+			value="select {0}
+			  from tl_user tu
+			 where tu.numuserid not in
+			       (SELECT U.numuserid
+			          FROM TL_USER U, TL_USER_ROLE UR
+			         where U.Numuserid = UR.NUMUSERID
+			           AND U.NUMDEPARTID = {1}
+			           AND U.NUMSTATE = 1
+			           AND UR.NUMROLEID = {2})
+			   AND tu.NUMSTATE = 1
+			   AND (tu.NUMTYPE = 2 or tu.NUMTYPE = 4)
+			   and tu.NUMDEPARTID = {1}">
+	     </property>
+	</bean>
+</beans>

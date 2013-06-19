@@ -1,0 +1,209 @@
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 10.2.0.1.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 10.2.0.1.0 - Production
+  Time: 18-10月-2012 16:11:11
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operation timed out
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operation timed out
+    nt secondary err code: 110
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 10.2.0.1.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 10.2.0.1.0 - Production
+  Time: 18-10月-2012 16:14:20
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operation timed out
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operation timed out
+    nt secondary err code: 110
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 10.2.0.1.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 10.2.0.1.0 - Production
+  Time: 19-10月-2012 09:40:18
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operation timed out
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operation timed out
+    nt secondary err code: 110
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 10.2.0.1.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 10.2.0.1.0 - Production
+  Time: 19-10月-2012 09:43:28
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operation timed out
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operation timed out
+    nt secondary err code: 110
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 10.2.0.1.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 10.2.0.1.0 - Production
+  Time: 19-10月-2012 18:14:07
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operation timed out
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operation timed out
+    nt secondary err code: 110
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 10.2.0.1.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 10.2.0.1.0 - Production
+  Time: 19-10月-2012 18:17:16
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operation timed out
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operation timed out
+    nt secondary err code: 110
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 10.2.0.1.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 10.2.0.1.0 - Production
+  Time: 23-10月-2012 13:22:54
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operation timed out
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operation timed out
+    nt secondary err code: 110
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 10.2.0.1.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 10.2.0.1.0 - Production
+  Time: 23-10月-2012 14:16:43
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operation timed out
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operation timed out
+    nt secondary err code: 110
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 10.2.0.1.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 10.2.0.1.0 - Production
+  Time: 23-10月-2012 14:19:53
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operation timed out
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operation timed out
+    nt secondary err code: 110
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 10.2.0.1.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 10.2.0.1.0 - Production
+  Time: 23-10月-2012 15:00:23
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operation timed out
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operation timed out
+    nt secondary err code: 110
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 10.2.0.1.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 10.2.0.1.0 - Production
+  Time: 23-10月-2012 15:03:33
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operation timed out
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operation timed out
+    nt secondary err code: 110
+    nt OS err code: 0
+  Client address: <unknown>

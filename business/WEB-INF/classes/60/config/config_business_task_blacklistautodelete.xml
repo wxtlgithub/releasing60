@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="906" name="business_task_blacklistautodelete" desc="黑名单自动删除配置文件">
+	<item key="scanTime" value="14" desc="定时扫描时间" />
+	<item key="interval" value="60" desc="扫描间隔时间（秒）"/>
+</function>

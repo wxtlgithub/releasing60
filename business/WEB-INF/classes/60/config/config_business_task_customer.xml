@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="900" name="business_task_customer" desc="客户组成员添加配置文件">
+	<item key="comandArg" value="yxtec/yxtec@yxtec control={0} data={1}  rows=50000  bindsize=2000000" desc="sqlloader数据库配置" />
+	<item key="commandFile" value="sqlldr" desc="sqlloader执行文件地址" />
+	<item key="crlGMTemp" value="${WORKDIR}WEB-INF/classes/Service/Tasks/UserGroups/UserGroup_Temp.ctl" desc="客户组成员临时表控制文件" />
+	<item key="customerDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/UserGroups/file/UserGroups/" desc="客户组成员处理文件目录" />
+	<item key="backUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/UserGroups/file/UserGroupsBackUp/" desc="客户组成员备份文件目录" />
+	<item key="whiteUploadDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/UserGroups/file/UserGroupsWhiteUpload/" desc="白名单上传文件目录" />
+	<item key="errorDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/UserGroups/file/UserGroupsError/" desc="客户组成员错误文件目录" />
+	<item key="customerLoadLogFileDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/UserGroups/file/UserGroupsLoadLogFile/" desc="客户组入库log文件目录" />
+	<item key="customerLoadLogBackUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/UserGroups/file/UserGroupsLoadLogBackUp/" desc="客户组入库log文件备份目录" />
+	<item key="loadDataMaxEmptyFileNumber" value="10" desc="客户组入库空文件数据量限制" />
+	<item key="isneedinit" value="true" desc="服务Session失效时候是否重新加载" />
+</function>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="994" name="business_task_shareblacklistFTP" desc="共享黑名单FTP操作配置文件">
+	<item key="blackListFtpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/ShareBlackListSvr/file/BlackListFTP/" desc="共享黑名单FTP文上传件目录"/>
+	<item key="ftpCountDir" value="1,2,3,4,5,6" desc="ftp链接字段"/>
+	<item key="hostnameDir1" value="58.68.247.163" desc="网络链接地址"/>
+	<item key="ftpPortDir1" value="21" desc="port"/>
+	<item key="ftpUsernameDir1" value="tech" desc="用户名"/>
+	<item key="ftpPasswordDir1" value="xKNZuoBSYf" desc="密码"/>
+	<item key="ShareBlackFtpFileUrl1" value="/data/gwblackfiles/" desc="ftp上传目的地址" />
+	<item key="hostnameDir2" value="58.68.247.154" desc="网络链接地址"/>
+	<item key="ftpPortDir2" value="21" desc="port"/>
+	<item key="ftpUsernameDir2" value="tech" desc="用户名"/>
+	<item key="ftpPasswordDir2" value="I8C5JeUj92" desc="密码"/>
+	<item key="ShareBlackFtpFileUrl2" value="/data/gwblackfiles/" desc="ftp上传目的地址" />
+
+	<item key="hostnameDir3" value="58.68.247.137" desc="网络链接地址"/>
+        <item key="ftpPortDir3" value="21" desc="port"/>
+        <item key="ftpUsernameDir3" value="tech" desc="用户名"/>
+        <item key="ftpPasswordDir3" value="f21nH1ebzC" desc="密码"/>
+        <item key="ShareBlackFtpFileUrl3" value="/data/gwblackfiles/" desc="ftp上传目的地址" />
+
+	<item key="hostnameDir4" value="124.42.127.84" desc="网络链接地址"/>
+        <item key="ftpPortDir4" value="21" desc="port"/>
+        <item key="ftpUsernameDir4" value="tech" desc="用户名"/>
+        <item key="ftpPasswordDir4" value="m9raI07LDV" desc="密码"/>
+        <item key="ShareBlackFtpFileUrl4" value="/data/gwblackfiles/" desc="ftp上传目的地址" />
+
+	<item key="hostnameDir5" value="58.68.247.163" desc="网络链接地址"/>
+        <item key="ftpPortDir5" value="21" desc="port"/>
+        <item key="ftpUsernameDir5" value="tech" desc="用户名"/>
+        <item key="ftpPasswordDir5" value="xKNZuoBSYf" desc="密码"/>
+        <item key="ShareBlackFtpFileUrl5" value="${WORKDIR}WEB-INF/classes/Service/Tasks/ShareBlackListSvr/file/BlackListFTPError/21" desc="ftp上传目的地址" />
+
+	<item key="hostnameDir6" value="58.68.247.163" desc="网络链接地址"/>
+        <item key="ftpPortDir6" value="21" desc="port"/>
+        <item key="ftpUsernameDir6" value="tech" desc="用户名"/>
+        <item key="ftpPasswordDir6" value="xKNZuoBSYf" desc="密码"/>
+        <item key="ShareBlackFtpFileUrl6" value="${WORKDIR}WEB-INF/classes/Service/Tasks/ShareBlackListSvr/file/BlackListFTPError/23" desc="ftp上传目的地址" />
+	
+	<item key="backPathDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/ShareBlackListSvr/file/BlackListFTPLogBackUp/" desc="ftp备份目录" />
+</function>

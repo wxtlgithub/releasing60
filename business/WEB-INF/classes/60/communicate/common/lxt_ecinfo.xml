@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!-- Ec鉴权信息配置，缩写nd(网元级配置) -->
+	<!-- API Ec鉴权服务 -->
+	<bean id="prepaidEcVerify" class="com.lxt2.clientinfo.XmlEcVerifyService" init-method="init">
+		<property name="persistDir" value="${CLASSPATH}/${nodeID}/persistent"/>
+ 		<property name="cmd" value="-U{0} -F{1} -Cgetecprepaid"/> 
+	</bean>
+	<!-- API Ec鉴权服务同步命令 -->
+	<bean id="prepaidEcVerifySyncCmd" class="com.lxt2.clientinfo.EcVerifyCmd">
+		<property name="clientVerifyService" ref="prepaidEcVerify"/>
+	</bean>
+	
+	<bean id="startEcCmd" class="com.lxt2.clientinfo.ChangeEcVerifyCmd">
+		<property name="clientVerifyService" ref="prepaidEcVerify"/>
+		<property name="status" value="true"/>
+	</bean>
+	
+	<bean id="stopEcCmd" class="com.lxt2.clientinfo.ChangeEcVerifyCmd">
+		<property name="clientVerifyService" ref="prepaidEcVerify"/>
+		<property name="status" value="false"/>
+	</bean>
+	
+	<!-- API Ec鉴权定时同步任务 -->
+	<bean id="prepaidEcVerifyTask" class="com.lxt2.clientinfo.EcVerifyServiceTask">
+		<property name="id" value="130" />
+		<property name="name" value="EC鉴权"/>
+		<property name="verifyService" ref="prepaidEcVerify" />
+		<!-- 每小时执行一次客户端鉴权信息同步 -->
+		<property name="taskSchRule" value="@{cycle(60)}" />
+		<property name="commandMap">
+			<map>
+				<!-- 触发定时同步 -->
+				<entry key="sync" value-ref="prepaidEcVerifySyncCmd"/>
+			</map>
+		</property>
+	</bean>
+
+</beans>

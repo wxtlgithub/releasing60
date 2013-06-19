@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<sevlet>
+		<servlet-name>blackListQuery</servlet-name>
+		<servlet-class>com.lxt2.business.blf.blackwhitelist.BlackListSev</servlet-class>
+		<url-pattern>/URL/BlackWhilteList/BlackQuery.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>blackListUpdate</servlet-name>
+		<servlet-class>com.lxt2.business.blf.blackwhitelist.BlackListSev</servlet-class>
+		<url-pattern>/URL/BlackWhilteList/BlackUpdate.ashx</url-pattern>
+	</sevlet>
+	
+	<sevlet>
+		<servlet-name>SvcBlackListQuery</servlet-name>
+		<servlet-class>com.lxt2.business.blf.blackwhitelist.SvcBlackListSev</servlet-class>
+		<url-pattern>/URL/BlackWhilteList/SvcBlackQuery.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>SvcBlackListUpdate</servlet-name>
+		<servlet-class>com.lxt2.business.blf.blackwhitelist.SvcBlackListSev</servlet-class>
+		<url-pattern>/URL/BlackWhilteList/SvcBlackUpdate.ashx</url-pattern>
+	</sevlet>
+	
+	<sevlet>
+		<servlet-name>SvcBlackListNumQuery</servlet-name>
+		<servlet-class>com.lxt2.business.blf.blackwhitelist.SvcBlackListSev</servlet-class>
+		<url-pattern>/URL/BlackWhilteList/SvcBlackGwSuccnum.ashx</url-pattern>
+	</sevlet>
+	
+	<sevlet>
+		<servlet-name>whiteListQuery</servlet-name>
+		<servlet-class>com.yxt.business.blf.blackwhitelist.YXTWhiteListSev</servlet-class>
+		<url-pattern>/URL/BlackWhilteList/WhilteQuery.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>whiteListUpdate</servlet-name>
+		<servlet-class>com.lxt2.business.blf.blackwhitelist.StatisticWhiteListQuery</servlet-class>
+		<url-pattern>/URL/statistics/whitelist/statisticwhitelistquery.ashx</url-pattern>
+	</sevlet>
+	
+	
+	<sevlet>
+		<servlet-name>blackInfoListQuery</servlet-name>
+		<servlet-class>com.lxt2.business.blf.blackwhitelist.BlackQueryListSev</servlet-class>
+		<url-pattern>/URL/BlackWhilteList/BlackList/BlackInfoQuery.ashx</url-pattern>
+	</sevlet>
+	
+</sevlets>

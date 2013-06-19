@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>/60/web/oracle.properties</value>
+				<value>/60/communicate/communicate.properties</value>
+				<value>/60/communicate/mmsg.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<import resource="lxt_node.xml" />
+
+	<!-- 业务管理服务 -->
+	<import resource="web/task/business.xml" />
+	<!-- 系统管理服务 -->
+	<import resource="web/task/system.xml" />
+	<import resource="communicate/common/mtp_opphase.xml" />
+	<import resource="communicate/common/lxt_dbcp.xml" />
+	<import resource="communicate/common/lxt_oracle.xml" />
+	<import resource="communicate/common/hub.xml" />
+	<import resource="communicate/common/lxt_clientinfo.xml" />
+	<import resource="communicate/common/mts_common.xml" />
+	<import resource="communicate/common/resource_center.xml" />
+	<!-- begin -->
+	<import resource="communicate/proxyservice/db/1060_ps_db_listenerfilters.xml" />
+	<import resource="communicate/proxyservice/db/1060_ps_db_queue.xml" />
+	<import resource="communicate/proxyservice/1060_cbip_db.xml" />
+	<import resource="communicate/proxyservice/1060_mod.xml" />
+
+	<import resource="communicate/mtprocess/mtp_specialmobile.xml" />
+	<import resource="communicate/mtprocess/mtp_phase.xml" />
+	<import resource="communicate/mtprocess/mtp_mod_1160.xml" />
+	<import resource="communicate/mtprocess/mtp_1160.xml" />
+	<import resource="communicate/mtprocess/mtp_router.xml" />
+	<import resource="communicate/mtprocess/mtp_blacklist.xml" />
+	<import resource="communicate/mtprocess/mtp_blacklist_gw.xml" />
+	<import resource="communicate/mtprocess/mtp_blacklistMMS.xml" />
+	<import resource="communicate/mtprocess/mtp_keyword.xml" />
+	<import resource="communicate/mtprocess/mtp_keyword_gw.xml" />
+	<import resource="communicate/proxyservice/ps_productverify.xml" />
+
+	<import resource="communicate/rptprocess/rpt_mod_1360.xml" />
+	<import resource="communicate/clumped/Clumped_Mod_1560.xml" />
+
+
+
+	<import resource="communicate/common/mime_context.xml" />
+    <import resource="communicate/common/lxt_ecinfo.xml" />	
+</beans>

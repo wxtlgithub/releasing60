@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!-- 报警指标日志。 -->
+	<bean id="TlAlertKpiLogDAO_yxt" class="com.yxt.systemapp.dal.alert.TlAlertKpiLogDAL"
+		scope="prototype">
+		<property name="checkLinkState">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					SELECT distinct a.vc2key         as vc2key,
+					                c.vc2value       AS NUMGWID,
+					                d.vc2gatewayname as VC2GATEWAYNAME,
+					                a.numtaskid      AS NUMTASKID
+					  FROM (SELECT DISTINCT a.numtaskid, a.vc2key, a.vc2value
+					          FROM tl_alert_kpi_log a
+					         WHERE a.datcreatetime BETWEEN
+					               to_date('{0}', 'yyyy-mm-dd hh24:mi:ss') AND
+					               to_date('{1}', 'yyyy-mm-dd hh24:mi:ss')
+					           AND a.vc2key = 'CONNECTION_STATUS') a,
+					       tl_task_opt b,
+					       tl_task_opt_item c,
+					       tl_gateway d
+					 WHERE a.numtaskid = b.NUMTASKID
+					   AND b.NUMOPTID = c.NUMOPTID
+					   AND c.VC2VALUE = d.NUMGWID
+					   AND c.VC2KEY = 'gatewayId'
+					   AND a.vc2key = 'CONNECTION_STATUS'
+					   AND d.numstatus = 1
+					   and a.numtaskid {2} IN
+					       (SELECT DISTINCT a.numtaskid
+					          FROM tl_alert_kpi_log a
+					         WHERE a.datcreatetime BETWEEN
+					               to_date('{0}', 'yyyy-mm-dd hh24:mi:ss') AND
+					               to_date('{1}', 'yyyy-mm-dd hh24:mi:ss')
+					           AND a.vc2key = 'CONNECTION_STATUS'
+					           AND a.vc2value = 'true')
+					"></property>
+			</bean>
+		</property>
+		<property name="countGatewayKpi">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					SELECT count(1)as nums
+			         FROM tl_alert_kpi_log a
+			        WHERE
+			         a.datcreatetime BETWEEN
+			              to_date('{0}', 'yyyy-mm-dd hh24:mi:ss') AND
+			              to_date('{1}', 'yyyy-mm-dd hh24:mi:ss')
+			          AND
+			          a.vc2key = 'CONNECTION_STATUS'
+					"></property>
+			</bean>
+		</property>
+
+
+		<property name="checkRespFailureRate">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					select t1.numtaskid as NUMTASKID, 
+					t5.vc2gatewayname as VC2GATEWAYNAME,
+					t5.NUMGWID as NUMGWID,
+					RESPONSE_ERROR , 
+					RESPONSE_COUNT,
+					decode(RESPONSE_COUNT,0,0,RESPONSE_ERROR/RESPONSE_COUNT) as RESPONSE_ERROR_PCT 
+					  from (select a.numtaskid,
+					               max(vc2value + 1) - min(a.vc2value + 1) as RESPONSE_ERROR
+					          from tl_alert_kpi_log a
+					         where a.datcreatetime between
+					               to_date('{0}', 'yyyy-mm-dd hh24:mi:ss') and
+					               to_date('{1}', 'yyyy-mm-dd hh24:mi:ss')
+					           and a.vc2key = 'RESPONSE_ERROR'
+					         group by a.numtaskid) t1,
+					       (select b.numtaskid,
+					               max(b.vc2value + 1) - min(b.vc2value + 1) as RESPONSE_COUNT
+					          from tl_alert_kpi_log b
+					         where b.datcreatetime between
+					               to_date('{0}', 'yyyy-mm-dd hh24:mi:ss') and
+					               to_date('{1}', 'yyyy-mm-dd hh24:mi:ss')
+					           and b.vc2key = 'RESPONSE_COUNT'
+					         group by b.numtaskid) t2,         
+					         tl_task_opt t3 ,         
+					         tl_task_opt_item t4 ,                  
+					         tl_gateway t5
+					 where t1.numtaskid = t2.numtaskid 
+					 and t1.numtaskid = t3.NUMTASKID   
+					 and t3.NUMOPTID = t4.NUMOPTID 
+					 and t4.VC2KEY = 'gatewayId' 
+					 and t4.VC2VALUE = t5.NUMGWID
+					 and t5.numstatus = 1
+					"></property>
+			</bean>
+		</property>
+		<property name="checkRepoFailureRate">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					select t1.numtaskid as NUMTASKID, 
+					t5.vc2gatewayname as VC2GATEWAYNAME,
+					t5.NUMGWID as NUMGWID,
+					RPT_FAIL_COUNT , 
+					RPT_COUNT,
+					decode(RPT_COUNT,0,0,RPT_FAIL_COUNT/RPT_COUNT) as RPT_ERROR_PCT  
+					  from (select a.numtaskid,
+					               max(vc2value + 1) - min(a.vc2value + 1) as RPT_FAIL_COUNT
+					          from tl_alert_kpi_log a
+					         where a.datcreatetime between
+					               to_date('{0}', 'yyyy-mm-dd hh24:mi:ss') and
+					               to_date('{1}', 'yyyy-mm-dd hh24:mi:ss')
+					           and a.vc2key = 'RPT_FAIL_COUNT'
+					         group by a.numtaskid) t1,
+					       (select b.numtaskid,
+					               max(b.vc2value + 1) - min(b.vc2value + 1) as RPT_COUNT
+					          from tl_alert_kpi_log b
+					         where b.datcreatetime between
+					               to_date('{0}', 'yyyy-mm-dd hh24:mi:ss') and
+					               to_date('{1}', 'yyyy-mm-dd hh24:mi:ss')
+					           and b.vc2key = 'RPT_COUNT'
+					         group by b.numtaskid) t2,         
+					         tl_task_opt t3 ,         
+					         tl_task_opt_item t4 ,                  
+					         tl_gateway t5
+					 where t1.numtaskid = t2.numtaskid 
+					 and t1.numtaskid = t3.NUMTASKID   
+					 and t3.NUMOPTID = t4.NUMOPTID 
+					 and t4.VC2KEY = 'gatewayId' 
+					 and t4.VC2VALUE = t5.NUMGWID
+					 and t5.numstatus = 1
+					"></property>
+			</bean>
+		</property>
+		<property name="checkTimelag">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					select e.NUMGWID AS NUMGWID,
+					       e.VC2GATEWAYNAME,
+					       e.NUMTASKID,
+					       nvl(f.avg_sms_delay,-1) AS SMS_DELAY
+					  from (SELECT c.vc2value AS NUMGWID, d.VC2GATEWAYNAME, a.NUMTASKID
+					          FROM tl_alert_kpi_log a,
+					               tl_task_opt      b,
+					               tl_task_opt_item c,
+					               tl_gateway       d
+					         WHERE a.datcreatetime BETWEEN
+					               to_date('{0}', 'yyyy-mm-dd hh24:mi:ss') AND
+					               to_date('{1}', 'yyyy-mm-dd hh24:mi:ss')
+					           AND a.numtaskid = b.NUMTASKID
+					           AND b.NUMOPTID = c.NUMOPTID
+					           AND c.VC2VALUE = d.NUMGWID
+					           AND c.VC2KEY = 'gatewayId'
+					           AND a.vc2key = 'SMS_DELAY'
+					         GROUP BY c.vc2value, d.vc2gatewayname, a.numtaskid) e
+					  left join (select k.numtaskid, avg(k.vc2value) as avg_sms_delay
+					               from tl_alert_kpi_log k
+					              where k.vc2value > -1
+					                and k.vc2key = 'SMS_DELAY'
+					                and k.datcreatetime BETWEEN
+					                    to_date('{0}', 'yyyy-mm-dd hh24:mi:ss') AND
+					                    to_date('{1}', 'yyyy-mm-dd hh24:mi:ss')
+					              group by k.numtaskid) f on e.NUMTASKID = f.numtaskid
+					"></property>
+			</bean>
+		</property>
+		<property name="deleteAlertLogDataByAlertType">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					delete from tl_alert_log_data where numalerttypeid = {0} and numgwid = {1}
+					"></property>
+			</bean>
+		</property>
+		<property name="deleteAlertLogByTypeAndNumGwid">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					delete from tl_alert_log where NUMTYPEID = {0} and NUMGWID = {1}
+					"></property>
+			</bean>
+		</property>
+
+	</bean>
+
+	<bean id="TlAlertDAO_yxt" class="com.yxt.systemapp.dal.alert.TlAlertYxtDAL"
+		scope="prototype">
+		<property name="querySmsDelayAlertSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+						select tg.vc2gatewayname,
+						       tg.numgwid,
+						       tg.numstatus,
+						       tt.numtaskid,
+						       t.numalertid,
+						       t.numstate,
+						       nvl(t.sms_delay,0) as sms_delay_average
+						  from tl_gateway tg,
+						       (select ta.numgwid,
+						               ta.numalertid,
+						               ta.numtaskid,
+						               ta.numstate,
+						               (select trim(to_char(t2.vc2value, 99999999999990))
+						                  from tl_alert_log_data t2
+						                 where t2.numalertid = ta.numalertid
+						                   and t2.vc2key = 'SMS_DELAY') as sms_delay
+						          from tl_alert_log ta
+						         where ta.numalertid in (select max(numalertid) as numalertid
+						                                   from tl_alert_log
+						                                  where numtypeid = 4
+						                                  group by numgwid)) t,
+						       tl_task_opt tt,
+						       (select * from tl_task_opt_item ti where ti.vc2key='gatewayId') ti
+						 where tg.numgwid = t.numgwid(+)
+						   and tg.numgwid = ti.vc2value
+						   and tt.numoptid = ti.numoptid
+						   and tg.numstatus = 1
+						 order by tg.numgwid
+						">
+				</property>
+			</bean>
+		</property>
+
+
+		<property name="insertSendGroupSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+						insert into tl_sms_sendgroup(numsendgroupid,numcontentid) 
+						values(tlseq_sms_sendgroup.nextval,{0})	
+						">
+				</property>
+			</bean>
+		</property>
+		<property name="queryReportAlertSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+							select tg.vc2gatewayname,
+							       tg.numgwid,
+							       tg.numstatus,
+							       tt.numtaskid,
+							       t.numalertid,
+							       t.numstate,
+							       nvl(t.rpt_count,0) as rpt_count,
+							       nvl(t.rpt_fail_count,0) as rpt_fail_count,
+							       nvl(t.rpt_error_pct,0) as rpt_error_pct
+							  from tl_gateway tg,
+							       (select ta.numgwid,
+							               ta.numalertid,
+							               ta.numtaskid,
+							               ta.numstate,
+							               (select t2.vc2value
+							                  from tl_alert_log_data t2
+							                 where t2.numalertid = ta.numalertid
+							                   and t2.vc2key = 'RPT_COUNT') as rpt_count,
+							               (select t2.vc2value
+							                  from tl_alert_log_data t2
+							                 where t2.numalertid = ta.numalertid
+							                   and t2.vc2key = 'RPT_FAIL_COUNT') as rpt_fail_count,
+							               (select trim(to_char(t2.vc2value * 100, 9990.09)) || '%'
+							                  from tl_alert_log_data t2
+							                 where t2.numalertid = ta.numalertid
+							                   and t2.vc2key = 'RPT_ERROR_PCT') as rpt_error_pct
+							          from tl_alert_log ta
+							         where ta.numalertid in (select max(numalertid) as numalertid
+							                                   from tl_alert_log
+							                                  where numtypeid = 3
+							                                  group by numgwid)
+							        
+							        ) t,
+							       tl_task_opt tt,
+							       (select * from tl_task_opt_item ti where ti.vc2key='gatewayId') ti
+							 where tg.numgwid = t.numgwid(+)
+							   and tg.numgwid = ti.vc2value
+							   and tt.numoptid = ti.numoptid
+							   and tg.numstatus =1 
+							 order by tg.numgwid
+						">
+				</property>
+			</bean>
+		</property>
+
+		<property name="queryResponseAlertSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+							select tg.vc2gatewayname,
+							       tg.numgwid,
+							       tg.numstatus,
+							       tt.numtaskid,
+							       t.numalertid,
+							       t.numstate,
+							       nvl(t.response_count,0) as response_count,
+							       nvl(t.response_error,0) as response_error,
+							       nvl(t.response_error_pct,0) as response_error_pct
+							  from tl_gateway tg,
+							       (select ta.numgwid,
+							               ta.numalertid,
+							               ta.numtaskid,
+							               ta.numstate,
+							               (select t2.vc2value
+							                  from tl_alert_log_data t2
+							                 where t2.numalertid = ta.numalertid
+							                   and t2.vc2key = 'RESPONSE_COUNT') as response_count,
+							               (select t2.vc2value
+							                  from tl_alert_log_data t2
+							                 where t2.numalertid = ta.numalertid
+							                   and t2.vc2key = 'RESPONSE_ERROR') as response_error,
+							               (select trim(to_char(t2.vc2value * 100, 9990.09)) || '%'
+							                  from tl_alert_log_data t2
+							                 where t2.numalertid = ta.numalertid
+							                   and t2.vc2key = 'RESPONSE_ERROR_PCT') as response_error_pct
+							          from tl_alert_log ta
+							         where ta.numalertid in (select max(numalertid) as numalertid
+							                                   from tl_alert_log
+							                                  where numtypeid = 2
+							                                  group by numgwid)) t,
+							       tl_task_opt tt,
+							       (select * from tl_task_opt_item ti where ti.vc2key='gatewayId') ti
+							 where tg.numgwid = t.numgwid(+)
+							   and tg.numgwid = ti.vc2value
+							   and tt.numoptid = ti.numoptid
+							   and tg.numstatus =1
+							 order by tg.numgwid
+
+						">
+				</property>
+			</bean>
+		</property>
+		<property name="queryGateWayAlertSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+						select tg.vc2gatewayname,
+						       tg.numgwid,
+						       tg.numstatus,
+						       tt.numtaskid,
+						       t.numalertid,
+						       t.numstate,
+						       t.CONNECTION_STATUS
+						  from tl_gateway tg,
+						       (select ta.numgwid,
+						               ta.numalertid,
+						               ta.numtaskid,
+						               ta.numstate,
+						               td.vc2value as CONNECTION_STATUS
+						          from tl_alert_log ta, tl_alert_log_data td
+						         where ta.numalertid in (select max(numalertid) as numalertid
+						                                   from tl_alert_log
+						                                  where numtypeid = 1
+						                                  group by numgwid)
+						           and ta.numalertid = td.numalertid
+						           and td.vc2key = 'CONNECTION_STATUS') t,
+						       tl_task_opt tt,
+						       (select * from tl_task_opt_item ti where ti.vc2key='gatewayId') ti
+						 where tg.numgwid = t.numgwid(+)
+						   and tg.numgwid = ti.vc2value
+						   and tt.numoptid = ti.numoptid
+						   and tg.numstatus =1 
+						 order by tg.numgwid
+
+						">
+				</property>
+			</bean>
+		</property>
+		<property name="getAlertLogByType">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					select distinct tg.numgwid,
+				                tg.vc2gatewayname,
+				                t.numalertid,
+				                t.numtypeid,
+				                t.numstate,
+				                t1.numtaskid,
+				                t.response_count,
+				                t.response_error,
+				                t.response_error_pct,
+				                t.rpt_count,
+				                t.rpt_fail_count,
+				                t.rpt_error_pct,
+				                t.sms_delay as sms_delay_average
+				  from tl_gateway tg,
+				       (select tal.numalertid,
+				               tal.numtypeid,
+				               tal.numstate,
+				               tal.numtaskid,
+				               tal.numgwid,
+				               t3.vc2gatewayname,
+				               (select t2.vc2value
+				                  from tl_alert_log_data t2
+				                 where t2.numalertid = tal.numalertid
+				                   and t2.vc2key = 'RESPONSE_COUNT') as response_count,
+				               (select t2.vc2value
+				                  from tl_alert_log_data t2
+				                 where t2.numalertid = tal.numalertid
+				                   and t2.vc2key = 'RESPONSE_ERROR') as response_error,
+				               (select trim(to_char(t2.vc2value * 100, 9990.09)) || '%'
+				                  from tl_alert_log_data t2
+				                 where t2.numalertid = tal.numalertid
+				                   and t2.vc2key = 'RESPONSE_ERROR_PCT') as response_error_pct,
+				               (select t2.vc2value
+				                  from tl_alert_log_data t2
+				                 where t2.numalertid = tal.numalertid
+				                   and t2.vc2key = 'RPT_COUNT') as rpt_count,
+				               (select t2.vc2value
+				                  from tl_alert_log_data t2
+				                 where t2.numalertid = tal.numalertid
+				                   and t2.vc2key = 'RPT_FAIL_COUNT') as rpt_fail_count,
+				               (select trim(to_char(t2.vc2value * 100, 9990.09)) || '%'
+				                  from tl_alert_log_data t2
+				                 where t2.numalertid = tal.numalertid
+				                   and t2.vc2key = 'RPT_ERROR_PCT') as rpt_error_pct,
+				               (select trim(to_char(t2.vc2value, 99999999999990))
+				                  from tl_alert_log_data t2
+				                 where t2.numalertid = tal.numalertid
+				                   and t2.vc2key = 'SMS_DELAY') as sms_delay
+				          from tl_alert_log tal,
+				               (select t1.numgwid, max(t1.datupdatetime) as datupdatetime
+				                  from tl_alert_log t1
+				                 where t1.numtypeid = {0}
+				                 group by t1.numgwid) t2,
+				               tl_gateway t3
+				         where tal.numgwid = t2.numgwid
+				           and tal.datupdatetime = t2.datupdatetime
+				           and tal.numtypeid = {0}
+				           and tal.numgwid = t3.numgwid) t,
+				       (select ttoi.vc2value as numgwid, tt.numtaskid
+				          from tl_task tt, tl_task_opt tto, tl_task_opt_item ttoi
+				         where tt.numtaskid = tto.numtaskid
+				           and tto.numoptid = ttoi.numoptid
+				           and ttoi.vc2key = 'gatewayId'
+				           and tto.numtypeid = 1) t1
+				 where t.numgwid(+) = tg.numgwid
+				   and t1.numgwid(+) = tg.numgwid
+					"></property>
+			</bean>
+		</property>
+		<property name="getAlertLogDataById">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					select * from tl_alert_log_data t1 where t1.numalertid ={0}
+					"></property>
+			</bean>
+		</property>
+	</bean>
+
+</beans>

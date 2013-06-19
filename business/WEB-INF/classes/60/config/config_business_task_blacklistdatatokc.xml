@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="995" name="business_task_blacklistdataToKc" desc="黑名单数据库入kc初始化">
+	<item key="InitLimit" value="10000" desc="程序一次处理数据最大值"/>
+	<item key="blackListKcPath" value="F:/data/BlackListKc/blackListKc.kch" desc="kc文件存放地址"/>
+	<item key="blackListKcGwPath" value="f:/data/Kc/blackListKc.kch" desc="kc文件存放地址"/>
+	<item key="blackListKcTxtPath" value="F:/data/BlackListKc/blackListKc.kch" desc="目标kc文件地址"/>
+	<item key="blackListTxtPath" value="f:/data/Kc/blackList.txt" desc="kc文件生成txt地址"/>
+</function>

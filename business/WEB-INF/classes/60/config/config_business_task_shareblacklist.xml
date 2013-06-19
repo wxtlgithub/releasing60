@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="993" name="business_task_shareblacklist" desc="共享黑名单添加操作配置文件">
+	<item key="comandArg" value="yxtec/yxtec@yxtec control={0} data={1}  rows=50000  bindsize=2000000" desc="sqlloader数据库配置" />
+	<item key="commandFile" value="sqlldr" desc="sqlloader执行文件地址" />
+	<item key="crlBlackList" value="${WORKDIR}WEB-INF/classes/Service/Tasks/ShareBlackListSvr/LoadBlackList.ctl" desc="黑名单正式表控制文件" />
+	<item key="crlBlackDetailLog" value="${WORKDIR}WEB-INF/classes/Service/Tasks/ShareBlackListSvr/LoadDetailBwList.ctl" desc="黑名单日志详情控制文件" />
+	<item key="managerId" value="900000" desc="默认用户" />
+	<item key="departId" value="1"	desc="默认部门" />
+	<item key="uploadDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/ShareBlackListSvr/file/BlackListFile/" desc="共享黑名单处理文件路径"/>
+	<item key="backUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/ShareBlackListSvr/file/BlackListFileBackUp/" desc="共享黑名单备份文件目录" />
+	<item key="loadLogFileDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/ShareBlackListSvr/file/BlackListLogBackUp/" desc="共享黑名单入库日志目录"/>
+	<item key="errorDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/ShareBlackListSvr/file/BlackListFileError/" desc="共享黑名单错误文件目录" />
+	<item key="blackListKcPath" value="${WORKDIR}../../../data/BlackListKc/blackListKc.kch" desc="黑名单正式KC文件目录"/>
+	<item key="logKcDir" value="${WORKDIR}../../../data/BlackListLogKcFile/" desc="共享黑名单批次KC文件目录"/>
+	<item key="logGwKcDir" value="${WORKDIR}../../../data/BlackListLogGwKcFile/" desc="网关黑名单批次kc文件目录"/>
+	<item key="blackListFtpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/ShareBlackListSvr/file/BlackListFTP/" desc="共享黑名单FTP文上传件目录"/>
+	<item key="isneedinit" value="true" desc="服务Session失效时候是否重新加载" />
+	<item key="ftpFileDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/ShareBlackListSvr/file/BlackListFiles/" desc="ftp文件存放主目录"/>
+	<item key="fileCount" value="192.168.4.116@60,192.168.4.116@52,53,22" desc="文件夹名字"/>
+</function>

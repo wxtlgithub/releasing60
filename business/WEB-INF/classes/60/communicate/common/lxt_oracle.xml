@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<!-- 事务bean -->
+	<bean id="dbTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+
+	<!-- 抽象dao bean -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<bean id="abstractDAO" abstract="true" lazy-init="true">
+		<property name="jdbcTemplate">
+			<ref bean="jdbcTemplate" />
+		</property>
+	</bean>
+
+	<!-- 定义事物拦截器 -->
+	<bean id="dbTransactionInterceptor"
+		class="org.springframework.transaction.interceptor.TransactionInterceptor">
+		<!-- 事物拦截器bean需要依赖注入一个事物管理器 -->
+		<property name="transactionManager" ref="dbTransactionManager" />
+		<property name="transactionAttributes">
+			<!-- 下面定义事物传播属性 -->
+			<props>
+				<prop key="insert*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!--
+		定义一个BeanPostProcessor bean
+		Spring提供BeanPostProcessor的实现类BeanNameAutoProxyCreator
+	-->
+	<bean
+		class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<!-- 指定对满足哪些bean name的bean自动生成业务代理 -->
+		<property name="beanNames">
+			<value>*DAO, *DaoService</value>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<idref local="dbTransactionInterceptor" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="tlBlackListDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlBlackListDAO" />
+	<bean id="tlGwBlackListDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlGwBlackListDAO" />
+	<bean id="tlColumnMemberDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlColumnMemberDAO" />
+	<bean id="tlEcBlackListUserDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlEcBlackListUserDAO" />
+	<bean id="tlGatewayDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlGatewayDAO" />
+	<bean id="tlImtMmsContentDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlImtMmsContentDAO" />
+	<bean id="tlImtSmsContentDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlImtSmsContentDAO" />
+	<bean id="tlMmsContentDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlMmsContentDAO" />
+	<bean id="tlMmsLogStddeliverDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlMmsLogStddeliverDAO" />
+	<bean id="tlMmsLogStdreportDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlMmsLogStdreportDAO" />
+	<bean id="tlMmsLogStdsubmitDaysDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlMmsLogStdsubmitDaysDAO" />
+	<bean id="tlMmsLogStdsubmitHisDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlMmsLogStdsubmitHisDAO" />
+	<bean id="tlMmsSendListDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlMmsSendListDAO" />
+	<!--
+		bean id="tlMmsSendtasklistDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlMmsSendtasklistOldDAO"/
+	-->
+	<bean id="tlMmsSendtasklistDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlMmsSendtasklistDAO" />
+	<bean id="tlSmsContentDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlSmsContentDAO" />
+	<bean id="tlSmsLogStddeliverDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlSmsLogStddeliverDAO" />
+	<bean id="tlSmsLogStdreportDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlSmsLogStdreportDAO" />
+	<bean id="tlSmsLogStdsubmitDaysDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlSmsLogStdsubmitDaysDAO" />
+	<bean id="tlSmsSendListDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlSmsSendListDAO" />
+	<!--
+		bean id="tlSmsSendtasklistDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlSmsSendtasklistOldDAO"/
+	-->
+	<bean id="tlSmsSendtasklistDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlSmsSendtasklistDAO" />
+	<bean id="tlUsergroupMemberDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcTlUsergroupMemberDAO" />
+	<!-- hand dao begin -->
+	<bean id="columnMemberFindDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcColumnMemberFindDAO" />
+	<bean id="mmsSendListFindDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcMmsSendListFindDAO" />
+	<bean id="smsSendListFindDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcSmsSendListFindDAO" />
+	<bean id="usergroupMemberFindDAO" parent="abstractDAO"
+		class="com.standardsm.db.dao.jdbc.JdbcUsergroupMemberFindDAO">
+		<property name="tableName" value="tl_usergroup_member" />
+	</bean>
+	<!-- 号段 -->
+	<bean id="tlPhoneInfo" parent="abstractDAO"
+		class="com.lxt2.mtprocess.phase.JdbcTlPhoneDAO" />
+	<!-- hand dao end -->
+	
+</beans>

@@ -1,0 +1,1012 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	
+	<bean id="YXTTlMmsCheckContentDAO" class="com.yxt.business.dal.mms.TlMmsCheckContentDAL" scope="prototype">
+		<property name="queryMmsContentUserGroupsByContentIDSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                	  adsfsds.*
+								from (
+									 select u.numusergroupid,u.vc2usergroupname from tl_usergroup u where 1=1  #0# 
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*) 
+							 from tl_usergroup u where 1=1  #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value> u.numusergroupid in ({0})</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean><!--DAL Configuration-->
+	
+	<bean id="YXTTlMmsContentDAO" class="com.lxt2.business.dal.mms.TlMmsContentDAL" scope="prototype">
+		<!-- 根据彩信内容编号删除彩信发送手机号表信息 -->
+		<property name="deleteSendListByContentIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="BEGIN delete from tl_mms_send_list  where numcontentid={0};
+					delete from TL_MMS_SENDGROUP where numcontentid={0};
+					END;"></property>
+			</bean>
+		</property>	
+	</bean>  
+
+	<bean id="YXTTlMmsSendQueryDAO" class="com.yxt.business.dal.mms.YXTTlMmsSendQueryDAL" scope="prototype">
+		<!-- 彩信上行记录查询 -->
+		<property name="queryMMSMOByArgs">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="PageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+						select TLLMS.NUMSEQID,
+					       to_char(TLLMS.DATLASTSEND, 'yyyy-mm-dd hh24:mi:ss') DATLASTSEND,       
+					       TLLMS.NUMSRCID,
+					       TLLMS.NUMDESID,
+					       TLLMS.NUMSENDCOUNT,
+					       TLLMS.VC2SRCMOBILE,
+					       TLLMS.VC2LONGCODE,
+					       TLLMS.VC2SERVICEID,
+					       TLLMS.VC2SVC,
+					       TLLMS.VC2MSGID,
+					       TLLMS.VC2LINKID,
+					       TLLMS.NUMOPID,
+					       TLLMS.NUMPROVID,
+					       TLLMS.NUMCITYID,
+					       TLLMS.NUMCOUNTYID,
+					       TLLMS.VC2TYPE,
+					       TLLMS.VC2FORMAT,
+					       TLLMS.NUMMSGLENGTH,
+					       TLLMS.VC2CONTENT,
+					       TLLMS.VC2SEQID,
+					       to_char(TLLMS.DATGEN, 'yyyy-mm-dd hh24:mi:ss') DATGEN,       
+					       TLLMS.NUMSVCID,
+					       TLLMS.NUMCHNID,
+					       to_char(TLLMS.DATRECV, 'yyyy-mm-dd hh24:mi:ss') DATRECV,       
+					       TLLMS.NUMPROCESSSTATE,
+					       TLLMS.VC2USERCODE,
+					       TLLMS.NUMMOTYPE,
+					       SER.VC2SVCNAME,
+					       GW.VC2SPNUM || TLLMS.VC2LONGCODE LONGCODE
+					  from tl_mms_log_stddeliver TLLMS, tl_servicecode SER, tl_gateway GW
+					 where TLLMS.NUMSVCID= SER.NUMSVCID(+)
+					   AND TLLMS.numsrcid = gw.numgwid(+)   #0# 
+						order by datgen desc,TLLMS.NUMSEQID desc
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="CountSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*) 
+								from tl_mms_log_stddeliver TLLMS,tl_servicecode SER ,tl_gateway GW
+								where TLLMS.NUMSVCID = SER.NUMSVCID(+) AND TLLMS.numsrcid = gw.numgwid(+)  #0# 
+						    " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 开始时间 -->
+						<value>DATRECV > date '{0}' </value>
+						<!-- 结束时间 -->
+						<value>DATRECV &lt; date '{0}'+1</value>
+						<!-- 短信内容 -->
+						<value>VC2CONTENT like '%{0}%'</value>
+						<!-- 手机号码 -->
+						<value>VC2SRCMOBILE like '%{0}%'</value>
+						<!-- 服务号码 -->
+						<value>GW.VC2SPNUM || TLLMS.VC2LONGCODE  = '{0}'</value>
+						<!-- 创建人编号 -->
+						<value>NUMUSERID = '{0}'</value>
+						<!-- 部门编号 
+						<value> NUMDEPARTID in ({0})</value>
+						-->
+	
+					</list>
+				</property>
+			</bean>
+		</property>
+		<!-- 根据彩信内容ID返回统计信息  -->
+		<property name="queryDetailByContentID">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" SELECT *
+							   FROM (SELECT VLT.*,
+							                to_char(round(decode(VLT.nummtcnt,
+							                                     0,
+							                                     0,
+							                                     VLT.numrep_succnt / VLT.nummtcnt),
+							                              4) * 100) || '%' numsuc_rate
+							           FROM (SELECT VL.NUMSENDGROUPID,
+							                        COUNT(*) NUMMTCNT,
+							                        COUNT(CASE
+							                                WHEN VL.NUMREPORTSTATUS = '0' THEN
+							                                 VL.VC2DESTMOBILE
+							                              END) NUMREP_SUCCNT,
+							                        COUNT(CASE
+							                                WHEN VL.NUMREPORTSTATUS = '2' THEN
+							                                 VL.VC2DESTMOBILE
+							                              END) NUMREP_FAICNT,
+							                        COUNT(CASE
+							                                WHEN VL.NUMREPORTSTATUS = '1' THEN
+							                                 VL.VC2DESTMOBILE
+							                              END) NUMREP_NOCNT
+							                   FROM TLV_MMS_LOG_STDSUBMIT VL
+							                  WHERE VL.NUMSENDGROUPID in
+							                        (select numsendgroupid
+							                           from tl_mms_sendgroup
+							                          where numContentId = {0})
+							                       and NUMSRCCLIENTID in(0,1,2,3)
+							                  GROUP BY VL.NUMSENDGROUPID) VLT) VL,
+							        TLV_MMS_Content VC,
+							        tl_mms_sendgroup ts
+							  WHERE VL.NUMSENDGROUPID = ts.numsendgroupid
+							    and ts.numcontentid = vc.numContentId
+							    AND vc.numContentId = {0}
+				"></property>
+			</bean>
+		</property>
+	<!-- 彩信下行记录查询 -->
+		<property name="queryDetailPageByContentID">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="PageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                adsfsds.* from (SELECT vl.*,vc.*,ts.numusergroupid
+							   FROM (SELECT VLT.*,
+							                to_char(round(decode(VLT.nummtcnt,
+							                                     0,
+							                                     0,
+							                                     VLT.numrep_succnt / VLT.nummtcnt),
+							                              4) * 100) || '%' numsuc_rate
+							           FROM (SELECT VL.NUMSENDGROUPID,
+							                        COUNT(*) NUMMTCNT,
+							                        COUNT(CASE
+							                                WHEN VL.NUMREPORTSTATUS = '0' THEN
+							                                 VL.VC2DESTMOBILE
+							                              END) NUMREP_SUCCNT,
+							                        COUNT(CASE
+							                                WHEN VL.NUMREPORTSTATUS = '2' THEN
+							                                 VL.VC2DESTMOBILE
+							                              END) NUMREP_FAICNT,
+							                        COUNT(CASE
+							                                WHEN VL.NUMREPORTSTATUS = '1' THEN
+							                                 VL.VC2DESTMOBILE
+							                              END) NUMREP_NOCNT
+							                   FROM TLV_MMS_LOG_STDSUBMIT VL
+							                  WHERE VL.NUMSENDGROUPID in
+							                        (select numsendgroupid
+							                           from tl_mms_sendgroup
+							                          where numContentId = {2})
+							                       and NUMSRCCLIENTID in (0,1,2,3)
+							                  GROUP BY VL.NUMSENDGROUPID) VLT) VL,
+							        TLV_MMS_Content VC,
+							        tl_mms_sendgroup ts
+							  WHERE VL.NUMSENDGROUPID = ts.numsendgroupid
+							    and ts.numcontentid = vc.numContentId #0#
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="CountSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*) 
+							   FROM (SELECT VLT.*,
+							                to_char(round(decode(VLT.nummtcnt,
+							                                     0,
+							                                     0,
+							                                     VLT.numrep_succnt / VLT.nummtcnt),
+							                              4) * 100) || '%' numsuc_rate
+							           FROM (SELECT VL.NUMSENDGROUPID,
+							                        COUNT(*) NUMMTCNT,
+							                        COUNT(CASE
+							                                WHEN VL.NUMREPORTSTATUS = '0' THEN
+							                                 VL.VC2DESTMOBILE
+							                              END) NUMREP_SUCCNT,
+							                        COUNT(CASE
+							                                WHEN VL.NUMREPORTSTATUS = '2' THEN
+							                                 VL.VC2DESTMOBILE
+							                              END) NUMREP_FAICNT,
+							                        COUNT(CASE
+							                                WHEN VL.NUMREPORTSTATUS = '1' THEN
+							                                 VL.VC2DESTMOBILE
+							                              END) NUMREP_NOCNT
+							                   FROM TLV_MMS_LOG_STDSUBMIT VL
+							                  WHERE VL.NUMSENDGROUPID in
+							                        (select numsendgroupid
+							                           from tl_mms_sendgroup
+							                          where numContentId = {0})
+							                       and NUMSRCCLIENTID in (0,1,2)
+							                  GROUP BY VL.NUMSENDGROUPID) VLT) VL,
+							        TLV_MMS_Content VC,
+							        tl_mms_sendgroup ts
+							  WHERE VL.NUMSENDGROUPID = ts.numsendgroupid
+							    and ts.numcontentid = vc.numContentId #0#
+						    " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 开始时间 -->
+						<value>vc.numContentId = {0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<!-- 彩信下行记录查询 -->
+	<property name="querySendMMSMTByArgs">
+		<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+			<property name="sqlType">
+				<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+			</property>
+			<property name="PageSQLObj">
+				<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL"
+						value="
+						select * from (select rownum numrowasdf, 
+		                adsfsds.* from (	
+						select NUMCONTENTID,
+					       NUMMMSID,
+					       VC2DESTMOBILE,
+					       VC2MMSTITLE,
+					       NUMSENDTYPE,
+					       VC2SERVICECODE,
+					       vc2username,
+					       vc2departname,
+					       vc2messagecontent,
+					       to_char(DATCREATETIME, 'yyyy-mm-dd hh24:mi:ss') DATCREATETIME,
+					       to_char(DATSENDTIME, 'yyyy-mm-dd hh24:mi:ss') DATSENDTIME,
+					       to_char(DATSEND, 'yyyy-mm-dd hh24:mi:ss') DATSEND,
+					       to_char(DATCHECK2, 'yyyy-mm-dd hh24:mi:ss') DATCHECK2,
+					       NUMRESPONSESTATUS,
+					       decode(numreportstatus,
+					              '0',
+					              '接收成功',
+					              '1',
+					              '接收等待',
+					              '2',
+					              decode(vc2reporterrorcode,
+					                     NULL,
+					                     '接收失败(发送失败)',
+					                     '接收失败(' || vc2reporterrorcode || ')')) as vc2reportstatus
+					  from TLV_MMS_LOG_STDSUBMITALL 
+						where 1=1 #0#  
+						order by DATSENDTIME DESC,NUMCONTENTID desc
+					) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+					" />
+				</bean>
+			</property>
+			<property name="CountSQLObj">
+				<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL"
+						value="select count(*) 
+						from TLV_MMS_LOG_STDSUBMITALL 
+						where 1=1 #0# 
+					    " />
+				</bean>
+			</property>
+			<property name="sqlPartList">
+				<list>
+					<!-- 开始时间 -->
+					<value>DATSENDTIME > date '{0}' </value>
+					<!-- 结束时间 -->
+					<value>DATSENDTIME &lt; date '{0}'+1</value>
+					<!-- 短信内容 -->
+					<value>VC2MMSTITLE like '%{0}%'</value>
+					<!-- 手机号码 -->
+					<value>VC2DESTMOBILE like '{0}'</value>
+					<!-- 发送状态(0成功，其他为失败) -->
+					<value>{0}</value>
+					<!-- 接收状态(0 成功 1 等待 2 失败) -->
+					<value>NUMREPORTSTATUS = '{0}'</value>
+					<value>{0}</value>
+					<!-- 创建人编号 -->
+					<value>NUMUSERID = {0}</value>
+					<!-- 部门编号 -->
+					<value> NUMDEPARTID in ({0})</value>
+				</list>
+			</property>
+		</bean>
+	</property>
+	
+	<!-- 彩信发送任务查询 -->
+	<property name="querySendMMSByArgs">
+		<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+			<property name="sqlType">
+				<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+			</property>
+			<property name="PageSQLObj">
+				<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL"
+						value="
+						select * from (select rownum numrowasdf, 
+		                adsfsds.* from (	
+					select NUMUSERID,
+						       NUMUSERNAME,
+						       NUMCONTENTID,
+						       NUMMMSID,
+						       VC2NAME,
+						       VC2DESC,
+						       NUMMMSTYPE,
+						       NUMMMSTYPENAME,
+						       NUMSTATE,
+						       NUMSTATENAME,
+						       VC2STATUS,
+						       NUMCHECK1ID,
+						       NUMCHECK1IDNAME,
+						       NUMCHECK2ID,
+						       NUMCHECK2IDNAME,
+						       NUMSENDTYPE,
+						       VC2TYPELIST,
+						       NUMDEPARTID,
+						       NUMTOTAL,
+						       NUMSUCCESS,
+						       NUMFAILED,
+						       NUMPRENUM,
+						       to_char(DATCREATETIME, 'yyyy-mm-dd hh24:mi:ss') DATCREATETIME,
+						       to_char(DATSEND, 'yyyy-mm-dd hh24:mi:ss') DATSEND,
+						       to_char(DATCHECK1, 'yyyy-mm-dd hh24:mi:ss') DATCHECK1,
+						       to_char(DATCHECK2, 'yyyy-mm-dd hh24:mi:ss') DATCHECK2
+						  from TLV_MMS_Content 
+					where 1=1   #0#
+					order by datsend desc,NUMCONTENTID desc
+					) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+					" />
+				</bean>
+			</property>
+			<property name="CountSQLObj">
+				<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL"
+						value="select count(*) 
+						from TLV_MMS_Content 
+						where 1=1 #0# 
+					    " />
+				</bean>
+			</property>
+			<property name="sqlPartList">
+				<list>
+					<!-- 开始时间 -->
+					<value>DATSEND > date '{0}' </value>
+					<!-- 结束时间 -->
+					<value>DATSEND &lt; date '{0}'+1</value>
+					<value>numcheck1id = {0}</value>
+					<value>numcheck2id = {0}</value>
+					<value>VC2STATUS  {0}</value>
+					<value>','||VC2TYPELIST||',' like '%,{0},%'</value>
+					<!-- 部门编号 -->
+					<value> NUMDEPARTID in ({0})</value>
+					<!-- 创建人编号 -->
+					<value>NUMUSERID = {0}</value>
+				</list>
+			</property>
+		</bean>
+	</property>
+	
+	<!-- 通过页面输入条件分页查询 彩信发送详情查询 -->
+	<property name="queryMMSDetailsListByArgs">
+		<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+			<property name="sqlType">
+				<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+			</property>
+			<property name="PageSQLObj">
+				<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL"
+						value="
+						select * from (select rownum numrowasdf, adsfsds.* from (	
+							select * from TLV_MMS_CONTENT_DETAILS #0# 
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+					" />
+				</bean>
+			</property>
+			<property name="CountSQLObj">
+				<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL"
+						value="select count(0) from TLV_MMS_CONTENT_DETAILS #0# 
+					    " />
+				</bean>
+			</property>
+			<property name="sqlPartList">
+				<list>
+					<!-- 彩信内容编号 -->
+					<value>numcontentid={0} </value>
+				</list>
+			</property>
+		</bean>
+	</property>
+	</bean>
+	
+	<!-- 彩信统计 -->
+	<bean id="YXTMMSMtStaticDAO" class="com.yxt.business.dal.mms.YXTMMSMtStaticDAL" scope="prototype">
+		<!--根据用户ID查询二级部门-->
+		<property name="querySecondDepartbyCurrentUser" value="select count(1) from  tl_user u, tl_department d 
+              where u.numdepartid = d.numdepartid
+              and d.numparentdepart =1 
+              and u.numstate = 1 
+              and d.numstate = 1 
+              and u.numuserid = {0} "></property>
+              
+        <!--根据用户ID查询通道组-->
+		<property name="queryProductbyCurrentUser" value="select numprodid
+						 from tl_products p
+						 where p.numecid in (select numecid
+                         from tl_ec_info ec
+                         where  ec.NUMSTATUS = 1 and
+                          ec.numdepartid in (select numdepartid
+                                                  from tl_user u
+                                                  where u.numuserid = {0}
+                                                  and u.numstate = 1 
+                                                )) "></property>
+		<property name="countByProduct" value="
+			select 
+				vc2PRODNAME,			
+				datstat,
+			    vc2opname,			
+				SUM(NUMALL) NUMALL,
+				SUM(NUMSUCCESS) NUMSUCCESS,
+				SUM(NUMFAILED) NUMFAILED,
+				SUM(NUMNOREPORT) NUMNOREPORT,
+				to_char(ROUND(DECODE(SUM(NUMALL),0,0,SUM(NUMSUCCESS)/SUM(NUMALL)),4) * 100) || '%' NUM_RATE 
+			from TLV_STAT_MMS_PROD4DEP_SEND 
+			where 
+				DATSTAT >= to_date('{0}','yyyy-mm-dd') and 
+				DATSTAT &lt; to_date('{1}','yyyy-mm-dd')+1 {2}  
+				group by vc2PRODNAME  ,datstat,  vc2opname    
+				order by vc2PRODNAME  ,datstat,  vc2opname  ">
+		</property>
+		
+		<property name="countByCustomer" value="
+		select 
+			to_char(datstat,'yyyy-mm-dd') datstat,
+			vc2username,to_char(numorder) numorder,
+			vc2departname,
+			vc2opname,
+			numall,
+			numsuccess,
+			numfailed,
+			numnoreport,
+			num_all_fee,
+			num_rate 
+		from TLV_STAT_MMS_USER_DEPART sus 
+		where 
+			1=1 {0}  
+		union all 
+		select 
+			'总计' datstat,
+			'-' vc2username ,
+			'' numorder,
+			'-' vc2departname,
+			'-' vc2opname,
+			sum(NUMALL) NUMALL,
+			sum(NUMSUCCESS) NUMSUCCESS,
+			sum(NUMFAILED) NUMFAILED,
+			sum(NUMNOREPORT) NUMNOREPORT,
+			SUM(NUM_ALL_FEE) NUM_ALL_FEE,
+			to_char(TRUNC(sum(NUMSUCCESS)/sum(NUMALL),4) * 100 ) || '%' NUM_RATE 
+		from ( select to_char(datstat,'yyyy-mm-dd') datstat,vc2username,to_char(numorder) numorder,vc2departname,vc2opname,numall,numsuccess,numfailed,numnoreport,num_all_fee,num_rate from TLV_STAT_MMS_USER_DEPART sus where 1=1 {0} )  order by datstat,NUMORDER
+		"></property>
+		
+		<property name="countByDepartment" value="
+		select 
+			to_char(datstat,'yyyy-mm-dd') datstat,
+			to_char(NUMORDER) NUMORDER, 
+			vc2departname,
+			vc2opname,
+			sum(NUMALL) NUMALL,
+			sum(NUMSUCCESS) NUMSUCCESS,
+			sum(NUMFAILED) NUMFAILED,
+			NUMNOREPORT,
+			round(sum(NUMSUCCESS) * 100/sum(NUMALL), 2) || '%' NUM_RATE, 
+			sum(NUM_ALL_FEE) NUM_ALL_FEE
+		from TLV_STAT_MMS_DEPART 
+		where 
+			DATSTAT >= to_date('{0}','yyyy-mm-dd') and 
+			DATSTAT &lt; to_date('{1}','yyyy-mm-dd')+1 {2}  
+	    group by 
+				to_char(datstat,'yyyy-mm-dd') ,
+				to_char(NUMORDER) , 
+				vc2departname,
+				vc2opname,
+				NUMNOREPORT
+		union all 
+		select 
+			'总计' datstat,'','-','-',sum(NUMALL),sum(NUMSUCCESS),sum(NUMFAILED),sum(NUMNOREPORT),to_char(trunc(SUM(NUMSUCCESS)/SUM(NUMALL),4) * 100) || '%' NUMSUC_RATE,sum(NUM_ALL_FEE) NUM_ALL_FEE FROM (select to_char(datstat,'yyyy-mm-dd') datstat,to_char(NUMORDER) NUMORDER, vc2departname,vc2opname,NUMALL,NUMSUCCESS,NUMFAILED,NUMNOREPORT,NUM_RATE, NUM_ALL_FEE 
+		from TLV_STAT_MMS_DEPART 
+		where 
+			DATSTAT >= to_date('{0}','yyyy-mm-dd') and 
+			DATSTAT &lt; to_date('{1}','yyyy-mm-dd')+1 {2}) 
+			order by datstat,NUMORDER"></property>
+	</bean>
+	
+	<bean id="YXT2TlMmsContentDAO" class="com.project.business.dal.mms.TlMmsContentDAL" scope="prototype">
+	   <!-- 根据彩信内容编号删除彩信发送手机号表信息 -->
+		<property name="deleteSendListByContentIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="delete from tl_mms_send_list  where numcontentid={0}"></property>
+			</bean>
+		</property>
+	    <!-- 自身去重处理 -->
+		<property name="judgeRepeatMobileSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="  update  TL_MMS_CONTENT_CH_TEMP 
+							     set numflag = -2
+							   where rowid in (select rowidtmp
+							                     from (select rowid rowidtmp,
+							                                  row_number() over(partition by vc2mobile order by vc2mobile) rn
+							                             from  TL_MMS_CONTENT_CH_TEMP 
+							                            where  numcontentid = {0})
+							                    where rn > 1)"></property>
+			</bean>
+		</property> 
+	
+		<property name="queryTMPContentIDSQL" value="  select numcontentid,numuserid from TL_MMS_CONTENT Where NUMSTATUS = 2 and NUMCONTENTID in ( select numcontentid from  TL_MMS_CONTENT_CH_TEMP  where NumState = 0 group by numcontentid)"/>
+		<property name="queryContentStDataByContentIDSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select * FROM tl_mms_content_st where numcontentid ={0}"></property>
+			</bean>
+		</property>
+	  
+	  	<!-- 通过页面输入条件分页查询tl_mms_content表（用于彩信发送，彩信审核的查询） -->
+		<property name="QueryMMSCheckByArgs">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="PageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, adsfsds.* from (	
+								select numcontentid,
+							       nummmsid,
+	                   			   to_char(datreject, 'yyyy-mm-dd hh24:mi:ss') datreject,
+							       numcheck1id,                   
+	                   			   to_char(datcheck1, 'yyyy-mm-dd hh24:mi:ss') datcheck1,
+							       numcheck2id,
+	                   			   to_char(datcheck2, 'yyyy-mm-dd hh24:mi:ss') datcheck2,
+							       numstate,
+	                   			   to_char(datsend, 'yyyy-mm-dd hh24:mi:ss') datsend,
+	                   			   to_char(datendtime, 'yyyy-mm-dd hh24:mi:ss') datendtime,
+							       numchecktype,
+							       numsendtype,
+							       numsenduserid,
+							       vc2sendstatus,
+							       numstatus,
+							       vc2status,
+							       sendusername,
+							       numdepartid,
+							       vc2name,
+							       numuserid,
+							       vc2username,
+				                   to_char(numcreattime, 'yyyy-mm-dd hh24:mi:ss') numcreattime,
+				                   to_char(datsendsubmit, 'yyyy-mm-dd hh24:mi:ss') datsendsubmit,
+							       nummmsstate,
+							       nummmstype,
+							       vc2desc,
+							       numtotal,
+							       numsuccess,
+							       numfailed from tlv_mms_checkquery c where vc2sendstatus = 1 #0# 
+							) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="CountSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(0) from tlv_mms_checkquery c where vc2sendstatus = 1 #0# 
+						    " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!--  -->
+						<value>c.numcreattime >= date '{0}' </value>
+						<!--  -->
+						<value>c.numcreattime &lt; date '{0}' + 1</value>
+						<!-- 彩信创建人ID -->
+						<value>numuserid = '{0}'</value>
+						<!--  -->
+						<value>vc2name like '%{0}%'</value>
+						<!--  -->
+						<value>numstate = '{0}'</value>
+						<!--  -->
+						<value>numcheck1id = '{0}'</value>
+						<!--  -->
+						<value>numdepartid in ({0})</value>
+						<!-- 发送人ID -->
+						<value>numsenduserid = {0}</value>
+						<!-- 排序字段，一审按DATCHECK1排序，其他按datsend排序 -->
+						<value>{0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+	  
+	  	<!--	删除彩信批次信息-->
+	  	<property name="deleteByContentIDSQL" value="
+			BEGIN
+			delete from  TL_MMS_CONTENT_CH_TEMP  where numcontentid={0};
+			delete from tl_mms_content_st_detail where numcontentid={0};
+			delete from tl_mms_content_st where numcontentid={0};
+			delete from tl_mms_send_list where numcontentid={0};
+			delete from tl_mms_content where numcontentid={0};
+			END;
+			" />
+	
+	
+		
+		
+		<!-- 根据彩信内容ID获取彩信内容信息 -->
+		<property name="queryMMSSendObject">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select * from TLV_MMS_CONTENT_SENDOBJECT where numcontentid={0}"></property>
+			</bean>
+		</property>
+		
+		<!-- 根据内容ID导出错误手机号码信息 -->
+		<property name="queryDetailContent">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select VC2MOBILE,substr(VC2FLAG,1,2) VC2FLAG from tlv_mms_content_st_detail where numcontentid={0} and datcreatetime > date '{1}' and datcreatetime &lt; date '{1}' + 1"></property>
+			</bean>
+		</property>
+		<property name="queryDetailTypeContent">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select VC2MOBILE,substr(VC2FLAG,1,2) VC2FLAG from tlv_mms_content_st_detail where numflag={0} and numcontentid={1} and datcreatetime > date '{2}' and datcreatetime &lt; date '{2}' + 1"></property>
+			</bean>
+		</property>
+		<property name="queryDetailIllegalityContent">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select VC2MOBILE,substr(VC2FLAG,1,2) VC2FLAG from tlv_mms_content_st_detail where numflag in(0,-2) and numcontentid={0} and datcreatetime > date '{1}' and datcreatetime &lt; date '{1}' + 1"></property>
+			</bean>
+		</property>
+		
+		<!-- 以下为后台服务所用 -->
+		<property name="updateTableAndInsertTableSQL" value="
+			BEGIN
+			UPDATE TL_MMS_CONTENT TLSC SET NUMPRENUM ={1} WHERE TLSC.NUMCONTENTID={0};
+			INSERT INTO tl_mms_content_st(NUMCONTENTID,NUMTOTAL) values('{0}','{1}');
+			END;
+			" />
+		<!-- 以下为后台服务所用 -->
+		<property name="updateContentAndSTTotalNumSQL" value="
+			BEGIN
+			UPDATE TL_MMS_CONTENT TLSC SET NUMPRENUM ={1} WHERE TLSC.NUMCONTENTID={0};
+			UPDATE tl_mms_content_st set NUMTOTAL={1} where NUMCONTENTID={0};
+			END;
+		" />
+		<property name="updateSuccessFailureNumsSQL" value="update TL_MMS_CONTENT_ST set NUMSUCCESS={0},NUMFAILED={1} where NUMCONTENTID='{2}'" />
+		<property name="updateStateByContentIDSQL" value="
+		BEGIN
+		update tl_mms_content set numstatus='2' where NUMCONTENTID={0};
+		delete from  TL_MMS_CONTENT_CH_TEMP  where numcontentid={0};
+		delete from tl_mms_content_st_detail where numcontentid={0};
+		delete from tl_mms_content_st where numcontentid={0};
+		END;
+		" />
+		<property name="setOperateCompleteSQL" value="UPDATE TL_MMS_CONTENT TLSC SET TLSC.NUMSTATUS = 1 ,VC2STATUS=decode(VC2STATUS,-77,77,VC2STATUS) WHERE TLSC.NUMCONTENTID={0}" />
+		<property name="queryTypeByContentIDSQL" value="select NUMSENDTYPE from TL_MMS_CONTENT where NUMCONTENTID='{0}'" />
+		<property name="queryTMPNumsByContentIDSQL" value="select count(0) from  TL_MMS_CONTENT_CH_TEMP  where numcontentid='{0}' and NUMSTATE=0" />
+		<property name="querySucessNumsSQL" value="select count(1) from  TL_MMS_CONTENT_CH_TEMP  where NUMCONTENTID='{0}' and  NUMFLAG='1' and NUMSTATE='1'" />
+		<property name="queryNumsByContentIDSQL" value="select count(0) from tl_mms_content where NUMSTATUS=0 and numcontentid='{0}'" />
+		<property name="queryFailureNumsSQL" value="select count(1) from  TL_MMS_CONTENT_CH_TEMP  where NUMCONTENTID='{0}' and  (NUMFLAG='0' or NUMFLAG='-2') and NUMSTATE='1'" />
+		<property name="operateDataByContentIDAndMaxNumSQL" value="
+			begin
+			  UPDATE  TL_MMS_CONTENT_CH_TEMP 
+			     SET NUMSTATE = 2
+			   WHERE NUMSTATE = 0
+			     AND numcontentid = {0}
+			     and ROWNUM &lt;= {1};
+			  
+			  update  TL_MMS_CONTENT_CH_TEMP 
+			     set numflag = 0
+			   where not REGEXP_LIKE(vc2mobile, '{2}')
+			     and numcontentid = {0}
+			     and numflag = -1
+			     and NUMSTATE = 2;
+			                    
+			  UPDATE  TL_MMS_CONTENT_CH_TEMP 
+			     SET NUMFLAG = 1
+			   WHERE NUMFLAG = -1
+			     AND numcontentid = {0}
+			     and NUMSTATE = 2;
+			  
+			  
+			  INSERT INTO TL_MMS_SEND_LIST
+			    (NUMSENDLISTID, NUMCREATEUSER, VC2MOBILE, NUMCONTENTID, DATCREATETIME)
+			    SELECT TLSEQ_mms_SEND_LIST.NEXTVAL,
+			           {3},
+			           TP.VC2MOBILE,
+			           TP.NUMCONTENTID,
+			           SYSDATE
+			      FROM  TL_MMS_CONTENT_CH_TEMP  TP
+			     WHERE TP.NUMCONTENTID = {0}
+			       AND NUMSTATE = 2
+			       AND NUMFLAG = 1;
+			   
+			  INSERT INTO TL_MMS_CONTENT_ST_DETAIL
+			    (NUMSEQID, NUMCONTENTID, NUMFLAG, VC2MOBILE)
+			    SELECT TLSEQ_MMS_CONTENT_ST_DETAIL.NEXTVAL,
+			           tp.numcontentid,
+			           tp.NUMFLAG,
+			           tp.vc2mobile
+			      FROM  TL_MMS_CONTENT_CH_TEMP  tp
+			     WHERE tp.numcontentid = {0}
+			       AND tp.numstate = 2;		  
+			  
+			  update TL_MMS_CONTENT_ST
+			     set NUMSUCCESS = nvl(NUMSUCCESS, 0) +
+			                      (select count(1)
+			                         from  TL_MMS_CONTENT_CH_TEMP 
+			                        where NUMCONTENTID = {0}
+			                          and NUMFLAG = 1
+			                          and NUMSTATE = 2),
+			         NUMFAILED  = nvl(NUMFAILED, 0) +
+			                      (select count(1)
+			                         from  TL_MMS_CONTENT_CH_TEMP 
+			                        where NUMCONTENTID = {0}
+			                          and (NUMFLAG != 1)
+			                          and NUMSTATE = 2)
+			   where NUMCONTENTID = {0};
+			  
+			  delete from  TL_MMS_CONTENT_CH_TEMP 
+			   WHERE numcontentid = {0}
+			     and numstate = 2;
+			end;
+		" />
+		<property name="operateDataByContentIDSQL" value="
+		begin
+		UPDATE  TL_MMS_CONTENT_CH_TEMP   SET NUMSTATE=2 WHERE NUMSTATE=0 and numcontentid='{0}';
+		update  TL_MMS_CONTENT_CH_TEMP  set numflag='0' where not  REGEXP_LIKE(vc2mobile, '{1}') and numcontentid ='{0}' and NUMSTATE='2';
+		update  TL_MMS_CONTENT_CH_TEMP  set numflag = '-2'  where rowid in (select rowidtmp from (select rowid rowidtmp, row_number() over(partition by vc2mobile order by vc2mobile) rn from  TL_MMS_CONTENT_CH_TEMP   where numflag != '0' and numcontentid ='{0}') where rn > 1) ;
+		UPDATE  TL_MMS_CONTENT_CH_TEMP  SET NUMFLAG='1' WHERE NUMFLAG='-1' AND numcontentid='{0}' and NUMSTATE='2';
+		UPDATE  TL_MMS_CONTENT_CH_TEMP  SET numstate='1' WHERE numcontentid='{0}' and numstate='2' ;		
+		end;
+		" />
+		<property name="insert2LogSQL" value="INSERT INTO TL_MMS_CONTENT_ST_DETAIL (NUMSEQID,NUMCONTENTID,NUMFLAG,VC2MOBILE) SELECT  TLSEQ_MMS_CONTENT_ST_DETAIL.NEXTVAL,tp.numcontentid,tp.NUMFLAG,tp.vc2mobile FROM  TL_MMS_CONTENT_CH_TEMP  tp WHERE tp.numcontentid='{0}' AND tp.numstate=1" />
+		<property name="deleteDataByContentIDSQL" value="delete from  TL_MMS_CONTENT_CH_TEMP  where NUMSTATE='1' and numcontentid='{0}'" />
+		<property name="insert2SendMobileTableSQL" value="INSERT INTO TL_MMS_SEND_LIST(NUMSENDLISTID,NUMCREATEUSER,VC2MOBILE,NUMCONTENTID,DATCREATETIME) SELECT TLSEQ_mms_SEND_LIST.NEXTVAL,'{1}',TP.VC2MOBILE,TP.NUMCONTENTID,SYSDATE FROM  TL_MMS_CONTENT_CH_TEMP  TP WHERE TP.NUMCONTENTID='{0}' AND NUMSTATE=1 AND NUMFLAG ='1'" />
+	</bean>
+
+	<bean id="projectMmsContentDAL" class="com.project.business.dal.task.ProjectMmsContentDAL">
+		<!-- 号码处理 -->
+		<property name="operateDataByContentIdSQL" value="
+			begin
+			  insert into tl_mms_content_ch1_temp
+			    select a.numcontentid,
+			           a.vc2mobile,
+			           case
+			             when b.numopid is null or
+			                  not (length(a.vc2mobile) = 11 and
+			                   translate(a.vc2mobile, '\0123456789', '\') is null) then
+			              0
+			             else
+			              case
+			                when a.rn > 1 then
+			                 -2
+			                else
+			                 1
+			              end
+			           end numflag,
+			           a.numstate
+			      from (select numcontentid,
+			                   vc2mobile,
+			                   numflag,
+			                   numstate,
+			                   row_number() over(partition by vc2mobile order by vc2mobile) rn
+			              from TL_MMS_CONTENT_CH_TEMP 
+			              where numcontentid = {0}) a,
+			           tl_opphase b
+			     where substr(a.vc2mobile, 1, 3) = b.vc2phase(+);
+				commit;
+				
+			  insert into tl_mms_send_list
+			    (numsendlistid, numcreateuser, vc2mobile, numcontentid, datcreatetime)
+			    select tlseq_mms_send_list.nextval,
+			           {1},
+			           tp.vc2mobile,
+			           tp.numcontentid,
+			           sysdate
+			      from tl_mms_content_ch1_temp tp
+			     where numflag = 1 and numcontentid = {0};
+			
+			  insert into tl_mms_content_st_detail
+			    (numseqid, numcontentid, numflag, vc2mobile)
+			    select tlseq_mms_content_st_detail.nextval,
+			           tp.numcontentid,
+			           tp.numflag,
+			           tp.vc2mobile
+			      from tl_mms_content_ch1_temp tp
+			      where numcontentid = {0};
+			
+			  update tl_mms_content_st
+			     set numsuccess = nvl(numsuccess, 0) +
+			                      (select count(*)
+			                         from tl_mms_content_ch1_temp
+			                        where numflag = 1 and numcontentid = {0}),
+			         numfailed  = nvl(numfailed, 0) +
+			                      (select count(*)
+			                         from tl_mms_content_ch1_temp
+			                        where numflag != 1 and numcontentid = {0})
+			   where numcontentid = {0};
+			   
+				execute immediate 'alter table  TL_MMS_CONTENT_CH_TEMP  truncate partition p_{0}';
+				execute immediate 'alter table tl_mms_content_ch1_temp truncate partition p_{0}';
+				execute immediate 'alter table  TL_MMS_CONTENT_CH_TEMP  drop partition p_{0}';
+				execute immediate 'alter table tl_mms_content_ch1_temp drop partition p_{0}';
+			end;" />
+		
+		<!-- 个性化号码处理 -->
+		<property name="operateDiyDataByContentIdSQL" value="
+			begin
+			  insert into tl_mms_content_ch1_temp
+				select a.numcontentid,
+				       a.vc2mobile,
+				       case
+				         when b.numopid is null or
+				              not (substr(a.vc2mobile, 12, 1) ='|' and
+				               translate(substr(a.vc2mobile,1,11), '\0123456789', '\') is null) then
+				          0
+				         else
+				          case
+				         when a.rn > 1 then
+				          -2
+				         else
+				          1
+				       end end numflag,
+				       a.numstate
+				  from (select numcontentid,
+				               vc2mobile,
+				               numflag,
+				               numstate,
+				               row_number() over(partition by vc2mobile order by vc2mobile) rn
+				          from TL_MMS_CONTENT_CH_TEMP 
+				          where numcontentid = {0}) a,
+				       tl_opphase b
+				 where substr(a.vc2mobile, 1, 3) = b.vc2phase(+);
+				commit;
+				
+			  insert into tl_mms_send_list
+			    (numsendlistid, numcreateuser, vc2mobile, numcontentid, datcreatetime)
+			    select tlseq_mms_send_list.nextval,
+			           {1},
+			           tp.vc2mobile,
+			           tp.numcontentid,
+			           sysdate
+			      from tl_mms_content_ch1_temp tp
+			     where numflag = 1 and numcontentid = {0};
+			
+			  insert into tl_mms_content_st_detail
+			    (numseqid, numcontentid, numflag, vc2mobile)
+			    select tlseq_mms_content_st_detail.nextval,
+			           tp.numcontentid,
+			           tp.numflag,
+			           tp.vc2mobile
+			      from tl_mms_content_ch1_temp tp
+			      where numcontentid = {0};
+			
+			  update tl_mms_content_st
+			     set numsuccess = (select count(*)
+			                         from tl_mms_content_ch1_temp
+			                        where numflag = 1 and numcontentid = {0}),
+			         numfailed  = (select count(*)
+			                         from tl_mms_content_ch1_temp
+			                        where numflag != 1 and numcontentid = {0})
+			   where numcontentid = {0};
+			end;" />
+			
+		<!-- 查询表分区 -->
+		<property name="selectContentTempPartitionSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select partition_name from user_tab_partitions where table_name = 'TL_MMS_CONTENT_CH_TEMP' and partition_name = 'P_{0}'"></property>
+			</bean>
+		</property> 
+		
+		<!-- 查询表分区 -->
+		<property name="selectContentTemp1PartitionSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select partition_name from user_tab_partitions where table_name = 'TL_MMS_CONTENT_CH1_TEMP' and partition_name = 'P_{0}'"></property>
+			</bean>
+		</property> 
+		
+		<!-- 删除表分区 -->
+		<property name="deleteContentTempPartitionSQL" value="
+			begin
+				execute immediate 'alter table TL_MMS_CONTENT_CH_TEMP truncate partition p_{0}';
+				execute immediate 'alter table TL_MMS_CONTENT_CH_TEMP drop partition p_{0}';
+			end;
+		" />
+			
+		<!-- 删除表分区 -->
+		<property name="deleteContentTemp1PartitionSQL" value="
+			begin
+				execute immediate 'alter table tl_mms_content_ch1_temp truncate partition p_{0}';
+				execute immediate 'alter table tl_mms_content_ch1_temp drop partition p_{0}';
+			end;
+		" />
+			
+		<!-- 更新批次状态为处理中并删除统计信息 -->
+		<property name="updateStateByContentIdSQL" value="
+			begin
+				update tl_mms_content set numstatus='2' where NUMCONTENTID={0};
+				delete from tl_mms_content_st where numcontentid={0};
+			end;
+		" />
+			
+		<!-- 创建表分区 -->
+		<property name="createPartitionByContentIdSQL" value="
+			begin
+				execute immediate 'alter table  TL_MMS_CONTENT_CH_TEMP  add partition p_{0} values ({0}) tablespace YXTEC_TEMPDATA';
+				execute immediate 'alter table tl_mms_content_ch1_temp add partition p_{0} values ({0}) tablespace YXTEC_TEMPDATA';
+			end;" />
+	</bean>
+</beans>

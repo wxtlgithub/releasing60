@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<bean class="com.lxt2.rescenter.util.MimeFactory" init-method="init">
+		<property name="mime" ref="mmsMime"/>
+	</bean>
+	
+	<!-- 彩信可识别的媒体文件配置 -->
+	<bean id="mmsMime" class="com.lxt2.rescenter.mime.Mime">
+		<property name="mmsContentTypeList">
+			<list>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="amr"/>
+					<constructor-arg value="audio/amr"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="mid"/>
+					<constructor-arg value="audio/mid"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="midi"/>
+					<constructor-arg value="audio/midi"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="mp3"/>
+					<constructor-arg value="audio/mpeg"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="wav"/>
+					<constructor-arg value="audio/x-wav"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="wbmp"/>
+					<constructor-arg value="image/vnd.wap.wbmp"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="bmp"/>
+					<constructor-arg value="image/bmp"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="gif"/>
+					<constructor-arg value="image/gif"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="jpg"/>
+					<constructor-arg value="image/jpeg"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="jpeg"/>
+					<constructor-arg value="image/jpeg"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="png"/>
+					<constructor-arg value="image/png"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="txt"/>
+					<constructor-arg value="text/plain"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="htm"/>
+					<constructor-arg value="text/html"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="html"/>
+					<constructor-arg value="text/html"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="imy"/>
+					<constructor-arg value="text/x-iMelody"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="wml"/>
+					<constructor-arg value="text/vnd.wap.wml"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="rm"/>
+					<constructor-arg value="video/rm"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="3gp"/>
+					<constructor-arg value="video/3gp"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="mp4"/>
+					<constructor-arg value="video/mp4"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="tmp"/>
+					<constructor-arg value="other/tmp"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="smil"/>
+					<constructor-arg value="application/smil"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="pdf"/>
+					<constructor-arg value="application/pdf"/>
+				</bean>
+				<bean class="com.lxt2.rescenter.mime.MmsContentType">
+					<constructor-arg value="doc"/>
+					<constructor-arg value="application/msword"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>

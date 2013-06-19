@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+		<bean id="tlBullentinInfoDao" class="com.lxt2.systemapp.dal.notice.TlBulletinInfoDAL" scope="prototype">
+		<!-- 	  分页查询公告表中数据  -->
+		<property name="queryAllTlbullentinsSQL">
+		<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+			<property name="sqlType">
+				<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+			</property>
+			<property name="PageSQLObj">
+				<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL"
+						value="
+						select * from (select rownum numrowasdf, adsfsds.* from (	
+							select numseqid, vc2bulletin, 
+							vc2bultitle,vc2nodeid,
+							t.datcreatetime  datcreatetime,
+	                       t.numuserid numuserid,
+	                       vc2filepath,
+	                       u.vc2username vc2username
+                	  from tl_bulletin_info t,tl_user u
+              	   where  t.numuserid = u.numuserid (+) #0# 
+              		   order by t.datcreatetime desc
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+					" />
+				</bean>
+			</property>
+			<property name="CountSQLObj">
+				<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL"
+						value="select count(*)
+		                	  from tl_bulletin_info t,tl_user u
+			              	  where  t.numuserid = u.numuserid (+) #0# 
+              		   		  order by t.datcreatetime desc 
+					    " />
+				</bean>
+			</property>
+			<property name="sqlPartList">
+				<list>
+					<!-- 开始时间 -->
+					<value>t.datcreatetime >= date '{0}' </value>
+					<!-- 结束时间 -->
+					<value>t.datcreatetime &lt; date '{0}'+1</value>
+					<!-- 公告创建人ID -->
+					<value>t.numuserid = '{0}'</value>
+					<!-- 标题 -->
+					<value>t.vc2bultitle like '%{0}%'</value>
+					<!-- 公告id -->
+					<value>t.numseqid = '{0}'</value>
+					<!-- 可见网元 -->
+					<value>t.vc2nodeid like '%{0}%'</value>
+				</list>
+			</property>
+		</bean>
+	</property>
+  
+			<!-- 	queryLoadSvcListSQL 查询正是表数据总数  -->
+	<property name="queryOneBullentinSQL">
+		<bean class="com.lxt2.common.common.model.SimpleSQL">
+			<property name="sqlType">
+				<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+			</property>
+			<property name="theSQL"
+				value="select numseqid, vc2bulletin, datcreatetime, numuserid, vc2filepath
+								from tl_bulletin_info where numseqid='{0}'"></property>
+		</bean>
+	</property>
+	</bean>
+
+</beans>

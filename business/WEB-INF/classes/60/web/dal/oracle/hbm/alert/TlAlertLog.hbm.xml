@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.systemapp.model.alert.TlAlertLog" table="TL_ALERT_LOG">
+
+		<!--报警编号(NUMBER:22)-->
+		<id name="numalertid" type="java.lang.Integer">
+			<column name="NUMALERTID" precision="22" scale="0" />
+			<generator class="increment"></generator>
+		</id>
+
+		<!--(NUMBER:22)-->
+		<property name="numtypeid" type="java.lang.Integer">
+			<column name="NUMTYPEID" length="22" />
+		</property>
+		
+		<!--任务编号(NUMBER:22)-->
+		<property name="numtaskid" type="java.lang.Integer">
+			<column name="NUMTASKID" length="22" />
+		</property>
+		
+		<!--网关编号(NUMBER:22)-->
+		<property name="numgwid" type="java.lang.Integer">
+			<column name="NUMGWID" length="22" />
+		</property>
+
+		<!--报警产生时间(DATE:7)-->
+		<property name="datcreatetime" type="java.util.Date">
+			<column name="DATCREATETIME" length="7" />
+		</property>
+
+		<!--报警描述(VARCHAR2:200)-->
+		<property name="vc2desc" type="java.lang.String">
+			<column name="VC2DESC" length="200" />
+		</property>
+
+		<!--报警更新时间(DATE:7)-->
+		<property name="datupdatetime" type="java.util.Date">
+			<column name="DATUPDATETIME" length="7" />
+		</property>
+
+		<!--报警状态1存在 2消亡 (NUMBER:22)-->
+		<property name="numstate" type="java.lang.Integer">
+			<column name="NUMSTATE" length="22" />
+		</property>
+
+	</class>
+</hibernate-mapping>
+  

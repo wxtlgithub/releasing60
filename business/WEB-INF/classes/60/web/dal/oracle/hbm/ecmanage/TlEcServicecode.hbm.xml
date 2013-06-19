@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.yxt.business.model.ecmanage.TlEcServicecode" table="TL_EC_SERVICECODE">
+
+		<!--序列号，由TLSEQ_EC_SERVICECODE生成(NUMBER:22) -->
+		<id name="numseqid" type="java.lang.Integer">
+			<column name="NUMSEQID" precision="22" scale="0" />
+			<generator class="sequence">
+				<param name="sequence">TLSEQ_EC_SERVICECODE</param>
+			</generator>
+		</id>
+
+		<!--EC序列号，TL_EC_INFO表中系统生成NUMECID(NUMBER:22) -->
+		<property name="numecid" type="java.lang.Integer">
+			<column name="NUMECID" length="22" />
+		</property>
+
+		<!--EC编号，TL_EC_INFO表中的VC2ECID(VARCHAR2:7) -->
+		<property name="vc2ecid" type="java.lang.String">
+			<column name="VC2ECID" length="7" />
+		</property>
+
+		<!--运营商编号，对应TL_OPERATOR表(NUMBER:22) -->
+		<property name="numopid" type="java.lang.Integer">
+			<column name="NUMOPID" length="22" />
+		</property>
+
+		<!--业务代码，对应TL_SERVICECODE表(NUMBER:22) -->
+		<property name="numsvcid" type="java.lang.Integer">
+			<column name="NUMSVCID" length="22" />
+		</property>
+
+		<!--是否可用，1可用，0删除(NUMBER:22) -->
+		<property name="numstatus" type="java.lang.Integer">
+			<column name="NUMSTATUS" length="22" />
+		</property>
+
+		<!--建议子号码(VARCHAR2:10) -->
+		<property name="numsubcode" type="java.lang.String">
+			<column name="NUMSUBCODE" length="10" />
+		</property>
+
+		<!--接入方式（页面、接口 ），可多选(VARCHAR2:30) -->
+		<property name="vc2inputtype" type="java.lang.String">
+			<column name="VC2INPUTTYPE" length="30" />
+		</property>
+
+		<!--客户ip(VARCHAR2:15) -->
+		<property name="vc2cusip" type="java.lang.String">
+			<column name="VC2CUSIP" length="15" />
+		</property>
+
+		<!--计费方式（按条、按套餐、按产品）(VARCHAR2:15) -->
+		<property name="vc2feetype" type="java.lang.String">
+			<column name="VC2FEETYPE" length="15" />
+		</property>
+
+		<!--签约主体编号，对应TL_SIGN_LIST(NUMBER:22) -->
+		<property name="numsign" type="java.lang.Integer">
+			<column name="NUMSIGN" length="22" />
+		</property>
+
+		<!--结算地，使用分公司名称，对应TL_BRANCHCOMPANY_LIST(NUMBER:22) -->
+		<property name="numfeearea" type="java.lang.Integer">
+			<column name="NUMFEEAREA" length="22" />
+		</property>
+
+		<!--合同计费规则(VARCHAR2:1000) -->
+		<property name="vc2confeerule" type="java.lang.String">
+			<column name="VC2CONFEERULE" length="1000" />
+		</property>
+
+		<!--加入时间(DATE:7) -->
+		<property name="datinsert" type="java.util.Date">
+			<column name="DATINSERT" length="7" />
+		</property>
+	</class>
+</hibernate-mapping>
+  

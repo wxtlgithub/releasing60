@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<sevlet>
+		<servlet-name>TlAlertType</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.alert.TlAlertTypeSev
+		</servlet-class>
+		<url-pattern>/tlalerttype.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>TlAlertKpiLog</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.alert.TlAlertKpiLogSev
+		</servlet-class>
+		<url-pattern>/tlalertkpilog.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>TlAlertLog</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.alert.TlAlertLogSev
+		</servlet-class>
+		<url-pattern>/URL/Alert/AlertQuery.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>TlAlertLog</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.alert.TlAlertLogSev
+		</servlet-class>
+		<url-pattern>/URL/Alert/AlertUpdate.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>TlAlertLogData</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.alert.TlAlertLogDataSev
+		</servlet-class>
+		<url-pattern>/tlalertlogdata.ashx</url-pattern>
+	</sevlet>
+</sevlets>

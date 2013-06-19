@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<sevlet>
+		<servlet-name>cmd</servlet-name>
+		<servlet-class>com.lxt2.systemapp.blf.deployment.TlTaskSev
+		</servlet-class>
+		<url-pattern>URL/deployment/node.ashx</url-pattern>
+	</sevlet>
+</sevlets>

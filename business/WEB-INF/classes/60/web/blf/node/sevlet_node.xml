@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<sevlet>
+		<servlet-name>cmd</servlet-name>
+		<servlet-class>com.lxt2.common.base.Cmd
+		</servlet-class>
+		<url-pattern>/cmd.ashx</url-pattern>
+	</sevlet>
+</sevlets>

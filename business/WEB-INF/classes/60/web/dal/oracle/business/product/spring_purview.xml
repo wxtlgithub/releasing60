@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="TlUserDAO" class="com.lxt2.business.dal.purview.TlUserDAL"
+		scope="prototype">
+		
+		<property name="queryUserInfoByDepartmentIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					select numuserid,vc2username,vc2email from
+					 (SELECT U.* FROM TL_DEPARTMENT D INNER JOIN TL_USER U ON D.NUMDEPARTID=U.NUMDEPARTID AND D.NUMSTATE=1) 
+					 where numdepartid = {0} and numstate = 1 AND NUMTYPE=2 and NUMUSERID!={1} order by vc2username,numuserid
+					"></property>
+			</bean>
+		</property>		
+		<property name="queryUserByDepartidForComboxSQL"
+			value="select numuserid,vc2username from tl_user tl where tl.NUMSTATE=1 {0}"></property>
+		<property name="checkUserAccountByIdSQL"
+			value="select count(1) as nums from tl_user where VC2UACCOUNT='{0}' and NUMUSERID != '{1}' and NUMSTATE != -1"></property>
+		<property name="checkUserAccountSQL"
+			value="select count(1) as nums from tl_user where VC2UACCOUNT='{0}' and NUMSTATE != -1"></property>
+		<property name="getAuthorizeByDepartIdWithRoleIdSQL"
+			value="select {0} from (SELECT U.*  FROM TL_USER U 
+			INNER JOIN TL_USER_ROLE UR ON U.Numuserid = UR.NUMUSERID  
+			AND U.NUMDEPARTID = {1} AND U.NUMSTATE=1  AND UR.NUMROLEID = {2}) "></property>
+		<property name="getNoAuthorizeByDepartIdWithRoleIdSQL"
+			value="select {0}
+			  from tl_user tu
+			 where tu.numuserid not in
+			       (SELECT U.numuserid
+			          FROM TL_USER U, TL_USER_ROLE UR
+			         where U.Numuserid = UR.NUMUSERID
+			           AND U.NUMDEPARTID = {1}
+			           AND U.NUMSTATE = 1
+			           AND UR.NUMROLEID = {2})
+			   AND tu.NUMSTATE = 1
+			   AND tu.NUMTYPE = 2
+			   and tu.NUMDEPARTID = {1}"></property>
+		<property name="queryByNameAndPwd"
+			value=" from TlUser t where t.vc2uaccount = '{0}' and t.vc2upassword='{1}' and numstate=1"></property>
+		<property name="queryUserInfoById"
+			value="select {0} from tlv_user_role_drole where NUMUSERID ={1} order by vc2username"></property>
+		<property name="updateUserDeleteFlagSQL"
+			value="update tl_user set NUMSTATE = -1 where numuserid in ({0})"></property>
+		<property name="queryUserByArgs">
+			<bean class="com.lxt2.common.common.model.PageSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="countSQL"
+					value="select count(1) from (SELECT U1.*,D.VC2DEPARTNAME,U2.Vc2username vc2creatorname,
+			U2.VC2USERNAME vc2lastmodifyname FROM 
+			((TL_USER U1 INNER JOIN TL_USER U2 ON U1.NUMCREATOR = U2.NUMUSERID AND U1.NUMSTATE = 1) 
+			LEFT JOIN TL_DEPARTMENT D ON U1.NUMDEPARTID = D.NUMDEPARTID)
+	        LEFT JOIN TL_USER U3 ON U1.NUMLASTMODIFYUSER = U3.NUMUSERID WHERE U1.VC2USERNAME LIKE '%{0}%' {1}) "></property>
+				<property name="pageSQL"
+					value="
+					select * from (select rownum numrowasdf, 
+			adsfsds.* from (SELECT U1.*,D.VC2DEPARTNAME,U2.Vc2username vc2creatorname,
+			U2.VC2USERNAME vc2lastmodifyname FROM 
+			((TL_USER U1 INNER JOIN TL_USER U2 ON U1.NUMCREATOR = U2.NUMUSERID AND U1.NUMSTATE = 1) 
+			LEFT JOIN TL_DEPARTMENT D ON U1.NUMDEPARTID = D.NUMDEPARTID)
+	        LEFT JOIN TL_USER U3 ON U1.NUMLASTMODIFYUSER = U3.NUMUSERID WHERE U1.VC2USERNAME LIKE '%{0}%' {1}  
+	        order by U1.Datcreatetime desc,U1.Numuserid desc) adsfsds where rownum &lt; {2}+{3}+1) where numrowasdf > {3}
+					
+					
+					
+					" />
+			</bean>
+		</property>
+		
+	</bean>
+
+
+	<bean id="TlDepartmentDAO" class="com.lxt2.business.dal.purview.TlDepartmentDAL"
+		scope="prototype">
+		<property name="checkDepartmentNameByIdSQL"
+			value="select count(1) as nums from tl_department where VC2DEPARTNAME='{0}' and NUMDEPARTID != '{1}' and numstate!=-1"></property>
+		<property name="checkDepartmentNameSQL"
+			value="select count(1) as nums from tl_department where VC2DEPARTNAME='{0}' and numstate!=-1"></property>
+		<property name="getAuthorizeByDepartIdWithRoleIdSQL"
+			value="SELECT {0} FROM (SELECT D.* FROM TL_DEPARTMENT D 
+			INNER JOIN TL_DEPARTMENT_ROLE DR ON D.NUMDEPARTID=DR.NUMDEPARTID 
+			AND D.NUMPARENTDEPART={1} AND D.NUMSTATE=1 AND DR.NUMROLEID={2})"></property>
+		<property name="getNoAuthorizeByDepartIdWithRoleIdSQL"
+			value="SELECT {0} FROM TL_DEPARTMENT DE WHERE DE.NUMPARENTDEPART={1}  
+			AND DE.NUMSTATE=1  AND DE.NUMDEPARTID not in 
+			(SELECT D.Numdepartid FROM TL_DEPARTMENT D INNER JOIN TL_DEPARTMENT_ROLE DR 
+			ON D.NUMDEPARTID=DR.NUMDEPARTID AND
+			 D.NUMPARENTDEPART={1} AND D.NUMSTATE=1 AND DR.NUMROLEID={2})"></property>
+		<property name="queryListByDepartmentidByparentid"
+			value=" select numdepartid from TlDepartment t where numparentdepart = '{0}' "></property>
+		<property name="queryPageByDepartmentName">
+			<bean class="com.lxt2.common.common.model.PageSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQL" value="select * from 
+						 (select rownum numrowasdf, adsfsds.* from 
+							(select d.*, d2.vc2departname vc2parentdepartname, u1.vc2username vc2creatorname,
+									u2.vc2username vc2lastmodifyname, d3.vc2ecname
+							  from tl_department d
+							  left join tl_user u1 on d.numcreator = u1.numuserid
+							  left join tl_user u2 on d.numlastmodifyuser = u2.numuserid
+							  left join tl_department d2 on d.numparentdepart = d2.numdepartid
+							  left join (select t1.numdepartid,
+						                    decode(t1.numdepartid, 1, '总部', t2.vc2ecname) vc2ecname
+						               from (select numdepartid, vc2departid,
+						                            to_number(substr(vc2departid,
+						                                             instr(vc2departid, ';', 1, 2) + 1,
+						                                             instr(vc2departid, ';', 1, 3) -
+						                                             instr(vc2departid, ';', 1, 2) - 1)) numdepartid1
+						                       from (select numdepartid, max(sys_connect_by_path(numdepartid, ';') || ';') vc2departid
+						                             from tl_department
+						                             where numstate = 1 connect by prior numdepartid = numparentdepart
+						                             group by numdepartid)) t1,
+						                    tl_ec_info t2
+						              where t1.numdepartid1 = t2.numdepartid(+)) d3 on d.numdepartid = d3.numdepartid
+						where vc2departname like '%{0}%' and numstate = 1 and numdepartid {1} {2}
+						order by datcreatetime desc, numdepartid desc) adsfsds where rownum &lt; {3}+{4}+1) where numrowasdf > {4}"
+				 />
+				<property name="countSQL"
+					value="select count(1) from (select d.*, d2.vc2departname vc2parentdepartname, u1.vc2username vc2creatorname,
+						       u2.vc2username vc2lastmodifyname, d3.vc2ecname
+						  from tl_department d
+						  left join tl_user u1 on d.numcreator = u1.numuserid
+						  left join tl_user u2 on d.numlastmodifyuser = u2.numuserid
+						  left join tl_department d2 on d.numparentdepart = d2.numdepartid
+						  left join (select t1.numdepartid,
+						                    decode(t1.numdepartid, 1, '总部', t2.vc2ecname) vc2ecname
+						               from (select numdepartid, vc2departid,
+						                            to_number(substr(vc2departid,
+						                                             instr(vc2departid, ';', 1, 2) + 1,
+						                                             instr(vc2departid, ';', 1, 3) -
+						                                             instr(vc2departid, ';', 1, 2) - 1)) numdepartid1
+						                       from (select numdepartid, max(sys_connect_by_path(numdepartid, ';') || ';') vc2departid
+						                             from tl_department
+						                             where numstate = 1 connect by prior numdepartid = numparentdepart
+						                             group by numdepartid)) t1,
+						                    tl_ec_info t2
+						              where t1.numdepartid1 = t2.numdepartid(+)) d3 on d.numdepartid = d3.numdepartid
+						where vc2departname like '%{0}%' and numstate = 1 and numdepartid {1} {2}
+						order by datcreatetime desc, numdepartid desc)" />
+			</bean>
+		</property>
+		
+		<property name="queryListByDepartmentTree"
+			value="select {0} from tl_department where numparentdepart = {1} and numstate =1 order by NUMORDER"></property>
+		<property name="queryListByDepartId"
+			value="select {0} from tl_department where NUMDEPARTID ={1} and NUMSTATE = 1"></property>
+
+		<property name="querycount_HasChild"
+			value="select {0} from tl_department where numparentdepart = {1}"></property>
+		<property name="deleteDepartment"
+			value="update tl_department set numstate=-1 where numdepartid in({0})"></property>
+		<property name="isExistsNextLevelByDepartmentId"
+			value="select count(1) as nums from tl_department where numparentdepart={0} and NUMSTATE = 1"></property>
+		<property name="getNoDeleteUserCountByDepartId"
+			value="select count(1) as nums from tl_user where numdepartid = {0} and numstate != -1"></property>
+		<property name="getFuncRoleByDepartId"
+			value="select distinct numroleid from tl_role where numdepartid = {0} and numroletype=1"></property>
+		<property name="getUserGroupCountByDepartId"
+			value="select count(1) as nums from tl_userGROUP where numdepartid = {0} and vc2validflag != -1  and NUMTYPE=0"></property>
+	</bean>
+
+
+
+	<bean id="TlRoleDAO" class="com.lxt2.business.dal.purview.TlRoleDAL"
+		scope="prototype">
+		<property name="queryRoleListByDepartmentId"
+			value="SELECT {0} FROM TL_DEPARTMENT D  INNER JOIN TL_DEPARTMENT_ROLE DR ON D.NUMDEPARTID = DR.NUMDEPARTID  AND D.NUMSTATE = 1 
+ INNER JOIN TL_ROLE R ON DR.NUMROLEID = R.NUMROLEID WHERE D.NUMDEPARTID = '{1}' and r.numroletype = 1"></property>
+		<property name="queryRoleListByUserId"
+			value="SELECT {0}  FROM TL_USER U  INNER JOIN TL_USER_ROLE UR ON U.NUMUSERID = UR.NUMUSERID 
+ AND U.NUMSTATE = 1  INNER JOIN TL_ROLE R ON UR.NUMROLEID = R.NUMROLEID WHERE U.NUMUSERID={1} and r.numroletype = 1"></property>
+		<property name="deleteUserRoleRelationSQL"
+			value="delete from TL_USER_ROLE where numuserid in ({0}) and numtype =1"></property>
+		<property name="getRoleListByRoleNameSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="countSQL"
+					value="select count(1) from tlv_rolelist where 1=1 and numroletype=1 {0} "></property>
+				<property name="pageSQL"
+					value="select * from (select rownum numrowasdf, 
+					adsfsds.* from (
+						select numroleid,vc2rolename,vc2roledesc,numcreator,vc2creatorname,
+				          to_char(datcreatetime,'yyyy-mm-dd hh24:mi:ss') datcreatetime,
+				          numlastmodifyuser,numdepartid,vc2departname,vc2lastmodifyname,
+				          to_char(datlastmodifytime,'yyyy-mm-dd hh24:mi:ss') datlastmodifytime
+					 from tlv_rolelist where 1=1 and numroletype=1
+					  {0}) 
+					adsfsds where rownum &lt; {1}+{2}+1) where numrowasdf > {2} " />
+			</bean>
+		</property>
+		<property name="getRightTreeByRoleIdsSQL"
+			value="select t1.numrightid,
+		       t1.vc2rightname,
+		       t1.numorder,
+		       t1.numparentid,
+		       t1.vc2type,
+		       t1.vc2codegroupurl,
+		       decode(t2.numpermissionid, null, 'false', 'true') checked,
+		       t1.numorder
+		  from (select distinct tp.numrightid,
+		                        tr.vc2rightname,
+		                        tr.numorder,
+		                        tr.numparentid,
+		                        tr.vc2type,
+		                        tr.vc2codegroupurl
+		          from tl_permission2 tp, tl_right2 tr
+		         where tp.numroleid in ({0})
+		           and tp.numrightid = tr.numrightid
+		           and tr.numparentid = {1}
+		           and tr.VC2ENABLEDFLAG!=0
+		         order by tr.numorder) t1,
+		       (select distinct tp.numrightid,
+		                        tr.vc2rightname,
+		                        tr.numorder,
+		                        tr.numparentid,
+		                        tp.numpermissionid,
+		                        tr.vc2type,
+		                        tr.vc2codegroupurl
+		          from tl_permission2 tp, tl_right2 tr
+		         where tp.numroleid in ({2})
+		           and tp.numrightid = tr.numrightid
+		           and tr.numparentid = {1}
+		           and tr.VC2ENABLEDFLAG!=0
+		         order by tr.numorder) t2
+		 where t1.numrightid = t2.numrightid(+)
+		  order by t1.numorder
+			"></property>
+		<property name="getRightTreeByRoleIdsShowSQL"
+			value="select distinct tp.numrightid,
+		                        tr.vc2rightname,
+		                        tr.numorder,
+		                        tr.numparentid,
+		                        tr.vc2type,
+		                        tr.vc2codegroupurl
+		          from tl_permission2 tp, tl_right2 tr
+		         where tp.numroleid in ({0})
+		           and tp.numrightid = tr.numrightid
+		           and tr.numparentid = {1}
+		         order by tr.numorder
+			"></property>
+		
+		<property name="getRoleIdByRoleNameSQL"
+			value="select count(1) as nums from tl_role where vc2rolename='{0}' and numroletype=1"></property>
+		<property name="getRoleIdByRoleNameByUpdateSQL"
+			value="select count(1) as nums from tl_role where vc2rolename='{0}' and NUMROLEID!={1} and numroletype=1"></property>
+		<property name="isExsitDepartByRoleIdsSQL"
+			value="SELECT COUNT(1)as nums FROM TL_DEPARTMENT_ROLE DR INNER 
+			JOIN TL_DEPARTMENT D ON DR.NUMDEPARTID=D.NUMDEPARTID 
+			AND D.NUMSTATE=1 WHERE DR.NUMROLEID ={0} AND
+			 dr.numdepartid !=( SELECT tr.numdepartid FROM tl_role tr WHERE tr.numroleid={0}) "></property>
+		<property name="isExsitUserByroledIdsSQL"
+			value="SELECT COUNT(1) as nums FROM TL_USER_ROLE UR 
+			INNER JOIN TL_USER U ON UR.NUMUSERID=U.NUMUSERID 
+			AND U.NUMSTATE=1 WHERE UR.NUMROLEID IN ({0})"></property>
+		<property name="deleteRoleIdsSQL" value="delete from tl_role where numroleid in ({0})"></property>
+		<property name="deleteRoleRightSQL"
+			value="delete from tl_permission2 where numroleid in ({0})"></property>
+		<property name="getRoleInfoListByDepartmentidSQL" 
+			value="select r.* from tl_role r where r.numroleid  in(
+			 select tdr.numroleid from tl_department_role tdr where tdr.numdepartid={0}
+			 ) and r.numdepartid=(select numparentdepart from tl_department td where td.numdepartid={0}) 
+			and r.numroleid!={1} and r.numroletype=1"></property>
+		<property name="getRoleInfoListByDepartmentidAdminSQL" 
+			value="select r.* from tl_role r where r.numroleid!={0} and r.numroletype=1"></property>
+		<property name="getNoRoleInfoListByDepartmentidSQL"
+			value="select r.* from tl_role r where r.numroleid not in(
+			 select tdr.numroleid from tl_department_role tdr where tdr.numdepartid={0}
+			 ) and r.numdepartid=(select numparentdepart from tl_department td where td.numdepartid={0}) 
+			and r.numroleid!={1} and r.numroletype=1"></property>
+		<property name="getRoleIdByDepartId" value="select r.numRoleId from tl_role r where r.numDepartId in ({0}) and r.numroletype=1 "></property>
+	</bean>
+
+	<bean id="TlRightDAO" class="com.lxt2.business.dal.purview.TlRightDAL"
+		scope="prototype">
+		<property name="queryRightListByRoleIds"
+			value="select {0} from (SELECT R.NUMROLEID,
+		               R.NUMROLESTATE,
+		               R.VC2ROLENAME,
+		               RI.NUMRIGHTID,
+		               RI.VC2RIGHTNAME,
+		               RI.VC2CODEGROUPURL,
+		               RI.VC2CODEGROUPMODULE,
+		               RI.NUMORDER,
+		               RI.NUMPARENTID,
+		               RI.VC2TYPE
+         		   FROM TL_ROLE R
+         			 INNER JOIN TL_PERMISSION2 P
+           			 ON R.NUMROLEID = P.NUMROLEID
+          			 AND R.NUMROLESTATE = 1
+        			 INNER JOIN TL_RIGHT2 RI
+            		 ON RI.NUMRIGHTID = P.NUMRIGHTID
+                     AND RI.VC2ENABLEDFLAG = '1') T
+ 					 where NUMROLEID IN ({1})
+   					 and NUMROLESTATE = 1
+ 					 group by {0}
+ 					 order by max(numorder)"></property>
+		<property name="queryPageGetRightListByName">
+			<bean class="com.lxt2.common.common.model.PageSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="countSQL"
+					value="select count(1) from tl_right2 where VC2ENABLEDFLAG!=0 and vc2rightname  like '%{0}%' "></property>
+				<property name="pageSQL"
+					value="
+					select * from (select rownum numrowasdf, 
+				adsfsds.* from 
+					(select * from tl_right2 where VC2ENABLEDFLAG!=0 and vc2rightname
+					 like '%{0}%' order by numparentid) adsfsds where rownum &lt; {1}+{2}+1) where numrowasdf > {2}
+					" />
+			</bean>
+		</property>
+		<property name="queryRight2ParentListByColumns"
+			value="select {0} from tlv_right2 where vc2type = '0' and vc2enabledflag = '1'  order by numrightid"></property>
+		<property name="getCountRightIdByPermission"
+			value="select count(1) nums from tl_permission2 where numrightid in ({0})"></property>
+		<property name="deleteRightIds"
+			value="delete from tl_right2 where numrightid in ({0})"></property>
+		<property name="updateDeleteRightIdsSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="update tl_right2 set vc2enabledflag='0' where numrightid in ({0})"></property>
+			</bean>
+		</property>
+		
+	</bean>
+
+
+
+
+	<bean id="TlPermission2DAO" class="com.lxt2.business.dal.purview.TlPermission2DAL"
+		scope="prototype">
+		<property name="deletePermissionByRoleIdSQL"
+			value="delete from tl_permission2 where NUMROLEID ='{0}'"></property>
+		<property name="deleteRightByRoleIdSQL"  value="delete from tl_permission2 where numRoleId in ({0}) and numRightId in ({1})">
+		</property>
+		<property name="queryNotExistsByRoleAndRightIdSql" value="select distinct numRightId from tl_permission2 
+									where numRoleId = {0} and numRightId not in ({1})"></property>
+		<property name="queryExistsByRoleAndRightIdSql" value="select distinct numRightId from tl_permission2 
+									where numRoleId = {0} and  numRightId in ({1})"></property>
+		<property name="queryRightByRoleSql" value="select distinct numRightId from tl_permission2 
+									where numRoleId = {0} "></property>
+	</bean>
+
+	<bean id="TlUserRoleDAO" class="com.lxt2.business.dal.purview.TlUserRoleDAL"
+		scope="prototype">
+		<property name="deleteUserRoleRelationByDepartIdSQL"
+			value="DELETE FROM TL_USER_ROLE WHERE NUMROLEID={0} 
+			AND NUMUSERID IN (SELECT NUMUSERID FROM TL_USER WHERE NUMDEPARTID ={1} )"></property>
+		<property name="getRoleInfoListByUserIdSQL" 
+			value="select * from tl_role r where r.numroleid in(
+			select ur.numroleid from tl_user_role ur where ur.numuserid={0}) and numroleid!={1} and numroletype = {2}
+			"></property>
+		<property name="getNoRoleInfoListByUserIdSQL"
+			value="select * from tl_role r 
+			 where r.numdepartid=(select numdepartid from tl_user where numuserid={0})
+			 and numroleid not in(select ur.numroleid from tl_user_role ur where ur.numuserid={0}) 
+			and numroleid!={1} and numroletype = {2}"></property>
+		<property name="deleteUserRoleByUserIdSQL"
+			value="DELETE FROM tl_user_role tdr WHERE numuserid={0} and
+			  tdr.numroleid!={1} "></property>	
+	</bean>
+
+	<bean id="TlDepartmentRoleDAO" class="com.lxt2.business.dal.purview.TlDepartmentRoleDAL"
+		scope="prototype">
+		<property name="queryRoleInfoListByOwnDepartmentidSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select * from tl_role where numdepartid={0} and numroleid!={1} and numroletype=1"></property>
+			</bean>
+		</property>	
+		
+		<property name="deleteDepartRoleRelationByDepartIdWithRoleSQL"
+			value="DELETE FROM tl_department_role tdr WHERE NUMROLEID={0} and
+			 tdr.numdepartid !=(select t.numdepartid from tl_role t where t.numroleid={0}) "></property>
+		<property name="deleteDepartRoleByDepartIdSQL"
+			value="DELETE FROM tl_department_role tdr WHERE NUMDEPARTID={0} and
+			  tdr.numroleid!={1} "></property>	
+		<property name="queryDepartRoleByRoleIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select numdepartid from tl_department_role tdr WHERE NUMROLEID={0}
+			and  tdr.numdepartid !=(select t.numdepartid from tl_role t where t.numroleid={0})"></property>
+			</bean>
+		</property>	
+		<property name="queryRoleByRoleIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select r.numroleid from tl_department_role dr , tl_role r where dr.numdepartid = r.numdepartid 
+					and dr.numroleid = {0} and dr.numdepartid != 1 and r.numroleid != {0} 
+					and r.numdepartid !=(select numdepartid from tl_role where numroleid = {0})"></property>
+			</bean>
+		</property>	
+	   <property name="updateDepartmentRightByRoleIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					delete from tl_permission2 where numroleid in(
+						select numroleid from tl_role where numdepartid in(-1,{2})
+					)and numrightid in
+					(
+					select numrightid from tl_permission2 
+					where numrightid not in( select numrightid from tl_permission2 where numroleid in({3}))
+					and numroleid in({0})
+					)
+					"></property>
+			</bean>
+		</property>	
+		<property name="updateDepartmentDataByRoleIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" delete from tl_dpermission
+                                where numdroleid in
+                                      (select numroleid
+                                         from tl_role
+                                        where numdepartid in (-1,{2}))
+                                  and numdataid in
+                                      (select numdataid
+                                         from tl_dpermission
+                                        where numdataid not in
+                                              (select numdataid
+                                                 from tl_dpermission
+                                                where numdroleid in({3}))
+                                          and numdroleid in ({0}))
+					"></property>
+			</bean>
+		</property>
+		<property name="queryNotExistsDepartIdByRoleIdSql">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" select dr.numDepartId from tl_department_role dr, tl_role r
+						where dr.numRoleId = r.numRoleId and r.numDepartId != dr.numDepartId 
+						      and dr.numRoleId = {0} and dr.numDepartId not in ({1})">
+				</property>
+			</bean>
+		</property>
+		<property name="queryDepartIdByRoleIdSql">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" select dr.numDepartId from tl_department_role dr, tl_role r
+						where dr.numRoleId = r.numRoleId and r.numDepartId != dr.numDepartId 
+						      and dr.numRoleId = {0}">
+				</property>
+			</bean>
+		</property>
+	   
+	</bean>
+	
+	<bean id="TlDpermissionDAO" class="com.lxt2.business.dal.purview.TlDpermissionDAL" scope="prototype">
+		<property name="deleteByUserRoleTypeSql" value="delete from TlDpermission where numcreateuser = {0} and numdroleid in ({1}) and numtypeid ={2}"></property>
+		<property name="deleteByUserRoleTypeSql2" value="delete from TlDpermission where numdroleid in ({0}) and numtypeid ={1}"></property>
+		<property name="deleteByRoleTypeSql" value="delete from TlDpermission where numdroleid in ({0}) and numtypeid ={1} and numdataid in ({2})"></property>
+		<property name="queryDataByRoleAndTypeSql" value="select distinct numdataid from Tl_Dpermission where numdroleid= {0} and numtypeid = {1}"></property>
+		<property name="queryNotExistsByRoleAndDataIdSql" value="select distinct numDataId from tl_dpermission where numdroleid = {0} and numtypeid = {1} and numdataid not in ({2})"></property>
+		<property name="queryExistsByRoleAndDataIdSql" value="select distinct numDataId from tl_dpermission where numdroleid = {0} and numtypeid = {1} and numdataid in ({2})"></property>
+		<property name="deleteByUserRoleDataSql" >
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="delete from tl_dpermission where numdRoleId in ({0}) and numDataId in ({1}) and numtypeid ={2}"></property>
+			</bean>
+		</property>
+	</bean>
+	<bean id="TlDpermissionTypeDAO" class="com.lxt2.business.dal.purview.TlDpermissionTypeDAL" scope="prototype">
+		<property name="dataTableSql" value="from TlDpermissionType where vc2datatable = '{0}'"></property>
+	</bean>
+	<bean id="TlProductDAL" class="com.lxt2.business.dal.product.TlProductDAL" scope="prototype">
+	
+	</bean>
+</beans>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<sevlet>
+		<servlet-name>TlAlertLogYxt</servlet-name>
+		<servlet-class>
+			com.yxt.systemapp.blf.alert.TlAlertLogYxtSev
+		</servlet-class>
+		<url-pattern>/URL/Alert/AlertQueryYxt.ashx</url-pattern>
+	</sevlet>
+</sevlets>

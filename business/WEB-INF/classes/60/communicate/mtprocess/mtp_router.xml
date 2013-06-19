@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/task
+       http://www.springframework.org/schema/task/spring-task.xsd">
+	<!-- MT处理的Bean前缀是mtp -->
+	<!-- 下行路由实现Bean -->
+	<bean id="mtpSubmitRouter" class="com.lxt2.mtprocess.router.XmlSubmitRouter" init-method="init">
+		<property name="persistDir" value="${CLASSPATH}/${nodeID}/persistent"/>
+		<!-- 省份路由 -->
+		<property name="provinceRouter" value="true"/>
+ 		<property name="systemConfig" ref="systemConfig"/>
+		<property name="cmd" value="-U{0} -F{1} -Cgetroutestra"/> 
+	</bean>
+	<!-- MT路由reload -->
+	<bean id="mtpRouterReloadCmd" class="com.lxt2.mtprocess.router.RouterReloadCmd">
+		<property name="submitRouter" ref="mtpSubmitRouter"/>
+	</bean>
+	<!-- MT路由task -->
+	<bean id="mtpRouterReloadTask" class="com.lxt2.mtprocess.router.RouterConfigTask">
+		<property name="id" value="107"/>
+		<property name="name" value="下行路由策略加载"/>
+		<!-- 每天3点执行 -->
+		<property name="taskSchRule" value="@{sch(0,3)}"/>
+		<property name="submitRouter" ref="mtpSubmitRouter"/>
+		<property name="commandMap">
+			<map>
+				<entry key="sync" value-ref="mtpRouterReloadCmd"/>
+			</map>
+		</property>
+	</bean>
+</beans>

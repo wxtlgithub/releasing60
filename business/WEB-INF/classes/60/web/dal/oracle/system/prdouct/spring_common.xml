@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!-- c3p0-->
+	<bean id="C3P0DAO" class="com.lxt2.systemapp.dal.common.C3P0DAL"
+		scope="prototype">
+	</bean>
+	<!-- 系统管理操作日志 -->
+	<bean id="LogOperationDAO" class="com.lxt2.systemapp.dal.common.LogOperationDAL"
+		scope="prototype">
+		<property name="queryAll">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from 
+						(select rownum rn, o.* from (select * FROM TLV_LOG_OPERATION where 1=1 #0#) o 
+						where rownum &lt; {0}+{1}+1) where rn > {0}" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*) from TLV_LOG_OPERATION #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 开始时间 -->
+						<value>datopertimeSelect > date '{0}' </value>
+						<!-- 结束时间 -->
+						<value>datopertimeSelect &lt; date '{0}'+1</value>
+						<!-- 操作类型ID，对应t_operation_type表中的ID -->
+						<value>numopertypeid={0}</value>
+						<!-- 用户名 -->
+						<value>vc2username like '%{0}%'</value>
+						<!-- 日志描述 -->
+						<value>vc2operdetail like '%{0}%'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+
+		<property name="saveOperationLog"
+			value="insert into TL_LOG_OPERATION 
+				          (NUMLOGID, 
+				          NUMOPERID, 
+				          VC2OPERENAME,
+				          VC2OPERNAME,
+				          VC2OPERDETAIL,
+				          VC2OPERIP,
+				          NUMBOPERID,
+				          VC2BOPERNAME,
+				          VC2TABLE,				          
+				          DATOPERTIME, 
+				          NUMOPERTYPEID,
+				          VC2ISAUDIT) 
+				         values 
+				         (TLSEQ_LOG_OPERATION.nextval, 
+				         '{0}', '{1}', '{2}', '{3}','{4}','{5}',
+				         '{6}','{7}', sysdate, '{9}', '{10}')"></property>
+
+	</bean>
+	
+</beans>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.systemapp.model.routestra.TlRoutestraAs"
+		table="TL_ROUTESTRA_AS">
+
+		<!--id(NUMBER:22)-->
+		<id name="numid" type="java.lang.Integer">
+			<column name="NUMID" precision="20" scale="0" />
+			<generator class="sequence">
+				<param name="sequence">TLSEQ_ROUTESTRA_AS</param>
+			</generator>
+		</id>
+
+		<!--策略编号(NUMBER:22)-->
+		<property name="numstraid" type="java.lang.Integer">
+			<column name="NUMSTRAID" length="22" />
+		</property>
+
+		<!--(NUMBER:22)-->
+		<property name="numsvcid" type="java.lang.Integer">
+			<column name="NUMSVCID" length="22" />
+		</property>
+
+		<!--主备标示 1 ACTIVE 主 2 STANDBY 备(NUMBER:22)-->
+		<property name="numasflag" type="java.lang.Integer">
+			<column name="NUMASFLAG" length="22" />
+		</property>
+
+	</class>
+</hibernate-mapping>
+  

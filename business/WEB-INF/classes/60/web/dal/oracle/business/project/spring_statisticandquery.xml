@@ -1,0 +1,905 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="QueryDAO" class="com.yxt.business.dal.statisticandquery.QueryDAL" scope="prototype">
+		<!-- 按状态报告查询(分省) -->
+		<property name="queryReportSql">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+				                adsfsds.* from (select datstat, vc2ecname, vc2svcname, vc2servcode, vc2pftype, numopid, vc2opname, 
+				                		vc2type, numresponsestatus, vc2reporterrorcode, numprovid, vc2prov, numcnt 
+									from tlv_stat_mtinfo_distri 
+	 								where 1=1 #0# 
+	 								order by datstat desc 
+							 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(1)  from (select * from tlv_stat_mtinfo_distri where 1=1 #0# order by datstat ) t" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>datstat >= to_date('{0}', 'yyyy-MM-dd')</value>
+						<value>datstat &lt; to_date('{0}', 'yyyy-MM-dd') + 1</value>
+						<value>vc2ecname like '%{0}%'</value>
+						<value>numpftype = {0}</value>
+						<value>vc2servcode like '%{0}%'</value>
+						<value>vc2svctype = '{0}'</value>
+						<value>numopid = {0}</value>
+						<value>vc2svcname like '%{0}%'</value>
+						<value>numresponsestatus like '%{0}%'</value>
+						<value>vc2reporterrorcode like '%{0}%'</value>
+						<value>numprovid = {0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 按状态报告查询(全国) -->
+		<property name="queryReportAllSql">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+				                adsfsds.* from (select datstat, numopid, vc2opname, vc2ecname, numsvcid, vc2servcode, 
+				                			vc2svcname, vc2svctype, vc2type, numpftype, vc2pftype, substr('全国', 0) vc2prov, numresponsestatus, 
+				                			numreportstatus, vc2reporterrorcode, sum(numcnt) numcnt
+									from tlv_stat_mtinfo_distri
+	 								where 1=1 #0# 
+									group by datstat, numopid, vc2opname, vc2ecname, numsvcid, vc2servcode, vc2svcname, vc2svctype,
+									       vc2type, numpftype, vc2pftype, substr('全国', 0), numresponsestatus, numreportstatus, vc2reporterrorcode
+	 								order by datstat desc 
+							 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(1)  from ( select datstat, numopid, vc2opname, vc2ecname, numsvcid, vc2servcode, vc2svcname, 
+											vc2svctype, vc2type, numpftype, vc2pftype, substr('全国', 0) vc2prov, numresponsestatus, numreportstatus, 
+											vc2reporterrorcode, sum(numcnt) numcnt
+									from tlv_stat_mtinfo_distri
+	 								where 1=1 #0# 
+									group by datstat, numopid, vc2opname, vc2ecname, numsvcid, vc2servcode, vc2svcname, vc2svctype,
+											vc2type, numpftype, vc2pftype, substr('全国', 0) , numresponsestatus, numreportstatus, vc2reporterrorcode
+	 								order by datstat desc ) t" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>datstat >= to_date('{0}', 'yyyy-MM-dd')</value>
+						<value>datstat &lt; to_date('{0}', 'yyyy-MM-dd') + 1</value>
+						<value>vc2ecname like '%{0}%'</value>
+						<value>numpftype = {0}</value>
+						<value>vc2servcode like '%{0}%'</value>
+						<value>vc2svctype = '{0}'</value>
+						<value>numopid = {0}</value>
+						<value>vc2svcname like '%{0}%'</value>
+						<value>numresponsestatus like '%{0}%'</value>
+						<value>vc2reporterrorcode like '%{0}%'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 按内容查询 -->
+		<property name="queryContentSql">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+				                adsfsds.* from (select datstat, vc2ecname, vc2svcname, vc2servcode, numopid, vc2opname, 
+				                	vc2type, vc2messagecontent,numcnt, numsuccnt
+									from tlv_stat_mtinfo_content
+	 								where 1=1 #0# 
+	 								order by datstat desc 
+							 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(1)  from (select * from tlv_stat_mtinfo_content where 1=1 #0# order by datstat ) t" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>datstat >= to_date('{0}', 'yyyy-MM-dd')</value>
+						<value>datstat &lt; to_date('{0}', 'yyyy-MM-dd') + 1</value>
+						<value>vc2messagecontent like '%{0}%'</value>
+						<value>vc2ecname like '%{0}%'</value>
+						<value>vc2svcname like '%{0}%'</value>
+						<value>vc2servcode like '%{0}%'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 短信号码提取 -->
+		<property name="querySMSExtractNumberSql">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+				                adsfsds.* from (select vc2destmobile, datsendtime, vc2ecname, vc2servcode, vc2opname, substr(vc2type, 0) vc2type, 
+									vc2reporterrorcode, numprovinceId ,vc2prov
+									from tlv_sms_log_stdsubmit_days 
+	 								where 1=1 #0# 
+							 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(1)  from (select * from tlv_sms_log_stdsubmit_days where 1=1 #0# ) t" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>datsendtime >= to_date('{0}', 'yyyy-MM-dd')</value>
+						<value>datsendtime &lt; to_date('{0}', 'yyyy-MM-dd') + 1</value>
+						<value>vc2ecname like '%{0}%'</value>
+						<value>vc2servcode like '%{0}%'</value>
+						<value>vc2reporterrorcode like '%{0}%'</value>
+						<value>numprovinceid = {0}</value>
+						<value>numopid = {0}</value>
+						<value>numtype = {0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 彩信号码提取 -->
+		<property name="queryMMSExtractNumberSql">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+				                adsfsds.* from (select vc2destmobile, datsendtime, vc2ecname, vc2servcode, vc2opname, substr(vc2type, 0) vc2type, 
+									vc2reporterrorcode, numprovinceId ,vc2prov
+									from tlv_mms_log_stdsubmit_days 
+	 								where 1=1 #0# 
+							 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(1)  from (select * from tlv_mms_log_stdsubmit_days where 1=1 #0# ) t" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>datsendtime >= to_date('{0}', 'yyyy-MM-dd')</value>
+						<value>datsendtime &lt; to_date('{0}', 'yyyy-MM-dd') + 1</value>
+						<value>vc2ecname like '%{0}%'</value>
+						<value>vc2servcode like '%{0}%'</value>
+						<value>vc2reporterrorcode like '%{0}%'</value>
+						<value>numprovinceid = {0}</value>
+						<value>numopid = {0}</value>
+						<value>numtype = {0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	<bean id="StatisticDAO" class="com.yxt.business.dal.statisticandquery.StatisticDAL" scope="prototype">
+<!-- 运营商按日统计 -->
+	<property name = "queryByDaliySql">
+		<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL" value="
+						Select rownum numrowasdf, DATSTAT,VC2SIGNTYPE,VC2OPNAME,VC2TYPE,NUMSUBCNT,NUMCNT,NUMSUCCNT,NUMRATIO 
+						From ( SELECT TO_CHAR(DATSTAT, 'YYYY-MM-DD') DATSTAT,
+							           VC2SIGNTYPE,
+							           VC2TYPE ,
+							           VC2OPNAME,
+ 										NUMSUBCNT,							           
+							           SUM(NUMCNT) NUMCNT,
+							           SUM(NUMSUCCNT) NUMSUCCNT,
+							           TO_CHAR(DECODE(SUM(NUMCNT),
+							                  0,
+							                  0,
+							                  ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+							      FROM TLV_STAT_MTINFO_SUMMARY 
+							      Where  1=1 #0#
+							     GROUP BY DATSTAT,VC2SIGNTYPE,VC2TYPE,NUMSUBCNT,VC2OPNAME
+							 ) Where rownum &lt;={1}
+					    UNION ALL
+					    SELECT null numrowasdf,
+					    	   '汇总' DATSTAT,
+					           NULL VC2SIGNTYPE,
+					           null VC2OPNAME,
+					           VC2TYPE,SUM(NUMSUBCNT) NUMSUBCNT,
+					           SUM(NUMCNT) NUMCNT,
+					           SUM(NUMSUCCNT) NUMSUCCNT,
+					           TO_CHAR(DECODE(SUM(NUMCNT),
+					                  0,
+					                  0,
+					                  ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+					      FROM TLV_STAT_MTINFO_SUMMARY
+					      Where  1=1 #0# 
+					      GROUP BY VC2TYPE
+					"></property>
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+						Select count(1)
+						From ( SELECT TO_CHAR(DATSTAT, 'YYYY-MM-DD') DATSTAT,
+							           VC2SIGNTYPE,
+							           VC2TYPE ,
+							           VC2OPNAME,
+							           SUM(NUMCNT) NUMCNT,
+							           SUM(NUMSUCCNT) NUMSUCCNT,
+							           TO_CHAR(DECODE(SUM(NUMCNT),
+							                  0,
+							                  0,
+							                  ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+							      FROM TLV_STAT_MTINFO_SUMMARY 
+							      Where  1=1 #0#
+							     GROUP BY DATSTAT,VC2SIGNTYPE,VC2TYPE,VC2OPNAME
+						)
+							" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>DATSTAT >= to_date('{0}','yyyy-mm-dd')</value>
+						<value>DATSTAT &lt; to_date('{0}','yyyy-mm-dd')+1 </value>
+						<value>NUMSIGNTYPE = '{0}'</value>
+					</list>
+				</property>
+		</bean>
+	</property>
+	
+<!--运营商不按日统计 -->
+	<property name = "queryByUnionSql">
+		<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL" value="
+					 Select rownum numrowasdf,
+				             DATSTAT,
+				             VC2SIGNTYPE,
+				             VC2OPNAME,
+				             VC2TYPE,
+				             NUMSUBCNT,
+				             NUMCNT,
+				             NUMSUCCNT,
+				             NUMRATIO
+				        From (SELECT concat('{0}', '~{1}') DATSTAT,
+				                     VC2SIGNTYPE,
+				                     VC2TYPE,
+				                     VC2OPNAME,SUM(NUMSUBCNT) NUMSUBCNT,
+				                     SUM(NUMCNT) NUMCNT,
+				                     SUM(NUMSUCCNT) NUMSUCCNT,
+				                     TO_CHAR(DECODE(SUM(NUMCNT),
+				                            0,
+				                            0,
+				                            ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+				                FROM TLV_STAT_MTINFO_SUMMARY
+				                Where 1 = 1 #0#
+				               GROUP BY VC2SIGNTYPE,VC2TYPE,VC2OPNAME)
+				         Where rownum &lt;={3}
+				              UNION ALL
+				              SELECT null numrowasdf,
+				              		 '汇总' DATSTAT,
+				                     null VC2SIGNTYPE,
+				                     null VC2OPNAME,
+				                     VC2TYPE,SUM(NUMSUBCNT) NUMSUBCNT,
+				                     SUM(NUMCNT) NUMCNT,
+				                     SUM(NUMSUCCNT) NUMSUCCNT,
+				                     TO_CHAR(DECODE(SUM(NUMCNT),
+				                            0,
+				                            0,
+				                            ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+				                FROM TLV_STAT_MTINFO_SUMMARY
+				                Where 1 = 1 #0#
+				               GROUP BY VC2TYPE
+					"></property>
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							Select count(1)
+				       	 	From (SELECT concat('{0}', '~{1}') DATSTAT,
+				                     VC2SIGNTYPE,
+				                     VC2TYPE,
+				                     VC2OPNAME,
+				                     SUM(NUMCNT) NUMCNT,
+				                     SUM(NUMSUCCNT) NUMSUCCNT,
+				                     TO_CHAR(DECODE(SUM(NUMCNT),
+				                            0,
+				                            0,
+				                            ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+				                FROM TLV_STAT_MTINFO_SUMMARY
+				                Where 1 = 1 #0#
+				              GROUP BY VC2SIGNTYPE,VC2TYPE,VC2OPNAME) 
+				             " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>DATSTAT >= to_date('{0}','yyyy-mm-dd')</value>
+						<value>DATSTAT &lt; to_date('{0}','yyyy-mm-dd')+1 </value>
+						<value>NUMSIGNTYPE = '{0}'</value>
+					</list>
+				</property>
+		</bean>
+	</property>
+	
+<!-- 地区按日统计 -->
+		<property name = "queryAreaByDaliySql">
+		<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL" value="
+						Select rownum numrowasdf, DATSTAT,VC2AREA,VC2TYPE,NUMSUBCNT,NUMCNT,NUMSUCCNT,NUMRATIO 
+						From (SELECT TO_CHAR(DATSTAT, 'YYYY-MM-DD') DATSTAT,
+						             VC2AREA,
+						             VC2TYPE,SUM(NUMSUBCNT) NUMSUBCNT,
+						             SUM(NUMCNT) NUMCNT,
+						             SUM(NUMSUCCNT) NUMSUCCNT,
+						             TO_CHAR(DECODE(SUM(NUMCNT),
+						                    0,
+						                    0,
+						                    ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+						        FROM TLV_STAT_MTINFO_SUMMARY
+						        Where  1=1 #0#
+						       GROUP BY DATSTAT,VC2AREA,VC2TYPE)
+						 Where rownum &lt;={1}
+					     UNION ALL
+					     SELECT null numrowasdf,
+					       		 '汇总' DATSTAT,
+					             null VC2AREA,
+					             VC2TYPE,SUM(NUMSUBCNT) NUMSUBCNT,
+					             SUM(NUMCNT) NUMCNT,
+					             SUM(NUMSUCCNT) NUMSUCCNT,
+					             TO_CHAR(DECODE(SUM(NUMCNT),
+					                    0,
+					                    0,
+					                    ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+					        FROM TLV_STAT_MTINFO_SUMMARY
+					        Where  1=1 #0#
+					       GROUP BY VC2TYPE
+					"></property>
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							Select Count(1) 
+							From (SELECT TO_CHAR(DATSTAT, 'YYYY-MM-DD') DATSTAT,
+						             VC2AREA,
+						             VC2TYPE,
+						             SUM(NUMCNT) NUMCNT,
+						             SUM(NUMSUCCNT) NUMSUCCNT,
+						             TO_CHAR(DECODE(SUM(NUMCNT),
+						                    0,
+						                    0,
+						                    ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+						        FROM TLV_STAT_MTINFO_SUMMARY
+						        Where  1=1 #0#
+						       GROUP BY DATSTAT,VC2AREA,VC2TYPE) " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>DATSTAT >= to_date('{0}','yyyy-mm-dd')</value>
+						<value>DATSTAT &lt; to_date('{0}','yyyy-mm-dd')+1 </value>
+					</list>
+				</property>
+		</bean>
+	</property>
+	
+<!-- 地区不按日统计 -->
+<property name = "queryAreaByUnionSql">
+		<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL" value="
+					     Select rownum numrowasdf,DATSTAT,
+					            VC2AREA,
+					            VC2TYPE,
+					            NUMSUBCNT,
+					            NUMCNT,
+					            NUMSUCCNT,
+					            NUMRATIO
+					       From (SELECT concat('{0}', '~{1}') DATSTAT,
+					             VC2AREA,
+					             VC2TYPE,SUM(NUMSUBCNT) NUMSUBCNT,
+					             SUM(NUMCNT) NUMCNT,
+					             SUM(NUMSUCCNT) NUMSUCCNT,
+					             TO_CHAR(DECODE(SUM(NUMCNT),
+					                    0,
+					                    0,
+					                    ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+					          FROM TLV_STAT_MTINFO_SUMMARY
+					          Where 1 = 1 #0#
+					          GROUP BY VC2AREA, VC2TYPE)
+					      Where rownum &lt;={3}
+				          UNION ALL
+				          SELECT null numrowasdf,
+				         		'汇总' DATSTAT,
+				               null VC2AREA,
+				               VC2TYPE,SUM(NUMSUBCNT) NUMSUBCNT,
+				               SUM(NUMCNT) NUMCNT,
+				               SUM(NUMSUCCNT) NUMSUCCNT,
+				               TO_CHAR(DECODE(SUM(NUMCNT),
+				                      0,
+				                      0,
+				                      ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+				          FROM TLV_STAT_MTINFO_SUMMARY
+				          Where 1 = 1 #0#
+				          GROUP BY VC2TYPE
+					"></property>
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							Select Count(1)
+					       From (SELECT concat('{0}', '~{1}') DATSTAT,
+					             VC2AREA,
+					             VC2TYPE,
+					             SUM(NUMCNT) NUMCNT,
+					             SUM(NUMSUCCNT) NUMSUCCNT,
+					             TO_CHAR(DECODE(SUM(NUMCNT),
+					                    0,
+					                    0,
+					                    ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+					          FROM TLV_STAT_MTINFO_SUMMARY
+					          Where 1 = 1 #0#
+					          GROUP BY VC2AREA, VC2TYPE)" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>DATSTAT >= to_date('{0}','yyyy-mm-dd')</value>
+						<value>DATSTAT &lt; to_date('{0}','yyyy-mm-dd')+1 </value>
+					</list>
+				</property>
+		</bean>
+	</property>
+	
+<!--客户按日汇总统计 -->
+	<property name = "queryCustByDaliySql">
+		<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL" value="
+					 Select rownum numrowasdf, DATSTAT,VC2AREA,VC2ECNAME,VC2TYPE,VC2SVCNAME,VC2SERVCODE,VC2OPNAME,VC2SIGNTYPE,NUMSUBCNT,NUMCNT,NUMSUCCNT,NUMRATIO 
+					 From (
+						        SELECT TO_CHAR(DATSTAT, 'YYYY-MM-DD') DATSTAT,
+						               VC2AREA,
+						               VC2ECNAME,
+						               VC2TYPE,
+						               VC2SVCNAME,
+						               VC2SERVCODE,
+						               VC2OPNAME,
+						               VC2SIGNTYPE,
+						               SUM(NUMSUBCNT) NUMSUBCNT,
+						               SUM(NUMCNT) NUMCNT,
+						               SUM(NUMSUCCNT) NUMSUCCNT,
+						               TO_CHAR(DECODE(SUM(NUMCNT),
+						                      0,
+						                      0,
+						                      ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+						          FROM TLV_STAT_MTINFO_SUMMARY
+						          Where 1=1 #0#
+						         GROUP BY DATSTAT,VC2AREA,VC2ECNAME,VC2TYPE,VC2SVCNAME,VC2SERVCODE,VC2OPNAME,VC2SIGNTYPE
+					) Where rownum &lt;={1}
+			        UNION ALL
+			        SELECT null numrowasdf,
+			        	   '汇总' DATSTAT,
+			               null VC2AREA,
+			               null VC2ECNAME,
+			               null VC2TYPE,
+			               null VC2SVCNAME,
+			               null VC2SERVCODE,
+			               null VC2OPNAME,
+			               null VC2SIGNTYPE,
+			               SUM(NUMSUBCNT) NUMSUBCNT,
+			               SUM(NUMCNT) NUMCNT,
+			               SUM(NUMSUCCNT) NUMSUCCNT,
+			               TO_CHAR(DECODE(SUM(NUMCNT),
+			                      0,
+			                      0,
+			                      ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+			          FROM TLV_STAT_MTINFO_SUMMARY
+			          Where  1=1 #0#
+					"></property>
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							Select Count(1)
+					 		From (
+						        SELECT TO_CHAR(DATSTAT, 'YYYY-MM-DD') DATSTAT,
+						               VC2AREA,
+						               VC2ECNAME,
+						               VC2TYPE,
+						               VC2SVCNAME,
+						               VC2SERVCODE,
+						               VC2OPNAME,
+						               VC2SIGNTYPE,
+						               SUM(NUMSUBCNT) NUMSUBCNT,
+						               SUM(NUMCNT) NUMCNT,
+						               SUM(NUMSUCCNT) NUMSUCCNT,
+						               TO_CHAR(DECODE(SUM(NUMCNT),
+						                      0,
+						                      0,
+						                      ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+						          FROM TLV_STAT_MTINFO_SUMMARY
+						          Where 1=1 #0#
+						         GROUP BY DATSTAT,VC2AREA,VC2ECNAME,VC2TYPE,VC2SVCNAME,VC2SERVCODE,VC2OPNAME,VC2SIGNTYPE
+							)  " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>DATSTAT >= to_date('{0}','yyyy-mm-dd')</value>
+						<value>DATSTAT &lt; to_date('{0}','yyyy-mm-dd')+1 </value>
+						<value>vc2ecname like '%{0}%'</value>
+						<value>numarea = {0}</value>
+						<value>vc2servcode like '%{0}%'</value>
+						<value>vc2svctype = '{0}'</value>
+						<value>numopid = '{0}'</value>
+						<value>numsigntype ={0}</value>
+						<value>vc2svcname like '%{0}%'</value>
+					</list>
+				</property>
+		</bean>
+	</property>
+<!--客户不按日汇总统计 -->
+	<property name = "queryCustByUnionSql">
+		<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL" value="
+					 Select rownum numrowasdf, DATSTAT,VC2AREA,VC2ECNAME,VC2TYPE,VC2SVCNAME,VC2SERVCODE,VC2OPNAME,VC2SIGNTYPE,NUMSUBCNT,NUMCNT,NUMSUCCNT,NUMRATIO 
+					 From ( SELECT concat('{0}', '~{1}') DATSTAT,
+							         VC2AREA,
+							         VC2ECNAME,
+							         VC2TYPE,
+							         VC2SVCNAME,
+							         VC2SERVCODE,
+							         VC2OPNAME,
+							         VC2SIGNTYPE,
+							         SUM(NUMSUBCNT) NUMSUBCNT,
+							         SUM(NUMCNT) NUMCNT,
+							         SUM(NUMSUCCNT) NUMSUCCNT,
+							         TO_CHAR(DECODE(SUM(NUMCNT),
+							                0,
+							                0,
+							                ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+							    FROM TLV_STAT_MTINFO_SUMMARY
+							    Where 1=1 #0#
+							   GROUP BY VC2AREA,VC2ECNAME,VC2TYPE,VC2SVCNAME,VC2SERVCODE,VC2OPNAME,VC2SIGNTYPE
+					) Where rownum &lt;={3}
+				  UNION ALL
+				  SELECT null numrowasdf,
+				  		 '汇总' DATSTAT,
+				  		 null VC2AREA,
+				         null VC2ECNAME,
+				         null VC2TYPE,
+				         null VC2SVCNAME,
+				         null VC2SERVCODE,
+				         null VC2OPNAME,
+				         null VC2SIGNTYPE,
+				         SUM(NUMSUBCNT) NUMSUBCNT,
+				         SUM(NUMCNT) NUMCNT,
+				         SUM(NUMSUCCNT) NUMSUCCNT,
+				         TO_CHAR(DECODE(SUM(NUMCNT),
+				                0,
+				                0,
+				                ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+				    FROM TLV_STAT_MTINFO_SUMMARY
+				    Where 1=1 #0#
+					"></property>
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							Select Count(1)
+					 		From ( SELECT concat('{0}', '~{1}') DATSTAT,
+							         VC2AREA,
+							         VC2ECNAME,
+							         VC2TYPE,
+							         VC2SVCNAME,
+							         VC2SERVCODE,
+							         VC2OPNAME,
+							         VC2SIGNTYPE,
+							         SUM(NUMSUBCNT) NUMSUBCNT,
+							         SUM(NUMCNT) NUMCNT,
+							         SUM(NUMSUCCNT) NUMSUCCNT,
+							         TO_CHAR(DECODE(SUM(NUMCNT),
+							                0,
+							                0,
+							                ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+							    FROM TLV_STAT_MTINFO_SUMMARY
+							    Where 1=1 #0#
+							   GROUP BY VC2AREA,VC2ECNAME,VC2TYPE,VC2SVCNAME,VC2SERVCODE,VC2OPNAME,VC2SIGNTYPE
+							) " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>DATSTAT >= to_date('{0}','yyyy-mm-dd')</value>
+						<value>DATSTAT &lt; to_date('{0}','yyyy-mm-dd')+1 </value>
+						<value>vc2ecname like '%{0}%'</value>
+						<value>numarea = {0}</value>
+						<value>vc2servcode like '%{0}%'</value>
+						<value>vc2svctype = '{0}'</value>
+						<value>numopid = '{0}'</value>
+						<value>numsigntype ={0}</value>
+						<value>vc2svcname like '%{0}%'</value>
+					</list>
+				</property>
+		</bean>
+	</property>
+<!--通道按日汇总统计 -->
+	<property name = "querySvcByDaliySql">
+		<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL" value="
+						Select rownum numrowasdf, DATSTAT,VC2SVCNAME,VC2PUTIN,VC2BRANCHCOMPANY,VC2OPNAME,VC2SIGNTYPE,VC2ISBIGEC,VC2SERVCODE,NUMBW,NUMPFTYPE,NUMSUBCNT,NUMCNT,NUMSUCCNT,NUMRATIO 
+						From (SELECT TO_CHAR(DATSTAT, 'YYYY-MM-DD') DATSTAT,
+						           VC2SVCNAME,
+						           VC2PUTIN,
+						           VC2BRANCHCOMPANY,
+						           VC2OPNAME,
+						           VC2SIGNTYPE,
+						           VC2ISBIGEC,
+						           VC2SERVCODE,
+						           CASE NUMPFTYPE WHEN 1 THEN '共享'||NUMBW ELSE ''||NUMBW END NUMBW,
+						           NUMPFTYPE,
+						           SUM(NUMSUBCNT) NUMSUBCNT,
+						           SUM(NUMCNT) NUMCNT,
+						           SUM(NUMSUCCNT) NUMSUCCNT,
+						           TO_CHAR(DECODE(SUM(NUMCNT),
+						                  0,
+						                  0,
+						                  ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+						     FROM TLV_STAT_MTINFO_SUMMARY
+						     Where  1=1 #0#
+						     GROUP BY DATSTAT, VC2SVCNAME,VC2PUTIN,VC2BRANCHCOMPANY,VC2OPNAME,VC2SIGNTYPE,VC2ISBIGEC,VC2SERVCODE,NUMBW,NUMPFTYPE
+						) Where rownum &lt;={1}
+					    UNION ALL
+					    SELECT null numrowasdf,
+					    	   '汇总' DATSTAT,
+					           null VC2SVCNAME,
+					           null VC2PUTIN,
+					           null VC2BRANCHCOMPANY,
+					           null VC2OPNAME,
+					           null VC2SIGNTYPE,
+					           null VC2ISBIGEC,
+					           null VC2SERVCODE,
+					           null NUMBW,
+					           null NUMPFTYPE,
+					           SUM(NUMSUBCNT) NUMSUBCNT,
+					           SUM(NUMCNT) NUMCNT,
+					           SUM(NUMSUCCNT) NUMSUCCNT,
+					           TO_CHAR(DECODE(SUM(NUMCNT),
+					                  0,
+					                  0,
+					                  ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+					      FROM TLV_STAT_MTINFO_SUMMARY
+					      Where 1=1 #0#
+					"></property>
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							Select Count(1)
+							From (SELECT TO_CHAR(DATSTAT, 'YYYY-MM-DD') DATSTAT,
+						           VC2SVCNAME,
+						           VC2PUTIN,
+						           VC2BRANCHCOMPANY,
+						           VC2OPNAME,
+						           VC2SIGNTYPE,
+						           VC2ISBIGEC,
+						           VC2SERVCODE,
+						           CASE NUMPFTYPE WHEN 1 THEN '共享'||NUMBW ELSE ''||NUMBW END NUMBW,
+						           NUMPFTYPE,
+						           SUM(NUMCNT) NUMCNT,
+						           SUM(NUMSUCCNT) NUMSUCCNT,
+						           TO_CHAR(DECODE(SUM(NUMCNT),
+						                  0,
+						                  0,
+						                  ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+						     FROM TLV_STAT_MTINFO_SUMMARY
+						     Where  1=1 #0#
+						     GROUP BY DATSTAT, VC2SVCNAME,VC2PUTIN,VC2BRANCHCOMPANY,VC2OPNAME,VC2SIGNTYPE,VC2ISBIGEC,VC2SERVCODE,NUMBW,NUMPFTYPE
+						)" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>DATSTAT >= to_date('{0}','yyyy-mm-dd')</value>
+						<value>DATSTAT &lt; to_date('{0}','yyyy-mm-dd')+1 </value>
+						<value>vc2svcname like '%{0}%'</value>
+						<value>numbranchcompany = {0}</value>
+						<value>vc2servcode like '%{0}%'</value>
+						<value>numsigntype ={0}</value>
+						<value>numopid = '{0}'</value>
+						<value>numisbigec = '{0}'</value>
+					</list>
+				</property>
+		</bean>
+	</property>
+
+<!--通道不按日汇总统计 -->
+	<property name = "querySvcByUnionSql">
+		<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+					<property name="SQL" value="
+					 Select rownum numrowasdf, DATSTAT,VC2SVCNAME,VC2PUTIN,VC2BRANCHCOMPANY,VC2OPNAME,VC2SIGNTYPE,VC2ISBIGEC,VC2SERVCODE,NUMBW,NUMPFTYPE,NUMSUBCNT,NUMCNT,NUMSUCCNT,NUMRATIO 
+					 From (SELECT concat('{0}', '~{1}') DATSTAT,
+						           VC2SVCNAME,
+						           VC2PUTIN,
+						           VC2BRANCHCOMPANY,
+						           VC2OPNAME,
+						           VC2SIGNTYPE,
+						           VC2ISBIGEC,
+						           VC2SERVCODE,
+						           CASE NUMPFTYPE WHEN 1 THEN '共享'||NUMBW ELSE ''||NUMBW END NUMBW,
+						           NUMPFTYPE,
+						           SUM(NUMSUBCNT) NUMSUBCNT,
+						           SUM(NUMCNT) NUMCNT,
+						           SUM(NUMSUCCNT) NUMSUCCNT,
+						           TO_CHAR(DECODE(SUM(NUMCNT),
+						                  0,
+						                  0,
+						                  ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+						      FROM TLV_STAT_MTINFO_SUMMARY
+						      Where 1=1 #0#
+						      GROUP BY VC2SVCNAME,VC2PUTIN,VC2BRANCHCOMPANY,VC2OPNAME,VC2SIGNTYPE,VC2ISBIGEC,VC2SERVCODE,NUMBW,NUMPFTYPE
+					) Where rownum &lt;={3}  
+				    UNION ALL
+				    SELECT null numrowasdf,
+				    	   '汇总' DATSTAT,
+				           null VC2SVCNAME,
+				           null VC2PUTIN,
+				           null VC2BRANCHCOMPANY,
+				           null VC2OPNAME,
+				           null VC2SIGNTYPE,
+				           null VC2ISBIGEC,
+				           null VC2SERVCODE,
+				           null NUMBW,
+				           null NUMPFTYPE,SUM(NUMSUBCNT) NUMSUBCNT,
+				           SUM(NUMCNT) NUMCNT,
+				           SUM(NUMSUCCNT) NUMSUCCNT,
+				           TO_CHAR(DECODE(SUM(NUMCNT),
+				                  0,
+				                  0,
+				                  ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+				      FROM TLV_STAT_MTINFO_SUMMARY
+				      Where 1=1 #0#
+					"></property>
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							Select Count(1) 
+					 		From (SELECT concat('{0}', '~{1}') DATSTAT,
+						           VC2SVCNAME,
+						           VC2PUTIN,
+						           VC2BRANCHCOMPANY,
+						           VC2OPNAME,
+						           VC2SIGNTYPE,
+						           VC2ISBIGEC,
+						           VC2SERVCODE,
+						           CASE NUMPFTYPE WHEN 1 THEN '共享'||NUMBW ELSE ''||NUMBW END NUMBW,
+						           NUMPFTYPE,
+						           SUM(NUMCNT) NUMCNT,
+						           SUM(NUMSUCCNT) NUMSUCCNT,
+						           TO_CHAR(DECODE(SUM(NUMCNT),
+						                  0,
+						                  0,
+						                  ROUND(SUM(NUMSUCCNT) * 100 / SUM(NUMCNT), 1)),'990.9')||'%' NUMRATIO
+						      FROM TLV_STAT_MTINFO_SUMMARY
+						      Where 1=1 #0#
+						      GROUP BY VC2SVCNAME,VC2PUTIN,VC2BRANCHCOMPANY,VC2OPNAME,VC2SIGNTYPE,VC2ISBIGEC,VC2SERVCODE,NUMBW,NUMPFTYPE
+							)" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>DATSTAT >= to_date('{0}','yyyy-mm-dd')</value>
+						<value>DATSTAT &lt; to_date('{0}','yyyy-mm-dd')+1 </value>
+						<value>vc2svcname like '%{0}%'</value>
+						<value>numbranchcompany = {0}</value>
+						<value>vc2servcode like '%{0}%'</value>
+						<value>numsigntype ={0}</value>
+						<value>numopid = '{0}'</value>
+						<value>numisbigec = '{0}'</value>
+					</list>
+				</property>
+		</bean>
+	</property>
+	
+	</bean>
+</beans>

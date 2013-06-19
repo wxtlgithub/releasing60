@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- IBus对象，数据存储同步 -->
+	<bean id="busImpl" class="ihandy.lxt20.bus.BusImpl">
+		<property name="maxFileSize" value="134217728" />
+		<property name="busPath" value="${WORKDIR}../../../data/" />
+	</bean>
+	
+	<!-- Hub功能实现类，实现IHub接口，供其它Module调用 -->
+	<bean id="hubImpl" class="com.lxt2.hub.HubFunction">
+		<property name="id" value="601" />
+		<property name="name" value="hub" />
+		<property name="busImpl" ref="busImpl" />
+		<property name="kpi" ref="hubKPI" />
+		<property name="delayTime" value="10000"/>
+		<property name="controlCmdMap">
+			<map>
+				<entry key="viewkpi" value-ref="hubViewCmd" />
+				<entry key="viewbussta" value-ref="busCmd" />
+				<entry key="viewhubsta" value-ref="hubCmd" />
+				<entry key="addentity"  value-ref="addCmd"/>
+				<entry key="select" value-ref="selectCmd" />
+			</map>
+		</property>
+		<property name="hubDataGather" ref="hubDataGather" />
+	</bean>
+	<!-- Hub数据查询 -->
+	<bean id="selectCmd" class="com.lxt2.hub.command.SelectEntityCmd">
+		<property name="hub" ref="hubImpl" />
+	</bean>
+	
+	<!-- Hub数据重载 -->
+	<bean id="reloadFunction" class="com.lxt2.hub.ReloadFunction">
+		<property name="hub" ref="hubImpl" />
+		<property name="id" value="9999"/>
+		<property name="name" value="数据重载"/>
+	</bean>
+	
+	<!-- hub数据收集类 -->
+	<bean id="hubDataGather" class="com.lxt2.hub.HubDataGather" />
+
+	<!-- Hub的KPI指标(主要应用于模块监视) -->
+	<bean id="hubKPI" class="com.lxt2.hub.HubKPI">
+		<property name="dataGather" ref="hubDataGather" />
+	</bean>
+	<!-- 获取Hub的监视信息命令 -->
+	<bean id="hubViewCmd" class="com.lxt2.base.module.ModuleKPICmd">
+		<property name="kpi" ref="hubKPI" />
+	</bean>
+
+	<bean id="busCmd" class="com.lxt2.hub.command.ViewBusSta">
+		<property name="busImpl" ref="busImpl" />
+	</bean>
+	
+	<bean id="addCmd" class="com.lxt2.hub.command.AddEntityCmd">
+		<property name="busImpl" ref="busImpl" />
+		<property name="sid" ref="ndSid"/>
+	</bean>
+
+	<bean id="hubCmd" class="com.lxt2.hub.command.ViewHubSta">
+		<property name="busImpl" ref="busImpl" />
+		<property name="hubDataGather" ref="hubDataGather" />
+	</bean>
+
+	<bean id="clearHubTask" class="com.lxt2.hub.task.ClearHubTask">
+		<property name="id" value="114" />
+		<property name="name" value="Hub数据清理(3天)" />
+		<property name="taskSchRule" value="@{sch(0,2)}" />
+		<property name="outHour" value="72" />
+		<property name="hub" ref="hubImpl"/>
+		<property name="saveLogger" ref="saveLogger"/>
+	</bean>
+	<bean id="clearHubTask2" class="com.lxt2.hub.task.ClearHubTask2">
+		<property name="id" value="122" />
+		<property name="name" value="Hub数据清理(7天)" />
+		<property name="taskSchRule" value="@{sch(0,2)}" />
+		<property name="outHour" value="-72" />
+		<property name="hub" ref="hubImpl" />
+		<property name="saveLogger" ref="saveLogger" />
+	</bean>
+</beans>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="BusinessTlProductDAO" class="com.lxt2.business.dal.product.TlProductDAL" scope="prototype">
+		<property name="queryUserSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select NUMPRODID as numprodid,VC2NAME as vc2name from tl_products 
+				where NUMUSERID = {0} order by NUMPRODID"></property>
+			</bean>
+		</property>
+		<property name="queryUserTypeSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select NUMPRODID as numprodid,VC2NAME as vc2name from tl_products 
+				where NUMUSERID = {0} and VC2SERVICETYPE = {1} order by NUMPRODID"></property>
+			</bean>
+		</property>
+		
+		<property name="queryRoleSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select distinct NUMPRODID as numprodid,VC2NAME as vc2name from  
+				tlv_products_user where NUMDROLEID in({0}) order by NUMPRODID"></property>
+			</bean>
+		</property>
+		
+		<property name="queryProductByRoleIdsUserIdTypeSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select * from 
+		(select distinct numprodid,vc2name from tlv_products_user where numdroleid IN ({0}) and VC2SERVICETYPE = {1} 
+		union (select numprodid,vc2name from tl_products where vc2status = 1 and NUMUSERID = {2} and VC2SERVICETYPE = {3}))"></property>
+			</bean>
+		</property>
+		
+		<property name="queryProductByRoleUserIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select * from 
+		(select distinct numprodid,vc2name from tlv_products_user where numdroleid IN ({0}) 
+		union (select numprodid,vc2name from tl_products where NUMUSERID = {1}))"></property>
+			</bean>
+		</property>
+		
+		<property name="queryProductByRoleDepartIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select * from 
+						(select distinct numprodid,vc2name from tlv_products_user where numdroleid IN ({0}) 
+						union (select p.numprodid, p.vc2name from tl_products  p,tl_user u
+                         where p.numuserid = u.numuserid and p.vc2status = 1 and u.numdepartid = {1}))"></property>
+			</bean>
+		</property>
+		
+		<property name="queryGatewayListSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select numgwid,vc2gatewayname from tl_gateway"></property>
+			</bean>
+		</property>
+	</bean>
+</beans>

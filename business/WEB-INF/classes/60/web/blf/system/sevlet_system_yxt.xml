@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+
+	<!-- Gateway start -->
+	<sevlet>
+		<servlet-name>Gateway</servlet-name>
+		<servlet-class>com.yxt.systemapp.blf.business.TlGatewayYxtSev</servlet-class>
+		<url-pattern>/URL/system/gateway/gatewayqueryyxt.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>Gateway</servlet-name>
+		<servlet-class>com.yxt.systemapp.blf.business.TlGatewayYxtSev</servlet-class>
+		<url-pattern>/URL/system/gateway/gatewayupdateyxt.ashx</url-pattern>
+	</sevlet>
+
+
+	<!-- GateWay end -->
+
+	<!-- 通道 -->
+	<sevlet>
+		<servlet-name>TlServicecodeQuery</servlet-name>
+		<servlet-class>
+			com.yxt.systemapp.blf.business.TlServicecodeYxtSev
+		</servlet-class>
+		<url-pattern>/URL/business/servicecode/servicecodeyxt.ashx</url-pattern>
+	</sevlet>
+	<!-- 通道批量替换 -->
+	<sevlet>
+		<servlet-name>TlSvcBatchQuery</servlet-name>
+		<servlet-class>
+			com.yxt.systemapp.blf.business.TlServicecodeYxtSev
+		</servlet-class>
+		<url-pattern>/URL/business/servicecode/svcbatchyxt.ashx</url-pattern>
+	</sevlet>
+	<!-- 通道组 -->
+	<sevlet>
+		<servlet-name>Products</servlet-name>
+		<servlet-class>
+			com.yxt.systemapp.blf.business.TlProductsYxtSev
+		</servlet-class>
+		<url-pattern>/URL/system/product/productsyxt.ashx</url-pattern>
+	</sevlet>
+<!-- 	客户端管理 -->
+	<sevlet>
+		<servlet-name>TlClient</servlet-name>
+		<servlet-class>
+			com.yxt.systemapp.blf.client.TlClientSev
+		</servlet-class>
+		<url-pattern>/URL/business/Program/ProgramUpdateYxt.ashx</url-pattern>
+	</sevlet>
+	
+	<sevlet>
+		<servlet-name>TlRouteyxt</servlet-name>
+		<servlet-class>
+			com.yxt.systemapp.blf.business.TlRouteSev
+		</servlet-class>
+		<url-pattern>/URL/business/morouter/morouteryxt.ashx</url-pattern>
+	</sevlet>
+</sevlets>

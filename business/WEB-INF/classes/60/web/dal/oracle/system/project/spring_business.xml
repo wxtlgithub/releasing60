@@ -1,0 +1,1014 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<!-- 宜信通网关dao -->
+	<bean id="TlGatewayYxtDAO" class="com.yxt.systemapp.dal.business.TlGatewayYxtDAL"
+		scope="prototype">
+		
+		 <property name="queryAllGateWaySQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">HQL</value>
+				</property>
+				<property name="theSQL"
+					value="from TlGateway"></property>
+			</bean>
+		</property>
+		
+		<!-- 查询网关详情 -->
+		<property name="queryByKeySQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+						select * from (select rownum numrowasdf, 
+			                adsfsds.* from (
+			               select g.*,
+					       o.vc2name       as vc2opname,
+					       t.vc2gwtypename,
+					       i.vc2name       as vc2instname,
+					       case
+					         when g.vc2type=1 then '短信' 
+					         when g.vc2type=2 then '彩信'
+					         when g.vc2type=3 then 'wap'
+					       end vc2typename,
+					       tlbl.vc2branchcompany,
+					        case
+					         when g.numext=1 then '支持扩展' 
+					         else '不支持扩展'
+					       end vc2numext,
+					       case
+					         when g.numblackflag=1 then '白名单' 
+					         when g.numblackflag=2 then '黑名单'
+					       end vc2blackflag,
+					        case
+					         when g.numlongflag=1 then '长短信' 
+					         when g.numlongflag=0 then '非长短信'
+					       end vc2longflag,
+					        case
+					         when g.numpftype=1 then '统付' 
+					         when g.numpftype=2 then '辅通道'
+					       end vc2pftype,
+					       case
+					         when g.numshare=1 then '共享' 
+					         when g.numshare=0 then '独享'
+					       end vc2share,
+					        (select ti.vc2name from tl_inst ti where ti.numinstid=g.NUMAREA) as vc2area
+					  from tl_gateway g, tl_operator o, tl_inst i, tl_gateway_type t,tl_branchcompany_list tlbl
+					 where   o.numopid = g.numopid  
+					   and i.numinstid = g.numinstid
+					   and t.numgwtypeid = g.numgwtypeid
+					   and g.numbusarea=tlbl.numbranchcompany #0#
+						order by g.numgwid desc		                
+			                ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select count(0) from (
+							 select g.*,o.vc2name as vc2opname,t.vc2gwtypename,i.vc2name as vc2instname 
+						from tl_gateway g,tl_operator o,tl_inst i,tl_gateway_type t
+						where    o.numopid = g.numopid   and i.numinstid = g.numinstid 
+						and t.numgwtypeid = g.numgwtypeid #0# )t" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 运营商编号 -->
+						<value>g.numopid='{0}'</value>
+						<!-- 网关名 -->
+						<value>g.vc2gatewayname like '%{0}%' </value>
+						<!-- 网关号码 -->
+						<value>g.vc2spnum like '%{0}%'</value>
+						<!-- 短彩类型 -->
+						<value>g.vc2type='{0}'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		 <property name="querySameGateWayByIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select tg2.* from tl_products tp, tl_gateway tg1, tl_servicecode ts1, tl_routestra tr1, 
+						       tl_routestra_base trb1, tl_svc_inst tsi1, tl_servicecode ts2, tl_routestra tr2, 
+						       tl_routestra_base trb2, tl_gateway tg2, tl_svc_inst tsi2
+						where tg1.numgwid = ts1.numgwid and ts1.numSvcId = trb1.numSvcId 
+						      and trb1.numStraId = tr1.numStraId and tr1.numprodid = tp.numProdId 
+						      and tp.numProdId = tr2.numProdId and tr2.numStraId = trb2.numStraId  
+						      and trb2.numSvcId = ts2.numSvcId and ts2.numGwId = tg2.numGwId 
+						      and ts1.NumSvcId = tsi1.numSvcId and ts2.numSvcId = tsi2.numSvcId
+						      and tsi1.numInstId = tsi2.Numinstid 
+						      and tg1.numGwId = {0} and tg2.numGwId != {0} and tg2.numOpId = {1}"></property>
+									</bean>
+		</property>
+		<property name="queryGateWayByStatusSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select t.numgwid,t.vc2gatewayname from tl_gateway t where t.numstatus = {0}"></property>
+									</bean>
+		</property>
+	</bean>
+	<!-- 宜信通网关dao -->
+	<bean id="TlServicecodeYxtDAO" class="com.yxt.systemapp.dal.business.TlServicecodeYxtDAL"
+		scope="prototype">
+		<!-- 通过运营商编号得到通道列表 -->
+		<property name="queryServicecodeByOpidSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" select ts.numsvcid, ts.vc2svcname
+							  from tl_servicecode ts, tl_gateway tg
+							 where ts.numgwid = tg.numgwid
+							   and tg.numopid = '{0}'
+					">
+				</property>
+			</bean>
+		</property>
+		<!-- 查询子通道 -->
+		<property name="queryChildrenServiceCodeSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+						select * from (select rownum numrowasdf, 
+			                adsfsds.* from (
+			                select tp.numprodid,
+							      tp.vc2name,
+							      ts.numsvcid,
+							      ts.vc2svcname,
+							      tg.vc2spnum,
+							      tp.vc2validflag,
+							      trb.vc2subcode,
+							      tp.vc2servicetype
+							 from tl_products       tp,
+							      tl_servicecode    ts,
+							      tl_routestra_base trb,
+							      tl_gateway        tg,
+							      tl_routestra      tr
+							where tp.numprodid = tr.numprodid(+)
+							  and tr.numstraid = trb.numstraid(+)
+							  and trb.numsvcid = ts.numsvcid(+)
+							  and ts.numgwid = tg.numgwid(+) 
+							  and tp.vc2status = 1	#0#  
+							  order by numprodid, tr.numstraid, trb.numid, ts.numsvcid, tg.numgwid desc
+			                ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select count(0) from (
+							select tp.numprodid,
+						      tp.vc2name,
+						      ts.numsvcid,
+						      ts.vc2svcname,
+						      tg.vc2spnum,
+						      tp.VC2VALIDFLAG,
+						      trb.VC2SUBCODE,
+						      tp.VC2SERVICETYPE,
+						      tg.numgwid
+						 from tl_products       tp,
+						      tl_servicecode    ts,
+						      tl_routestra_base trb,
+						      tl_gateway        tg,
+						      tl_routestra      tr
+						where tp.numprodid = tr.numprodid(+)
+						  and tr.numstraid = trb.numstraid(+)
+						  and trb.numsvcid = ts.numsvcid(+)
+						  and ts.numgwid = tg.numgwid(+)
+						  and tp.vc2status = 1  #0#  
+						  order by numprodid, tr.numstraid, trb.numid, ts.numsvcid, tg.numgwid desc)t" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 网关名 -->
+						<value>tg.numgwid ='{0}'</value>
+						<!-- 子号码 -->
+						<value>trb.VC2SUBCODE='{0}'</value>
+						<!-- 通道组名称 -->
+						<value>tp.vc2name like '%{0}%'</value>
+						<!-- 短彩类型 -->
+						<value>tp.VC2SERVICETYPE='{0}'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+
+		<!-- 查询通道 -->
+		<property name="queryServiceCodeSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+									select a.numsvcid,
+								      a.vc2svcname,
+								      a.vc2svc,
+								      a.vc2type,
+								      a.vc2servicetype,
+								      b.vc2gatewayname,
+								      a.VC2LONGCODE,
+								      a.vc2feevalue,
+								      a.numgwid,
+								      a.vc2dsc,
+								      a.numshare,
+								      a.numbusarea,
+								      a.vc2validflag,
+								      a.numisfeeback,
+								      a.numisbigec,
+								      a.numfeebakratio,
+								      a.vc2costdesc,
+								      a.vc2feetype,
+								      a.vc2signstatus,
+								      a.vc2signature,
+								      a.vc2servcode,
+								      a.numsigntype
+								 from tl_servicecode a, tl_gateway b
+								where numsvcid > 0
+								  and a.numgwid = b.numgwid #0#  
+								order by a.numsvcid desc
+	                         ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}	
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+								select  count(*) from  (	
+										select a.numsvcid, a.vc2svcname,a.vc2svc,a.vc2type,a.vc2servicetype,b.vc2gatewayname,a.VC2LONGCODE, a.vc2feevalue, a.numgwid, a.vc2dsc 
+								from tl_servicecode a, tl_gateway b 
+								where numsvcid > 0 and a.numgwid = b.numgwid #0# 
+								order by a.numsvcid desc
+	                         )	" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>a.vc2svcname like '%{0}%'</value>
+						<value>a.vc2svc like '%{0}%'</value>
+						<value>a.numgwid = {0}</value>
+						<value>a.vc2servicetype={0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 查询通道批量替换列表 -->
+		<property name="querySvcBatchListSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							SELECT * FROM (SELECT ROWNUM NUMROWASDF, ADSFSDS.* FROM (  
+						       SELECT TLP.NUMPRODID,
+				                       TLP.VC2NAME,
+				                       TLRB.NUMSVCID,
+				                       TLS.VC2SVCNAME,
+				                       TlGW.NUMOPID
+				                  FROM TL_PRODUCTS       TLP,
+				                       TL_ROUTESTRA      TLR,
+				                       TL_ROUTESTRA_BASE TLRB,
+				                       TL_SERVICECODE    TLS,
+				                       TL_GATEWAY TlGW
+				                 WHERE TLP.NUMPRODID = TLR.NUMPRODID
+				                   AND TLR.NUMSTRAID = TLRB.NUMSTRAID
+				                   AND TLRB.NUMSVCID = TLS.NUMSVCID
+				                   AND TlGW.NUMGWID = TLS.NUMGWID
+				                   AND TLP.VC2STATUS = 1
+							       #0#
+							ORDER BY TLP.NUMPRODID DESC
+							) ADSFSDS WHERE ROWNUM &lt; {0}+{1}+1) WHERE NUMROWASDF > {0}
+							"/>
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+								select count(0) from (
+									SELECT TLP.NUMPRODID,
+					                       TLP.VC2NAME,
+					                       TLRB.NUMSVCID,
+					                       TLS.VC2SVCNAME,
+					                       TlGW.NUMOPID
+					                  FROM TL_PRODUCTS       TLP,
+					                       TL_ROUTESTRA      TLR,
+					                       TL_ROUTESTRA_BASE TLRB,
+					                       TL_SERVICECODE    TLS,
+					                       TL_GATEWAY TlGW
+					                 WHERE TLP.NUMPRODID = TLR.NUMPRODID
+					                   AND TLR.NUMSTRAID = TLRB.NUMSTRAID
+					                   AND TLRB.NUMSVCID = TLS.NUMSVCID
+					                   AND TlGW.NUMGWID = TLS.NUMGWID
+					                   AND TLP.VC2STATUS = 1
+							        #0#) t
+							" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>TLP.NUMPRODID = {0}</value>
+						<value>TLRB.NUMSVCID = {0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 上行查询影响的客户端列表 -->
+		<property name="querySvcBatchUpListSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							SELECT * FROM (SELECT ROWNUM NUMROWASDF, ADSFSDS.* FROM (  
+								SELECT 	TC.NUMCLIENTID,
+										TC.VC2CLIENTNAME,
+										TS.NUMSVCID, 
+										TS.VC2SVCNAME,
+										TR.NUMROUTEID
+								FROM TL_ROUTE TR, TL_CLIENT TC, TL_SERVICECODE TS
+								WHERE TR.NUMSVCID = TS.NUMSVCID
+								  AND TR.NUMRPGMID = TC.NUMCLIENTID
+								#0#
+							) ADSFSDS WHERE ROWNUM &lt; {0}+{1}+1) WHERE NUMROWASDF > {0}
+							"/>
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select count(0) from (
+								SELECT 	TC.NUMCLIENTID,
+										TC.VC2CLIENTNAME,
+										TS.NUMSVCID, 
+										TS.VC2SVCNAME
+								FROM TL_ROUTE TR, TL_CLIENT TC, TL_SERVICECODE TS
+								WHERE TR.NUMSVCID = TS.NUMSVCID
+								AND TR.NUMRPGMID = TC.NUMCLIENTID
+							#0#) t
+							" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>TS.NUMSVCID = {0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<!-- 根据通道组ID、通道ID 批量替换通道 包括 EC 和 路由 -->
+		<!-- {0}操作人{1} 通道组ID列表 {2}上行路由ID列表 {3}原业务ID {4}新通道ID {5} 否支持扩展子号,{6}备注 -->
+		<property name="updateSvcBatchBySvcIdAndProdsSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					declare 
+					  N_RESULT varchar(10);
+					BEGIN
+					  PCK_REALTIME.PROC_SWITCH_SERICECODE({0},'{1}','{2}',{3},{4},{5},'{6}',N_RESULT);
+					END; 
+					"></property>
+			</bean>
+		</property>
+		
+		<!-- 通过运营商编号得到通道列表 -->
+		<property name="querySvcCodeByOpidExistSvcIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" SELECT TS.NUMSVCID, TS.VC2SVCNAME FROM TL_SERVICECODE TS, TL_GATEWAY TG
+							WHERE TS.NUMGWID = TG.NUMGWID
+							AND TS.NUMSVCID != '{0}'
+							AND TG.NUMOPID = (
+							SELECT DISTINCT TG.NUMOPID 
+							       FROM TL_SERVICECODE TS, TL_GATEWAY TG
+							            WHERE TS.NUMGWID = TG.NUMGWID
+							                  AND TS.NUMSVCID = '{0}'
+							)
+					">
+				</property>
+			</bean>
+		</property>
+		<!-- 获取通道组需要更新EC业务的EC列表 -->
+		<property name="queryNeedOpEcListByProdsAndNewSvcIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" select c.vc2ecname,c.numecid,c.vc2ecid
+							  from tl_products a,
+							       (select numecid, numsvcid
+							          from tl_ec_servicecode
+							         where numsvcid = {1}) b,
+							       tl_ec_info c
+							 where a.numecid = b.numecid(+)
+							   and a.numprodid in ({0})
+							   and a.numecid = c.numecid
+							   and b.numecid is null
+					">
+				</property>
+			</bean>
+		</property>
+		<!-- 按业务名称查询出通道组数量 -->
+		<property name="queryServicecodeCountBySvcNameQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value=" select * from tl_servicecode ts where vc2svcname = '{0}'"></property>
+			</bean>
+		</property>
+		
+		<!-- 查询使用该通道的通道组下其他同运营商通道的所属地区与该通道相同的地区 -->
+		<property name="querySameSvcInstByIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value=" select tsi.* from tl_products tp, tl_servicecode ts1, tl_gateway tg1, tl_routestra tr1, 
+					       tl_routestra_base trb1, tl_servicecode ts2, tl_routestra tr2, tl_routestra_base trb2, tl_gateway tg2, tl_svc_inst tsi
+					where trb1.numStraId = tr1.numStraId  and ts1.numSvcId = trb1.numSvcId 
+							and tr1.numprodid = tp.numProdId  and tp.numProdId = tr2.numProdId and tr2.numStraId = trb2.numStraId  
+							and trb2.numSvcId = ts2.numSvcId and ts2.numGwId = tg2.numGwId and tsi.numSvcId = trb2.numSvcId 
+							and tg2.numOpId = tg1.numOpId  and trb2.numSvcId != {0} and ts1.numSvcId = {0} and tsi.numInstId in ('{1}') 
+							and tg1.numgwid = {2}"></property>
+			</bean>
+		</property>
+		
+		<!-- 查询辅通道网关所属的通道 -->
+		<property name="queryServicecodeByGwIdAndPftypeSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select sc.* from tl_servicecode sc, tl_gateway gw
+					where sc.numgwid = gw.numgwid and gw.numgwid = {0} and gw.numpftype =2 ">
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 查询辅通道网关所属的通道 -->
+		<property name="queryServicecodeByGwSvcIdAndPftypeSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select sc.* from tl_servicecode sc, tl_gateway gw
+					where sc.numgwid = gw.numgwid and sc.numsvcid != {1} and gw.numgwid = {0} and gw.numpftype =2 ">
+				</property>
+			</bean>
+		</property>
+		<property name="queryServiceCodeByEcId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select numseqid from tl_ec_servicecode where numsvcid = {0}"></property>
+			</bean>
+		</property>
+	</bean>
+	<!-- 通道组DAO -->
+	<bean id="TlProductsYxtDAO" class="com.yxt.systemapp.dal.business.TlProductsYxtDAL"
+		scope="prototype">
+		<!-- 通道组基本信息列表 -->
+		<property name="queryByArgsSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="PageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+									select distinct a.numprodid,
+									      a.vc2name,
+									      a.vc2servicetype,
+									      a.datcreattime,
+									      b.vc2username,
+									      a.vc2dsc,
+									      a.VC2VALIDFLAG,
+									      a.NUMPRIFLAG,
+									      tlec.numecid,
+                      					  tlec.vc2ecname,
+                      					  a.vc2subcodeflag
+									 from tl_products       a,
+									      tl_user           b,
+									      tl_routestra      tlr,
+									      tl_routestra_base tlra,
+									      tl_servicecode    tls,
+									      tl_ec_info        tlec
+									where a.numprodid > 0
+									  and a.vc2status=1
+									  and a.numuserid = b.numuserid(+)
+									  and a.numprodid = tlr.numprodid(+)
+									  and tlr.numstraid = tlra.numstraid(+)
+									  and tlra.numsvcid = tls.numsvcid(+)
+									  and a.numecid=tlec.numecid(+) #0# order by a.numprodid  desc
+	                         ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}							
+							" />
+					</bean>
+				</property>
+				<property name="CountSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select  count(*) from  (	
+									select distinct a.numprodid,
+									      a.vc2name,
+									      a.vc2servicetype,
+									      a.datcreattime,
+									      b.vc2username,
+									      a.vc2dsc,
+									      a.VC2VALIDFLAG,
+									      a.NUMPRIFLAG
+									from tl_products       a,
+									      tl_user           b,
+									      tl_routestra      tlr,
+									      tl_routestra_base tlra,
+									      tl_servicecode    tls,
+									      tl_ec_info        tlec
+									where a.numprodid > 0
+									  and a.vc2status=1
+									  and a.numuserid = b.numuserid(+)
+									  and a.numprodid = tlr.numprodid(+)
+									  and tlr.numstraid = tlra.numstraid(+)
+									  and tlra.numsvcid = tls.numsvcid(+)
+									  and a.numecid=tlec.numecid(+) #0#  
+									  order by a.numprodid desc
+	                         )							
+							" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 网关名称 -->
+						<value>a.vc2name like '%{0}%'</value>
+						<!-- 短彩类型 -->
+						<value>a.vc2servicetype = '{0}'</value>
+						<!-- 通道名称 -->
+						<value>tls.vc2svcname like '%{0}%'</value>
+						<!-- 长号码 -->
+						<value>tlra.vc2subcode like '%{0}%'</value>
+						<!-- 优先级 -->
+						<value>a.numpriflag = '{0}'</value>
+						<!-- 开通状态 -->
+						<value>a.vc2validflag = '{0}'</value>
+						<!-- ec名称 -->
+						<value>tlec.vc2ecname like '%{0}%'</value>
+
+					</list>
+				</property>
+			</bean>
+		</property>
+		<!-- 查询ec所有业务 -->
+		<property name="queryEcAllServiceSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" 
+								select tle.numecid,
+					      tle.vc2ecname,
+					      tls.numsvcid,
+						  tls.numsvcid as numsvcid1,
+						  tls.vc2svcname,
+						  tls.vc2svcname as vc2svcname1,
+					      tlo.numopid,
+					      tlo.vc2name,
+					      tlg.numblackflag,
+					      '' as vc2subcode,
+					       tlg.vc2spnum || tls.vc2longcode as longservicecode
+					 from tl_ec_info        tle,
+					      tl_ec_servicecode tlecs,
+					      tl_servicecode    tls,
+					      tl_gateway        tlg,
+					      tl_operator       tlo
+					where tle.numecid = tlecs.numecid
+					  and tlecs.numsvcid = tls.numsvcid
+					  and tls.numgwid = tlg.numgwid
+					  and tlg.numopid = tlo.numopid
+					  and tlecs.numstatus = 1
+					  and tle.numecid='{0}'
+					 "></property>
+			</bean>
+		</property>
+		<!-- 查询ec所选业务 -->
+		<property name="queryEcUsedServiceSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select tle.numecid, tle.vc2ecname, tls.numsvcid, 
+									tls.numsvcid as numsvcid1, tls.vc2svcname, tls.vc2svcname as vc2svcname1, 
+									tlo.numopid, tlo.vc2name, tlg.numblackflag, tlrb.vc2subcode, 
+									tlrb.numdirtytype, tlg.vc2spnum || tls.vc2longcode as longservicecode
+							 from tl_ec_info tle, tl_servicecode tls, tl_gateway tlg, tl_operator tlo,
+							      tl_products tlp, tl_routestra tlr, tl_routestra_base tlrb
+							 where tle.numecid=tlp.numecid and tlp.numprodid=tlr.numprodid and tlr.numstraid=tlrb.numstraid
+							   and tlrb.numsvcid=tls.numsvcid and tls.numgwid=tlg.numgwid and tlg.numopid=tlo.numopid
+							   and tlp.numprodid='{0}' and tle.numecid ='{1}' and tls.vc2servicetype = '{2}' 
+					 "></property>
+			</bean>
+		</property>
+		<!-- 查询ec未选业务 -->
+		<property name="queryEcUnUsedServiceSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" 
+							select tle.numecid,
+							       tle.vc2ecname,
+							       tls.numsvcid,
+							       tls.numsvcid as numsvcid1,
+							       tls.vc2svcname,
+							       tls.vc2svcname as vc2svcname1,
+							       tlo.numopid,
+							       tlo.vc2name,
+							       tlg.numblackflag,
+							       '' as vc2subcode,
+					      		  tlg.vc2spnum || tls.vc2longcode as longservicecode
+							  from tl_ec_info        tle,
+							       tl_ec_servicecode tlecs,
+							       tl_servicecode    tls,
+							       tl_gateway        tlg,
+							       tl_operator       tlo
+							 where tle.numecid = tlecs.numecid
+							   and tlecs.numsvcid = tls.numsvcid
+							   and tls.numgwid = tlg.numgwid
+							   and tlg.numopid = tlo.numopid
+							   and tlecs.numstatus = 1
+							   and tle.numecid = '{1}'
+							   and tls.vc2servicetype = '{2}' 
+							   and tlecs.numsvcid not in
+							       (select tlrb.numsvcid
+							          from tl_products tlp, tl_routestra tlr, tl_routestra_base tlrb
+							         where tlp.numprodid = tlr.numprodid
+							           and tlr.numstraid = tlrb.numstraid
+							           and tlp.numprodid = '{0}'
+							           and tlp.numecid = '{1}')
+					 "></property>
+			</bean>
+		</property>
+
+		<!-- 验证长号码规则 -->
+		<property name="checkEcSubCodeSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" 
+								select count(1) from 
+							tl_products tp,tl_routestra tr,tl_routestra_base trb
+							where 
+							tp.numprodid=tr.numprodid
+							and tr.numstraid=trb.numstraid
+							and tp.numecid!='{0}'
+							and trb.numsvcid='{1}'
+							and trb.vc2subcode = '{2}'
+					 "></property>
+			</bean>
+		</property>
+		<!-- 验证通道组名称是否可用 -->
+		<property name="checkProductNameSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" select count(1) from tl_products tp where tp.vc2name = '{0}'"></property>
+			</bean>
+		</property>
+		<!-- 验证通道组编号是否存在 -->
+		<property name="checkProductIDSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" select numprodid from tl_products tp where tp.numprodid = '{0}'"></property>
+			</bean>
+		</property>
+		<!-- 验证通道组名称是否可用 更新 -->
+		<property name="checkProductNameUpdateSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" select count(1) from tl_products tp where tp.vc2name = '{0}' and tp.numprodid!='{1}'"></property>
+			</bean>
+		</property>
+		<!-- 备份路由策略 -->
+		<property name="batOldRoutestraSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" insert into TL_ROUTESTRA_BASE_HIS
+							  (NUMSTRAID,
+							   NUMPRODID,
+							   NUMTYPEID,
+							   NUMID,
+							   NUMSVCID,
+							   VC2SUBCODE,
+							   NUMUSERID,
+							   DATINSERT)
+							  select tr.numstraid,
+							         tr.numprodid,
+							         tr.numtypeid,
+							         trb.numid,
+							         trb.numsvcid,
+							         trb.vc2subcode,
+							         '{1}',
+							         sysdate
+							    from tl_routestra tr, tl_routestra_base trb
+							   where tr.numstraid = trb.numstraid
+							     and tr.numprodid = '{0}'"></property>
+			</bean>
+		</property>
+		<!-- ec删除业务级联删除通道组对应业务 -->
+		<property name="deleteEcProductsServiceSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" delete from tl_routestra_base tlrb
+					where tlrb.numstraid in (select tlr.numstraid
+					                           from tl_products tlp, tl_routestra tlr
+					                          where tlp.numprodid = tlr.numprodid(+)
+					                            and tlp.numecid = '{0}')
+					  and tlrb.numsvcid = '{1}'">
+				</property>
+			</bean>
+		</property>
+		<!-- 获得网关运营商与地区相同的通道 -->
+		<property name="querySameGwAndInstOperatorSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select sc2.* from Tl_ServiceCode sc1, Tl_Svc_Inst si1, Tl_GateWay gw1, Tl_ServiceCode sc2, Tl_Svc_Inst si2, Tl_GateWay gw2
+								where sc1.numsvcid = si1.numsvcid and sc1.numgwid = gw1.numgwid 
+								      and sc2.numsvcid = si2.numsvcid and sc2.numgwid = gw2.numgwid 
+								      and gw2.numopid = gw1.numopid and si2.numinstid = si1.numinstid 
+								      and sc1.numsvcid = {0} and sc2.numsvcid in ({1})">
+				</property>
+			</bean>
+		</property>
+		<!-- 通道组鉴权 得到所有客户端对应部门权限的通道组 -->
+		<property name="queryProductAndClintSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT DISTINCT TO_CHAR(TLUG.NUMPRODID) AS NUMPRODID,
+				                TO_CHAR(TLC.NUMCLIENTID) AS NUMCLIENTID,
+				                NVL(TLR.NUMGROUPLIMIT, 0) AS NUMGROUPLIMIT
+								  FROM TL_PRODUCTS TLUG,
+								       TL_DPERMISSION_TYPE TLDT,
+								       TL_DPERMISSION TLD,
+								       TL_DEPARTMENT_ROLE TLDR,
+								       TL_CLIENT TLC,
+								       (SELECT NUMPRODID, MAX(NUMGROUPLIMIT) NUMGROUPLIMIT
+								          FROM TLV_ROUTESTRA_BASE
+								         GROUP BY NUMPRODID) TLR
+								 WHERE TLD.NUMTYPEID = TLDT.NUMTYPEID(+)
+								   AND TLDT.VC2DATATABLE = 'TL_PRODUCTS'
+								   AND TLUG.NUMPRODID = TLD.NUMDATAID(+)
+								   AND TLD.NUMDROLEID = TLDR.NUMROLEID
+								   AND TLDR.NUMDEPARTID = TLC.NUMDEPARTID
+								   AND TLUG.VC2STATUS = 1
+								   AND TLUG.NUMPRODID = TLR.NUMPRODID(+)
+								 ORDER BY TLC.NUMCLIENTID">
+				</property>
+			</bean>
+		</property>
+	</bean>
+	<bean id="TlClientYxtDAO" class="com.yxt.systemapp.dal.client.TlClientDAL"
+		scope="prototype">
+		<!-- 通过客户端编号得到上行路由列表 -->
+		<property name="queryMoRouteCountByClientIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="   select * from tl_route t where t.numrpgmid in '{0}'">
+				</property>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="TlRouteYxtDAO" class="com.lxt2.systemapp.dal.business.TlRouteDAL"
+		scope="prototype">
+		<property name="queryServicecodeCount">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select numid from tl_routestra_as where numsvcid = {0}
+						union all
+						select numid from tl_routestra_balance where numsvcid = {0}
+						union all
+						select numid from tl_routestra_base where numsvcid = {0}"></property>
+			</bean>
+		</property>
+		<property name="queryGatewayCount">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select * from tl_route where numgwid = {0} "></property>
+			</bean>
+		</property>
+		<property name="queryRouteByProIdAndScId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select a.numrouteid from TL_ROUTE a where a.numprodid = {0} and a.numsvcid = {1}"></property>
+			</bean>
+		</property>
+		<property name="queryByArgs">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="PageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from (select rownum numrowasdf, 
+			                adsfsds.* from ( 
+									select s.vc2svcname,a.*, b.vc2gatewayname, c.vc2clientname,t.vc2name
+									  from TL_ROUTE a, Tl_Gateway b, Tl_Client c,Tl_Servicecode s,tl_products t
+									where a.numgwid = b.numgwid and a.numsvcid=s.numsvcid
+									  and a.numprodid = t.numprodid (+) and a.numrpgmid = c.numclientid #0#  
+									order by a.numrouteid, b.numgwid, c.numclientid, s.numsvcid desc
+	                         ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}							
+							" />
+					</bean>
+				</property>
+				<property name="CountSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select  count(*) from  (									              
+									select s.vc2svcname,a.*, b.vc2gatewayname, c.vc2clientname
+									  from TL_ROUTE a, Tl_Gateway b, Tl_Client c,Tl_Servicecode s
+									where a.numgwid = b.numgwid and a.numsvcid=s.numsvcid 
+									and a.numrpgmid = c.numclientid #0#  
+									order by a.numrouteid, b.numgwid, c.numclientid, s.numsvcid desc
+	                         )							
+							" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>a.VC2LONGCODE like '%{0}%'</value>
+						<value>a.VC2CMD like '%{0}%'</value>
+						<value>a.NUMRPGMID = {0}</value>
+						<value>a.NUMGWID = {0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="queryAllRoute">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="SELECT 
+								        nvl(tlr.vc2longcode,'') as vc2longcode,
+								        to_char(nvl(tlr.numgwid,'')) as numgwid,
+								        nvl(tlr.vc2cmd,' ') as vc2cmd,
+								        nvl(tlr.vc2lcmatch,'') as vc2lcmatch,
+								        nvl(tlr.vc2cmdmatch,'') as vc2cmdmatch,
+								        nvl(tlg.numopid,'') as numopid,
+								        nvl(tlr.numrpgmid,'') as numrpgmid,
+								        nvl(tlr.numsvcid,'') as  numsvcid         
+								    from
+								        tl_route tlr,
+								        tl_gateway tlg          
+								    where
+								        tlr.numgwid=tlg.numgwid"></property>
+			</bean>
+		</property>
+	</bean>
+	<bean id="TlECSignatureYxtDAO" class="com.yxt.systemapp.dal.business.TlECSignatureYxtDAL"
+		scope="prototype">
+		<!-- 查询签名内容，用以生成配置文件 -->
+		<property name="queryAllSilingSignature">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="  
+						 SELECT to_char(A.NUMCLIENTID) NUMCLIENTID,
+							       A.VC2CLIENTNAME,
+							       to_char(B.NUMECID) NUMECID,
+							       to_char(B.VC2ECID) VC2ECID,
+							       B.VC2ECNAME,
+							       B.NUMSIGNTYPEID,
+							       C.VC2TYPENAME,
+							       D.VC2SIGNTURE1,
+							       D.VC2SIGNTUREWIDE,
+							       DECODE(B.NUMSIGNTYPEID,3,'true') VC2NOSIGNTURE
+							  FROM TL_CLIENT A,
+							       TL_EC_INFO B,
+							       TL_ECSIGNTURE_TYPE C,
+							       (SELECT NUMECID,
+							               STRCAT(DISTINCT DECODE(NUMTYPEID, 1, VC2SIGNTURE)) VC2SIGNTURE1,
+							               STRCAT(DISTINCT DECODE(NUMTYPEID, 2, VC2SIGNTURE)) VC2SIGNTUREWIDE
+							          FROM TL_ECSIGNTURE
+							         GROUP BY NUMECID) D
+							 WHERE A.NUMDEPARTID = B.NUMDEPARTID
+							   AND B.NUMSIGNTYPEID = C.NUMTYPEID
+							   AND B.NUMECID = D.NUMECID(+)
+					"></property>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="TLECPrePaidYxtDAO" class="com.yxt.systemapp.dal.business.TLECPrePaidYxtDAL"
+		scope="prototype">
+		<!-- 查询EC预付费配置信息，用以生成配置文件 -->
+		<property name="queryECPayPaidConfig">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="  
+						 SELECT to_char(B.NUMCLIENTID) NUMCLIENTID,
+							       B.VC2CLIENTNAME,
+							       to_char(C.NUMECID) NUMECID,
+							       DECODE(to_char(nvl(A.NUMOVER, '0')), 0, 'true', 'false') NUMOVER,
+							       to_char(D.NUMPRODID) NUMPRODID
+							  FROM TL_EC_PREPAID A, TL_CLIENT B, TL_EC_INFO C, TL_PRODUCTS D
+							 WHERE B.NUMDEPARTID(+) = C.NUMDEPARTID
+							   AND A.NUMECID = C.NUMECID
+							   AND A.NUMECID = D.NUMECID
+							   AND C.VC2CHARGETYPE=1
+							 ORDER BY B.NUMCLIENTID
+					"></property>
+			</bean>
+		</property>
+	</bean>
+</beans>

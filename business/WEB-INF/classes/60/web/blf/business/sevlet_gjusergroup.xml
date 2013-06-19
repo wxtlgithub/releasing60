@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<sevlet>
+		<servlet-name>UserGroupQuery</servlet-name>
+		<servlet-class>com.lxt2.business.blf.usergroup.GJUserGroupSev
+		</servlet-class>
+		<url-pattern>/URL/Customer/UserGroup/GJUserGroupQuery.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>UserGroupUpdate</servlet-name>
+		<servlet-class>com.lxt2.business.blf.usergroup.GJUserGroupSev
+		</servlet-class>
+		<url-pattern>/URL/Customer/UserGroup/GJUserGroupUpdate.ashx</url-pattern>
+	</sevlet>
+	
+	 <sevlet>
+		<servlet-name>UserGroupMemberUpdate</servlet-name>
+		<servlet-class>com.lxt2.business.blf.usergroup.GJUserGroupMemberSev
+		</servlet-class>
+		<url-pattern>/URL/Customer/UserGroupMember/GJUserGroupMemberUpdate.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>UserGroupMemberQuery</servlet-name>
+		<servlet-class>com.lxt2.business.blf.usergroup.GJUserGroupMemberSev
+		</servlet-class>
+		<url-pattern>/URL/Customer/UserGroupMember/GJUserGroupMemberQuery.ashx</url-pattern>
+	</sevlet>
+	
+	<sevlet>
+		<servlet-name>ustomerBussinessQuery</servlet-name>
+		<servlet-class>com.lxt2.business.blf.usergroup.GJUserGroupMemberSev
+		</servlet-class>
+		<url-pattern>/URL/Customer/CustomerBussiness/GJCustomerBussinessQuery.ashx</url-pattern>
+	</sevlet>
+</sevlets>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.systemapp.model.notice.TlBulletinInfo" table="TL_BULLETIN_INFO">
+
+		<!--主键(NUMBER:22)-->
+		<id name="numseqid" type="java.lang.Integer">
+			<column name="NUMSEQID" precision="22" scale="0" />
+			  <generator class="sequence">
+		      <param name="sequence">TLSEQ_BULLETIN_INFO</param>
+		      </generator>
+		</id>
+		<!--公告内容(VARCHAR2:1000)-->
+		<property name="vc2bulletin" type="java.lang.String">
+			<column name="VC2BULLETIN" length="1000" />
+		</property>
+		
+		<!--公告标题(VARCHAR2:200)-->
+		<property name="vc2bultitle" type="java.lang.String">
+			<column name="VC2BULTITLE" length="200" />
+		</property>
+		<!--文件地址(VARCHAR2:200)-->
+		<property name="vc2filepath" type="java.lang.String">
+			<column name="VC2FILEPATH" length="200" />
+		</property>
+		<!--文件地址(VARCHAR2:200)-->
+		<property name="vc2nodeid" type="java.lang.String">
+			<column name="VC2NODEID" length="50" />
+		</property>
+		<!--创建时间(DATE:7)-->
+		<property name="datcreatetime" type="java.util.Date">
+			<column name="DATCREATETIME" length="7" />
+		</property>
+
+		<!--操作人编号(INTEGER:7)-->
+		<property name="numuserid" type="java.lang.Integer">
+			<column name="NUMUSERID" length="7" />
+		</property>
+
+	</class>
+</hibernate-mapping>
+  

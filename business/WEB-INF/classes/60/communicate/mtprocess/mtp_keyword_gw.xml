@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- 敏感词的前缀:dw -->
+	<!-- 通道敏感词应用 -->
+	<bean id="gwDirtyWordSqlDB"  class="com.techcenter.dbcore.dbbase.jdbc.JdbcSimpleFindDAO" parent="abstractDAO">
+		<constructor-arg type="java.lang.Class" value="com.lxt2.keywordfilter.gw.GwDirtyWordEntity"/>
+		<property name="sql">
+			<!-- <value><![CDATA[select w.vc2dirtyword,w.gatewayid as dirtyWord from tl_dirtyword_gw w where w.numflag = 1]]></value> -->
+			<value><![CDATA[select case when w.numgwid <2000 then w.numgwid + 2400 else w.numgwid end as gatewayid, w.vc2dirtyword as dirtyword  from tl_dirtyword_gw w where numflag = 1]]></value>
+		</property>
+	</bean> 
+	<!-- 网关通道敏感词过滤器 -->
+	<bean id="gwDirtyWord" class="com.lxt2.keywordfilter.gw.GwBitDirtyWord" init-method="loadDirty">
+		<property name="dirtySqlDB" ref="gwDirtyWordSqlDB"/>
+		<property name="persistDir" value="${WORKDIR}../../../data/biz/"/>
+	</bean>
+	<!-- 网关通道敏感词加载命令 -->
+	<bean id="gwDwDirtyWordSyncCmd" class="com.lxt2.keywordfilter.gw.GwDirtyWordLoadCmd">
+		<property name="dirtyWord" ref="gwDirtyWord"/>
+	</bean>
+	<!-- 网关通道敏感词全量加载任务 -->
+	<bean id="gwDwDirtyWordTask" class="com.lxt2.keywordfilter.gw.GwDirtyWordLoadTask">
+		<property name="id" value="125"/>
+		<property name="name" value="通道敏感词全量加载"/>
+		<property name="taskSchRule" value="@{sch(50,0)}"/>
+		<property name="dirtyWord" ref="gwDirtyWord"/>
+		<property name="commandMap">
+			<map>
+				<!-- 触发敏感词全量加载 -->
+				<entry key="sync" value-ref="gwDwDirtyWordSyncCmd"/>
+			</map>
+		</property>
+	</bean>
+
+</beans>

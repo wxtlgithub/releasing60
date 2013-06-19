@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<!-- MT处理的Bean前缀是mtp -->
+	<!-- 如果需要改为系统管理控制，需要修改的配置有： mtpSubmitQueue: 取消init-method, destory-method -->
+
+	<!-- 个性化短信过滤器 -->
+	<bean id="mtpSmsPersonalizedFilter1152" class="com.lxt2.mtprocess.filter.SmsPersonalizedFilter">
+		<property name="templateReplace" ref="templateReplace" />
+	</bean>
+	<!-- 手机号码过滤器 -->
+	<bean id="mtpPhoneVerificationFilter1152" class="com.lxt2.mtprocess.filter.PhoneVerificationFilter">
+		<property name="mobileValidator" ref="ndMobileValidator" />
+	</bean>
+	<!-- 白名单失败转黑名单过滤器 -->
+	<bean id="mtpWhiteErrRemletFilter1152" class="com.lxt2.mtprocess.filter.WhiteErrRemletFilter">
+		<property name="blackProductID" value="1" />
+	</bean>
+	<!-- 系统黑名单过滤器 -->
+	<!-- 网关通道共享黑名单过滤器 -->
+	<bean id="mtpGwShareBlackFilter1152" class="com.lxt2.mtprocess.filter.ShareBlackFilter">
+		<property name="blackList" ref="gwShareBlackList" />
+	</bean>
+	<bean id="mtpSysBlackFilter1152" class="com.lxt2.mtprocess.filter.SystemBlackFilter">
+		<property name="blackList" ref="blkSysBlackList" />
+	</bean>
+	<bean id="mtpSysBlackMMSFilter1152" class="com.lxt2.mtprocess.filter.SystemBlackMMSFilter">
+		<property name="blackList" ref="blkSysBlackListMMS" />
+	</bean>
+
+	<!-- 敏感词过滤器 -->
+	<bean id="mtpKeywordFilter1152" class="com.lxt2.mtprocess.filter.KeywordFilter">
+		<property name="dirtyWord" ref="dirtyWord" />
+	</bean>
+	<!-- 网关通道敏感词过滤器 -->
+	<bean id="mtpGwKeywordFilter1152" class="com.lxt2.mtprocess.filter.GwKeywordFilter">
+		<property name="dirtyWord" ref="gwDirtyWord"/>
+	</bean>
+	<!-- 下行路由过滤器 -->
+	<bean id="mtpRouterFilter1152" class="com.project.mtprocess.filter.ProjectSubmitRouterFilter">
+		<property name="submitRouter" ref="mtpSubmitRouter" />
+		<property name="mobileValidator" ref="ndMobileValidator" />
+		<!-- 注入省份路由信息 -->
+		<property name="phoneInfoList" ref="phoneInfoList" />
+		<property name="strategyContext" ref="mtpStrategyContext1152"></property>
+	</bean>
+	<bean id="templateReplace"
+		class="com.standardsm.individual.template.DefaultTemplateReplace" />
+	<!-- 特殊号码路由过滤器 -->
+	<bean id="specialMobileFilter1152" class="com.project.mtprocess.filter.ProjectSpecialMobileFilter">
+		<property name="gatewayXmlParser" ref="gatewayXml" />
+		<property name="specialMobileConfig" ref="specialMobileConfig" />
+		<property name="submitRouter" ref="mtpSubmitRouter" />
+	</bean>
+	<!-- 下行组包发送过滤器 -->
+	<bean id="submitGroupFilter1152" class="com.project.mtprocess.filter.ProjectSubmitGroupFilter">
+		<property name="gatewayConfig" ref="gatewayXml" />
+	</bean>
+	<!-- 过滤器结束 -->
+	<!-- 生成msgID -->
+	<bean id="mtpMsgID1152" class="com.lxt2.mtprocess.MsgIdUtil">
+	</bean>
+	<!-- 已接收队列处理监听 -->
+	<bean id="mtpSubmitListener1152" class="com.lxt2.mtprocess.MtpSubmitListener">
+		<property name="module" ref="mtpModule1152" />
+		<property name="sid" ref="ndSid" />
+		<property name="verifyService" ref="ndClientVerify" />
+		<property name="msgIdUtil" ref="mtpMsgID1152" />
+		<property name="saveLogger" ref="saveLogger" />
+		<property name="filters">
+			<list>
+				<!-- 个性化短信过滤器 要在最上面 -->
+				<ref bean="mtpSmsPersonalizedFilter1152" />
+				<ref bean="mtpPhoneVerificationFilter1152" />
+				<!-- 白名单失败转黑名单过滤器 -->
+				<ref bean="specialMobileFilter1152" />
+				<ref bean="mtpRouterFilter1152" />
+	
+				<ref bean="mtpWhiteErrRemletFilter1152" />
+				<ref bean="mtpSysBlackFilter1152" />
+					<ref bean="mtpGwShareBlackFilter1152"/>
+				<ref bean="mtpSysBlackMMSFilter1152" />
+				<ref bean="mtpKeywordFilter1152" />
+				<ref bean="mtpGwKeywordFilter1152"/>
+				<ref bean="submitGroupFilter1152" />
+			</list>
+		</property>
+	</bean>
+	<!-- MT处理模块所使用的cache -->
+	<bean id="mtpCache1152" class="ihandy.lxt20.persist.cache.FCCache" destroy-method="close"/>
+	<!-- 已接收队列 -->
+	<bean id="mtpSubmitQueue1152" class="com.lxt2.queuekc.CacheQueue">
+		<property name="queueName" value="mtpSubmit1152" />
+		<property name="cache" ref="mtpCache1152" />
+		<property name="listener" ref="mtpSubmitListener1152" />
+		<property name="ltnCount" value="2" />
+	</bean>
+
+	<!-- 策略相关配置 -->
+	<bean id="mtpStrategyContext1152" class="com.lxt2.mtprocess.strategy.StrategyContext">
+		<property name="msStrategy">
+			<bean class="com.lxt2.mtprocess.strategy.MsStrategy" />
+		</property>
+		<property name="balanceStrategy">
+			<bean class="com.lxt2.mtprocess.strategy.LoadBalanceStrategy" />
+		</property>
+	</bean>
+</beans>

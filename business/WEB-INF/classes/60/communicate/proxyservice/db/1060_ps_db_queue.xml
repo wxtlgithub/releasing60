@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<!-- 待发表队列时间控制 -->
+	<bean id="timeReceiveControl" class="com.techcenter.msgqueue.DayReceiveControlRunnable"
+		init-method="init" destroy-method="destroy">
+		<property name="dayStartTime" value="${send.starttime}" />
+		<property name="dayEndTime" value="${send.endtime}" />
+	</bean>
+	<!-- API短信内容表队列 -->
+	<bean id="apiSmsContentTblQueue" class="com.lxt20.interfaceservice.queue.SmsContentTblQueue"
+		 destroy-method="destroy">
+		<constructor-arg>
+			<ref bean="tlSmsContentDAO" />
+		</constructor-arg>
+		<property name="listener">
+			<ref bean="apiSmsContentTblListener" />
+		</property>
+		<property name="receiveControlList">
+			<list>
+				<!-- 发送时间控制 -->
+				<ref local="timeReceiveControl" />
+			</list>
+		</property>
+		<property name="statusInitSql">
+			<value><![CDATA[update TL_SMS_CONTENT set VC2STATUS=77 where VC2STATUS=2]]></value>
+		</property>
+		<property name="vc2status" value="77" />
+	</bean>
+
+	<!-- API彩信内容表队列 -->
+	<bean id="apiMmsContentTblQueue"
+		class="com.yxt.interfaceservice.queue.SubmitMmsContentTblQueue"
+		init-method="open" destroy-method="destroy">
+		<constructor-arg ref="tlMmsContentDAO" />
+		<property name="listener" ref="apiMmsContentTblListener" />
+		<property name="receiveControlList">
+			<list>
+				<!-- 发送时间控制 -->
+				<ref local="timeReceiveControl" />
+			</list>
+		</property>
+		<property name="statusInitSql">
+			<value><![CDATA[update TL_MMS_CONTENT set VC2STATUS=77 where VC2STATUS=2]]></value>
+		</property>
+		<property name="vc2status" value="77" />
+	</bean>
+</beans>

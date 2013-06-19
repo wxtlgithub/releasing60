@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.systemapp.model.monitor.TlAlarmData" table="TL_ALARM_DATA">
+
+		<!--主键(NUMBER:22)-->
+		<id name="numalarmdataid" type="java.lang.Integer">
+			<column name="NUMALARMDATAID" precision="22" scale="0" />
+			<generator class="increment"></generator>
+		</id>
+
+		<!--指标定义ID(NUMBER:22)-->
+		<property name="numkpidefid" type="java.lang.Integer">
+			<column name="NUMKPIDEFID" length="22" />
+		</property>
+
+		<!--模块ID(VARCHAR2:200)-->
+		<property name="vc2modelid" type="java.lang.String">
+			<column name="VC2MODELID" length="200" />
+		</property>
+
+		<!--指标编码(VARCHAR2:200)-->
+		<property name="vc2kpicode" type="java.lang.String">
+			<column name="VC2KPICODE" length="200" />
+		</property>
+
+		<!--告警消息(VARCHAR2:200)-->
+		<property name="vc2alarmmsg" type="java.lang.String">
+			<column name="VC2ALARMMSG" length="200" />
+		</property>
+
+		<!--告警状态(VARCHAR2:200)-->
+		<property name="vc2alarmstate" type="java.lang.String">
+			<column name="VC2ALARMSTATE" length="200" />
+		</property>
+
+		<!--更新时间(DATE:7)-->
+		<property name="datupdatetime" type="java.util.Date">
+			<column name="DATUPDATETIME" length="7" />
+		</property>
+
+		<!--生成时间(DATE:7)-->
+		<property name="datstarttime" type="java.util.Date">
+			<column name="DATSTARTTIME" length="7" />
+		</property>
+
+	</class>
+</hibernate-mapping>
+  

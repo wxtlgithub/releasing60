@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<sevlet>
+		<servlet-name>PurviewProductQuery</servlet-name>
+		<servlet-class>com.lxt2.business.blf.product.TlProductSev
+		</servlet-class>
+		<url-pattern>/URL/business/product/productquery.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>SendProductQuery</servlet-name>
+		<servlet-class>com.lxt2.business.blf.product.TlProductSev
+		</servlet-class>
+		<url-pattern>/URL/business/product/products.ashx</url-pattern>
+	</sevlet>
+	<!-- YXT通道组 -->
+	<sevlet>
+		<servlet-name>YXTProducts</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.product.YXTTlProductSev
+		</servlet-class>
+		<url-pattern>/URL/system/product/YXTproducts.ashx</url-pattern>
+	</sevlet>
+</sevlets>

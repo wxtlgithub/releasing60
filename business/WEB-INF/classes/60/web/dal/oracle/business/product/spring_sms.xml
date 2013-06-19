@@ -1,0 +1,1208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="TlSmsContentDAO" class="com.lxt2.business.dal.sms.TlSmsContentDAL"
+		scope="prototype">
+		<!-- 根据客户组编号集合得到去重后用户数 -->
+		<property name="countUseryGroupMembersByGroupIdsSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+						  value="select count(*) from (
+						  			select distinct  VC2MOBILE,0 as NUMPROVID 
+						  				from TL_USERGROUP_MEMBER where NUMUSERGROUPID in ({0})
+						  	)
+					"></property>
+			</bean>
+		</property>
+		
+			<!-- 根据客户组编号集合得到去重后用户数不通过vc2typelist取值 -->
+		<property name="countSMSUseryGroupMembersByGroupIdsSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+						  value="select count(*) from (
+						  			select distinct  VC2MOBILE,0 as NUMPROVID 
+						  				from TL_USERGROUP_MEMBER UM ,tl_sms_sendgroup ss where UM.NUMUSERGROUPID =  ss.NUMUSERGROUPID AND ss.NUMCONTENTID= {0}
+						  	)"></property>
+			</bean>
+		</property>
+		
+		<!-- 自身去重处理 -->
+		<property name="judgeRepeatMobileSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="update  tl_sms_content_ch_temp 
+						     set numflag = -2
+						   where rowid in (select rowidtmp
+						                     from (select rowid rowidtmp,
+						                                  row_number() over(partition by vc2mobile order by vc2mobile) rn
+						                             from  tl_sms_content_ch_temp 
+						                            where  numcontentid = {0})
+						                    where rn > 1)"></property>
+			</bean>
+		</property> 
+		
+		<property name="updateRefTimeSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="update tl_sms_template set numreftime=numreftime+1 where numtemplateid={0}"></property>
+			</bean>
+		</property> 
+		
+		<!-- 根据内容ID导出错误手机号码信息 -->
+		<property name="queryDetailContent">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select VC2MOBILE,NUMFLAG FROM tl_sms_content_st_detail where numcontentid={0}"></property>
+			</bean>
+		</property>
+		<property name="queryDetailTypeContent">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select VC2MOBILE,NUMFLAG FROM tl_sms_content_st_detail where numflag{0} and numcontentid={1}"></property>
+			</bean>
+		</property>
+		<!--根据内容ID查询数量-->
+		<property name="queryContentStDataByContentIDSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select * FROM tl_sms_content_st where numcontentid ={0}"></property>
+			</bean>
+		</property>
+		
+		
+		<!-- 根据短信内容编号删除短信发送手机号表信息 -->
+		<property name="deleteSendListByContentIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="delete from  tl_sms_send_list  where numcontentid={0}"></property>
+			</bean>
+		</property>
+
+
+
+		<!-- 通过页面输入条件分页查询tl_sms_content表（用于短信发送，短信审核的查询） -->
+		<property name="fuzzyQuerySMSContentByNameSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                	  adsfsds.*
+								from (
+									select 
+									numcontentid,vc2content,
+			                      to_char(datsend,'yyyy-mm-dd hh24:mi:ss') datsend,
+			                      vc2status,numstate,nummessageformat,numsendmethod,numpriority,vc2detail,numcheck,vc2reason,
+			                      to_char(datcreate,'yyyy-mm-dd hh24:mi:ss') datcreate,numcreaterid,datpresend,numcheck1id,
+			                      to_char(datcheck1,'yyyy-mm-dd hh24:mi:ss') datcheck1,numcheck2id,
+			                      to_char(datcheck2,'yyyy-mm-dd hh24:mi:ss') datcheck2,numprenum,numprodid,
+			                      numsource,numsendtype,vc2typelist,numdepartid,numstatus,vc2numstatus,vc2longcode,
+			                      vc2username,username1,username2, vc2departname,numstatename,
+			                      numsendtypename,nummessageformatname,numtotal,numsuccess,numfailed
+									 from TLV_SMS_CONTENT  where VC2STATUS = 1 #0# 
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*) 
+							from TLV_SMS_CONTENT 
+							where VC2STATUS = 1 #0# 
+						    " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 短信状态，可以同时查询多个状态，以半角逗号隔开，如“3,4”（0：待审；1：一审通过；2：二审通过；3：驳回；4：草稿） -->
+						<value>NUMSTATE in ({0}) </value>
+						<!-- 发送类型（1、栏目；2、客户组；3、持仓股票；4、手机号码；5、按文件发送） -->
+						<value>NUMSENDTYPE in ({0})</value>
+						<!-- 部门编号 -->
+						<value>NUMDEPARTID in ({0})</value>
+						<!-- 创建人编号 -->
+						<value>NUMCREATERID='{0}'</value>
+						<!-- 排序字段，一审按DATCHECK1排序，其他按datsend排序 -->
+						<value>{0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+
+		<property name="updateTableAndInsertTableSQL" value="
+		BEGIN
+		DELETE TL_SMS_CONTENT_ST TLSC WHERE TLSC.NUMCONTENTID={0};
+		COMMIT;
+		UPDATE TL_SMS_CONTENT TLSC SET NUMPRENUM ={1},NUMSTATUS='2' WHERE TLSC.NUMCONTENTID={0};
+		INSERT INTO tl_sms_content_st(NUMCONTENTID,NUMTOTAL) values('{0}','{1}');
+		END;
+		" />
+		<!-- 以下为后台服务所用 -->
+		<property name="updateContentAndSTTotalNumSQL" value="
+			BEGIN
+			UPDATE TL_SMS_CONTENT TLSC SET NUMPRENUM ={1} WHERE TLSC.NUMCONTENTID={0};
+			UPDATE tl_sms_content_st set NUMTOTAL={1} where NUMCONTENTID={0};
+			END;
+		" />
+		<property name="updateSuccessFailureNumsSQL" value="update TL_SMS_CONTENT_ST set NUMSUCCESS={0},NUMFAILED={1} where NUMCONTENTID='{2}'" />
+		<property name="updateStateByContentIDSQL" value="
+		BEGIN
+		update tl_sms_content set numstatus='2' where NUMCONTENTID={0};
+		delete from  tl_sms_content_ch_temp  where numcontentid={0};
+		delete from tl_sms_content_st_detail where numcontentid={0};
+		delete from tl_sms_content_st where numcontentid={0};
+		END;
+		" />
+		<property name="setOperateCompleteSQL" value="UPDATE TL_SMS_CONTENT TLSC SET TLSC.NUMSTATUS = 1 ,VC2STATUS=decode(VC2STATUS,-77,77,VC2STATUS) WHERE TLSC.NUMCONTENTID={0}" />
+		<property name="queryTypeByContentIDSQL" value="select NUMSENDTYPE from TL_SMS_CONTENT where NUMCONTENTID={0}" />
+		<property name="queryTMPNumsByContentIDSQL" value="select count(0) from  tl_sms_content_ch_temp  where numcontentid= {0} and NUMSTATE=0" />
+		<property name="queryTMPContentIDSQL" value="  select  numcreaterid,numcontentid,vc2detail from TL_SMS_CONTENT t where t.numstatus=2 and t.vc2detail is not null "/>
+		<property name="querySucessNumsSQL" value="select count(1) from  tl_sms_content_ch_temp  where NUMCONTENTID={0} and  NUMFLAG='1' and NUMSTATE='1'" />
+		<property name="queryNumsByContentIDSQL" value="select count(0) from tl_sms_content where NUMSTATUS=0 and numcontentid={0}" />
+		<property name="queryFailureNumsSQL" value="select count(1) from  tl_sms_content_ch_temp  where NUMCONTENTID={0} and  (NUMFLAG='0' or NUMFLAG='-2') and NUMSTATE='1'" />
+		<property name="operateDataByContentIDAndMaxNumSQL" value="
+		begin		
+		  UPDATE  tl_sms_content_ch_temp 
+		     SET NUMSTATE = 2
+		   WHERE NUMSTATE = 0
+		     AND numcontentid = {0}
+		     and ROWNUM &lt;
+		  = {1};
+		  
+		  update  tl_sms_content_ch_temp 
+		     set numflag = 0
+		   where not REGEXP_LIKE(vc2mobile, '{2}')
+		     and numcontentid = {0}
+		     and numflag != -2
+		     and NUMSTATE = 2;
+		     		                    
+		  UPDATE  tl_sms_content_ch_temp 
+		     SET NUMFLAG = 1
+		   WHERE NUMFLAG = -1
+		     AND numcontentid = {0}
+		     and NUMSTATE = 2;
+		     
+		  INSERT INTO TL_SMS_SEND_LIST
+		    (NUMSENDLISTID, NUMCREATEUSER, VC2MOBILE, NUMCONTENTID, DATCREATETIME)
+		    SELECT TLSEQ_sms_SEND_LIST.NEXTVAL,
+		           {3},
+		           TP.VC2MOBILE,
+		           TP.NUMCONTENTID,
+		           SYSDATE
+		      FROM  tl_sms_content_ch_temp  TP
+		     WHERE TP.NUMCONTENTID = {0}
+		       AND NUMSTATE = 2
+		       AND NUMFLAG = 1;
+		       
+		  INSERT INTO TL_SMS_CONTENT_ST_DETAIL
+		    (NUMSEQID, NUMCONTENTID, NUMFLAG, VC2MOBILE)
+		    SELECT TLSEQ_SMS_CONTENT_ST_DETAIL.NEXTVAL,
+		           tp.numcontentid,
+		           tp.NUMFLAG,
+		           tp.vc2mobile
+		      FROM  tl_sms_content_ch_temp  tp
+		     WHERE tp.numcontentid = {0}
+		       AND tp.numstate = 2;
+		       
+		  update TL_SMS_CONTENT_ST
+		     set NUMSUCCESS = nvl(NUMSUCCESS, 0) +
+		                      (select count(1)
+		                         from  tl_sms_content_ch_temp 
+		                        where NUMCONTENTID = {0}
+		                          and NUMFLAG = 1
+		                          and NUMSTATE = 2),
+		         NUMFAILED  = nvl(NUMFAILED, 0) +
+		                      (select count(1)
+		                         from  tl_sms_content_ch_temp 
+		                        where NUMCONTENTID = {0}
+		                          and (NUMFLAG != 1)
+		                          and NUMSTATE = 2)
+		   where NUMCONTENTID = {0};
+		   
+		  delete from   tl_sms_content_ch_temp 		     
+		   WHERE numcontentid = {0}
+		     and numstate = 2;
+		end;
+		" />
+		<property name="operateDataByContentIDSQL" value="
+		begin
+		UPDATE  tl_sms_content_ch_temp   SET NUMSTATE=2 WHERE NUMSTATE=0 and numcontentid='{0}';
+		update  tl_sms_content_ch_temp  set numflag='0' where not  REGEXP_LIKE(vc2mobile, '{1}') and numcontentid ='{0}' and NUMSTATE='2';
+		update  tl_sms_content_ch_temp  set numflag = '-2'  where rowid in (select rowidtmp from (select rowid rowidtmp, row_number() over(partition by vc2mobile order by vc2mobile) rn from  tl_sms_content_ch_temp   where numflag != '0' and numcontentid ='{0}') where rn > 1) ;
+		UPDATE  tl_sms_content_ch_temp  SET NUMFLAG='1' WHERE NUMFLAG='-1' AND numcontentid='{0}' and NUMSTATE='2';
+		UPDATE  tl_sms_content_ch_temp  SET numstate='1' WHERE numcontentid='{0}' and numstate='2' ;		
+		end;
+		" />
+		<property name="insert2LogSQL" value="INSERT INTO TL_SMS_CONTENT_ST_DETAIL (NUMSEQID,NUMCONTENTID,NUMFLAG,VC2MOBILE) SELECT  TLSEQ_SMS_CONTENT_ST_DETAIL.NEXTVAL,tp.numcontentid,tp.NUMFLAG,tp.vc2mobile FROM  tl_sms_content_ch_temp  tp WHERE tp.numcontentid='{0}' AND tp.numstate=1" />
+		<property name="deleteDataByContentIDSQL" value="delete from   tl_sms_content_ch_temp  where NUMSTATE='1' and numcontentid='{0}'" />
+		<property name="insert2SendMobileTableSQL" value="INSERT INTO TL_SMS_SEND_LIST(NUMSENDLISTID,NUMCREATEUSER,VC2MOBILE,NUMCONTENTID,DATCREATETIME) SELECT TLSEQ_sms_SEND_LIST.NEXTVAL,'{1}',TP.VC2MOBILE,TP.NUMCONTENTID,SYSDATE FROM  tl_sms_content_ch_temp  TP WHERE TP.NUMCONTENTID='{0}' AND NUMSTATE=1 AND NUMFLAG ='1'" />
+<!--		<property name="" value="" />-->
+		<property name="updateSmsContentStatusAndStSQL" value="
+		begin
+			delete tl_sms_content_st tlsc where tlsc.numcontentid={0};
+		commit;
+			update tl_sms_content tlsc set numprenum ={1},numstatus='3' where tlsc.numcontentid={0};
+			insert into tl_sms_content_st(numcontentid,numtotal, numsuccess) values('{0}','{1}','{2}');
+		end;
+		" />
+	<!-- 根据通道组组编号集合得到grouplimit最大值 -->
+		<property name="numGroupLimitByProductIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+						  value="select max(t.NUMGROUPLIMIT) as NUMGROUPLIMIT from TLV_ROUTESTRA_BASE t  ,tl_sms_content s 
+						  			where  s.numprodid = t.numprodid  and s.numcontentid =  {0} 	"></property>
+			</bean>
+		</property>
+		<!--入库成功数查询 -->
+		<property name="numSuccNumByContentIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+						  value="select t.numsuccess from tl_sms_content_st t where t.numcontentid =  {0} 	"></property>
+			</bean>
+		</property>
+	</bean>
+
+	<!-- 上传失败白名单 -->
+	<bean id="TlWhiteListLogDAO" class="com.lxt2.business.dal.sms.TlWhiteListLogDAL"
+		scope="prototype">
+		<property name="searchSql">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+select t.vc2mobile,t.numrepeattime,t.datreporttimelast datreporttime,t.datcreatetimelast datcreatetime from(select
+                      distinct vc2mobile,
+                      count(vc2mobile) as  numrepeattime,
+                      to_char(max(datreporttime),'yyyy-mm-dd hh24:mi:ss') as datreporttimelast,
+                      to_char(max(datcreatetime),'yyyy-mm-dd hh24:mi:ss') as datcreatetimelast
+                      
+                  from
+                      tl_gj_whitelistlog 
+                  where numberid is not null 
+	                group by
+	                    vc2mobile
+                      )t
+                  where 1=1 #0#
+	                order by datcreatetimelast desc
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(0) from(select
+                      distinct vc2mobile,
+                      count(vc2mobile) as  numrepeattime,
+                      max(datcreatetime) as datcreatetimelast,
+                      max(datreporttime) as datreporttimelast
+	                from
+	                    tl_gj_whitelistlog 
+                  where numberid is not null 
+	                group by
+	                    vc2mobile
+                      )
+                  where 1=1 #0#
+	                order by datcreatetimelast desc" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>vc2mobile = '{0}' </value>
+						<value>numrepeattime &lt;= '{0}'</value>
+					</list>
+				</property>
+			</bean>
+		</property>		
+		
+		
+		
+	</bean>
+
+	<!-- 短信通道统计 -->
+	<bean id="ChannelStatisticsDAO" class="com.lxt2.business.dal.sms.ChannelStatisticsDAL"
+		scope="prototype">
+		<property name="queryTimeSMSStat"
+			value="SELECT T.*
+			FROM (SELECT {1} AS DATSTAT,
+               D.VC2SVCNAME AS VC2SVCNAME,
+               D.NUMSVCID AS NUMSVCID, 
+               D.VC2FEEVALUE, 
+               NVL(SUM(A.NUMMTCNT), 0) AS NUMALL, 
+               NVL(SUM(A.NUMREP_SUCCNT), 0) * TO_NUMBER(D.VC2FEEVALUE) / 100 AS NUMFEEALL, 
+               NVL(SUM(A.NUMREP_SUCCNT), 0) AS NUMSUCCESS, 
+               NVL(SUM(A.NUMREP_FAICNT), 0) AS NUMFAILED, 
+               NVL(SUM(A.NUMREP_NOCNT), 0) AS NUMNOREPORT, 
+               to_char(TRUNC(SUM(A.NUMREP_SUCCNT) /
+                     SUM(A.NUMREP_SUCCNT + A.NUMREP_FAICNT + A.NUMREP_NOCNT),
+                     4) * 100 ,'990.99')|| '%' AS NUM_RATE
+          FROM TL_STAT_SMS_MTINFO A, TL_SERVICECODE D
+         WHERE A.NUMSVCID = D.NUMSVCID
+           AND D.VC2SERVICETYPE = 1
+           {0}
+         GROUP BY {1},
+                  D.VC2SVCNAME,
+                  D.NUMSVCID,
+                  D.VC2FEEVALUE
+         ORDER BY {1} ASC) T
+		UNION ALL
+		SELECT '总计' AS DATSTAT,
+		       '' AS VC2SVCNAME,
+		       0 AS NUMSVCID,
+		       '0' AS VC2FEEVALUE,
+		       NVL(SUM(T.NUMMTCNT), 0) AS NUMALL, 
+		       NVL(SUM(T.NUMFEEALL), 0) AS NUMFEEALL, 
+		       NVL(SUM(T.NUMREP_SUCCNT), 0) AS NUMSUCCESS, 
+		       NVL(SUM(T.NUMREP_FAICNT), 0) AS NUMFAILED, 
+		       NVL(SUM(T.NUMREP_NOCNT), 0) AS NUMNOREPORT, 
+		       to_char(TRUNC(SUM(T.NUMREP_SUCCNT) /
+		             SUM(T.NUMREP_SUCCNT + T.NUMREP_FAICNT + T.NUMREP_NOCNT),
+		             4) * 100,'990.99')  || '%' AS NUM_RATE 
+		  FROM (SELECT {1} AS DATSTAT, 
+		               D.VC2SVCNAME AS VC2SVCNAME, 
+		               D.NUMSVCID AS NUMSVCID, 
+		               D.VC2FEEVALUE, 
+		               NVL(SUM(A.NUMMTCNT), 0) AS NUMMTCNT,
+		               NVL(SUM(A.NUMREP_SUCCNT), 0) * TO_NUMBER(D.VC2FEEVALUE) / 100 AS NUMFEEALL, 
+		               NVL(SUM(A.NUMREP_SUCCNT), 0) AS NUMREP_SUCCNT,
+		               NVL(SUM(A.NUMREP_FAICNT), 0) AS NUMREP_FAICNT,
+		               NVL(SUM(A.NUMREP_NOCNT), 0) AS NUMREP_NOCNT
+		          FROM TL_STAT_SMS_MTINFO A, TL_SERVICECODE D
+		         WHERE A.NUMSVCID = D.NUMSVCID
+		           AND D.VC2SERVICETYPE = 1
+		           {0}
+		         GROUP BY {1},
+		                  D.VC2SVCNAME,
+		                  D.NUMSVCID,
+		                  D.VC2FEEVALUE) T
+			"></property>
+		<property name="queryTimeMMSStat"
+			value="SELECT T.*
+  		FROM (SELECT {1} AS DATSTAT, 
+               D.VC2SVCNAME AS VC2SVCNAME, 
+               D.NUMSVCID AS NUMSVCID, 
+               D.VC2FEEVALUE, 
+               NVL(SUM(A.NUMMTCNT), 0) AS NUMALL, 
+               NVL(SUM(A.NUMREP_SUCCNT), 0) * TO_NUMBER(D.VC2FEEVALUE) / 100 AS NUMFEEALL, 
+               NVL(SUM(A.NUMREP_SUCCNT), 0) AS NUMSUCCESS, 
+               NVL(SUM(A.NUMREP_FAICNT), 0) AS NUMFAILED, 
+               NVL(SUM(A.NUMREP_NOCNT), 0) AS NUMNOREPORT, 
+               TRUNC(SUM(A.NUMREP_SUCCNT) /
+                     SUM(A.NUMREP_SUCCNT + A.NUMREP_FAICNT + A.NUMREP_NOCNT),
+                     4) * 100 || '%' AS NUM_RATE 
+          FROM TL_STAT_MMS_MTINFO A, TL_SERVICECODE D
+         WHERE A.NUMSVCID = D.NUMSVCID
+           AND D.VC2SERVICETYPE = 2
+           {0}
+         GROUP BY {1},
+                  D.VC2SVCNAME,
+                  D.NUMSVCID,
+                  D.VC2FEEVALUE
+         ORDER BY {1} ASC) T
+		UNION ALL
+		SELECT '总计' AS DATSTAT,
+		       '' AS VC2SVCNAME,
+		       0 AS NUMSVCID,
+		       '0' AS VC2FEEVALUE,
+		       NVL(SUM(T.NUMMTCNT), 0) AS NUMALL, 
+		       NVL(SUM(T.NUMFEEALL), 0) AS NUMFEEALL, 
+		       NVL(SUM(T.NUMREP_SUCCNT), 0) AS NUMSUCCESS, 
+		       NVL(SUM(T.NUMREP_FAICNT), 0) AS NUMFAILED, 
+		       NVL(SUM(T.NUMREP_NOCNT), 0) AS NUMNOREPORT, 
+		       TRUNC(SUM(T.NUMREP_SUCCNT) /
+		             SUM(T.NUMREP_SUCCNT + T.NUMREP_FAICNT + T.NUMREP_NOCNT),
+		             4) * 100 || '%' AS NUM_RATE 
+		  FROM (SELECT {1} AS DATSTAT, 
+		               D.VC2SVCNAME AS VC2SVCNAME, 
+		               D.NUMSVCID AS NUMSVCID, 
+		               D.VC2FEEVALUE, 
+		               NVL(SUM(A.NUMMTCNT), 0) AS NUMMTCNT,
+		               NVL(SUM(A.NUMREP_SUCCNT), 0) * TO_NUMBER(D.VC2FEEVALUE) / 100 AS NUMFEEALL, 
+		               NVL(SUM(A.NUMREP_SUCCNT), 0) AS NUMREP_SUCCNT,
+		               NVL(SUM(A.NUMREP_FAICNT), 0) AS NUMREP_FAICNT,
+		               NVL(SUM(A.NUMREP_NOCNT), 0) AS NUMREP_NOCNT
+		          FROM TL_STAT_MMS_MTINFO A, TL_SERVICECODE D
+		         WHERE A.NUMSVCID = D.NUMSVCID
+		           AND D.VC2SERVICETYPE = 2
+		           {0}
+		         GROUP BY {1},
+		                  D.VC2SVCNAME,
+		                  D.NUMSVCID,
+		                  D.VC2FEEVALUE) T
+		"></property>
+	</bean>
+
+	<!-- 短信发送查询 -->
+	<bean id="TlSmsSendQueryDAO" class="com.lxt2.business.dal.sms.TlSmsSendQueryDAL"
+		scope="prototype">
+		<!-- 短信发送任务查询 -->
+		<property name="querySendSMSByArgsSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+								select numcontentid,vc2content,
+					            to_char(datsend,'yyyy-mm-dd hh24:mi:ss') datsend,numstate,
+					            nummessageformat,numsendmethod,numpriority,vc2detail,numcheck,vc2reason,
+					            to_char(datcreate,'yyyy-mm-dd hh24:mi:ss') datcreate,numcreaterid,datpresend,numcheck1id,
+					            to_char(datcheck1,'yyyy-mm-dd hh24:mi:ss') datcheck1,numcheck2id,
+					            to_char(datcheck2,'yyyy-mm-dd hh24:mi:ss') datcheck2,
+					            numprenum, numprodid, numsource,numsendtype,vc2typelist, numdepartid,
+					            vc2creatername,vc2departname,vc2check1name,vc2check2name,vc2status,
+					            numtotal,numsuccess,numfailed
+								from tlv_smscontent_user_depart 
+								where 1=1   #0#
+								order by datsend desc,numcontentid desc
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*) 
+							from tlv_smscontent_user_depart 
+							where 1=1 #0# 
+						    " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 开始时间 -->
+						<value>DATSEND > date '{0}' </value>
+						<!-- 结束时间 -->
+						<value>DATSEND &lt; date '{0}'+1</value>
+						<!-- 部门编号 -->
+						<value> NUMDEPARTID in ({0})</value>
+						<!-- 创建人编号 -->
+						<value>NUMCREATERID = '{0}'</value>
+						<!-- 部门名称 -->
+						<value>vc2departname like '%{0}%'</value>
+						<!-- 用户名称 -->
+						<value>vc2creatername like '%{0}%'</value>
+						<!-- 通道组编号 -->
+						<value>NUMPRODID = '{0}'</value>
+						<!-- 短信内容 -->
+						<value>VC2CONTENT like '%{0}%'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<!-- 短信下行记录查询 -->
+		<property name="querySendSMSMTByArgsSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value=" 
+							
+							select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+							select decode(t2.numreportstatus,
+						              '0',
+						              '接收成功',
+						              '1',
+						              '接收等待',
+						              '2',
+						      decode(t2.vc2reporterrorcode,
+						                     NULL,
+						                     '接收失败(发送失败)',
+						                     '接收失败(' || t2.vc2reporterrorcode || ')')) as vc2reportstatus,
+						       t2.numseqid,
+						       to_char(t2.datcreatetime, 'yyyy-mm-dd hh24:mi:ss') datcreatetime,
+						       to_char(t2.datrecvtime, 'yyyy-mm-dd hh24:mi:ss') datrecvtime,
+						       to_char(t2.datsendtime, 'yyyy-mm-dd hh24:mi:ss') datsendtime,
+						       to_char(t2.datsrcendtime, 'yyyy-mm-dd hh24:mi:ss') datsrcendtime,
+						       to_char(t2.datsrcsendtime, 'yyyy-mm-dd hh24:mi:ss') datsrcsendtime,
+						       t2.numsrcclientid,
+						       t2.numdestclientid,
+						       t2.nummessageformat,
+						       t2.nummessagepriority,
+						       t2.vc2destmobile,
+						       t2.vc2srcnumber,
+						       t2.vc2linkid,
+						       t2.VC2MESSAGECONTENT,
+						       t2.numpktotal,
+						       t2.numpknumber,
+						       t2.numreporttype,
+						       t2.vc2reserve1,
+						       t2.vc2reserve2,
+						       to_char(t2.datresponsetime, 'yyyy-mm-dd hh24:mi:ss') datresponsetime,
+						       t2.numresponsestatus,
+						       t2.vc2msgid,
+						       to_char(t2.datreporttime, 'yyyy-mm-dd hh24:mi:ss') datreporttime,
+						       t2.numreportstatus,
+						       t2.vc2reporterrorcode,
+						       t2.numoperatorid,
+						       t2.numproductid,
+						       t2.numchannelid,
+						       t2.numprovinceid,
+						       t2.numcityid,
+						       t2.numcountyid,
+						       t2.numsendgroupid,
+						       t2.numsysseqid,
+						       t2.numsrcseqid,
+						       t2.nummoseqid,
+						       t2.numsvcid,
+						       t2.nummessagetype,
+						       t2.vc2servicecode,
+						       t2.numfeetype,
+						       t2.numfeevalue,
+						       to_char(t2.datdealtime, 'yyyy-mm-dd hh24:mi:ss') datdealtime,
+						       t2.numdealflag,
+						       t2.numdepartid,
+						       to_char(t2.datsend, 'yyyy-mm-dd hh24:mi:ss') datsend,
+						       to_char(t2.datcreate, 'yyyy-mm-dd hh24:mi:ss') datcreate,
+						       to_char(t2.datcheck2, 'yyyy-mm-dd hh24:mi:ss') datcheck1,
+						       to_char(t2.datcheck2, 'yyyy-mm-dd hh24:mi:ss') datcheck2,
+						       t2.numcreaterid,
+						       t2.vc2spnum,
+						       t2.numgwid
+						  from (select t.*
+						          from (select rownum numrowasdf, rid
+						                  from (select rowid rid
+						                          from TL_SMS_LOG_STDSUBMIT_DAYS ts
+						                          where DATSENDTIME > to_date('{0}', 'yyyy-mm-dd hh24:mi:ss')
+						                          and DATSENDTIME &lt; to_date('{1}', 'yyyy-mm-dd hh24:mi:ss') + 1
+									  			
+						                         order by DATSENDTIME desc)
+						                 ) t
+						        ) t1,
+						       TLV_SMS_LOG_STDSUBMIT t2
+						 where t1.rid = t2.rid  #0#
+						 ) adsfsds where rownum &lt; {2}+{3}+1) where numrowasdf > {2}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value=" 
+                         		select count(1) from ( 
+                         		select decode(t2.numreportstatus,
+						              '0',
+						              '接收成功',
+						              '1',
+						              '接收等待',
+						              '2',
+						      decode(t2.vc2reporterrorcode,
+						                     NULL,
+						                     '接收失败(发送失败)',
+						                     '接收失败(' || t2.vc2reporterrorcode || ')')) as vc2reportstatus,
+						       t2.numseqid,
+						       to_char(t2.datcreatetime, 'yyyy-mm-dd hh24:mi:ss') datcreatetime,
+						       to_char(t2.datrecvtime, 'yyyy-mm-dd hh24:mi:ss') datrecvtime,
+						       to_char(t2.datsendtime, 'yyyy-mm-dd hh24:mi:ss') datsendtime,
+						       to_char(t2.datsrcendtime, 'yyyy-mm-dd hh24:mi:ss') datsrcendtime,
+						       to_char(t2.datsrcsendtime, 'yyyy-mm-dd hh24:mi:ss') datsrcsendtime,
+						       t2.numsrcclientid,
+						       t2.numdestclientid,
+						       t2.nummessageformat,
+						       t2.nummessagepriority,
+						       t2.vc2destmobile,
+						       t2.vc2srcnumber,
+						       t2.vc2linkid,
+						       t2.VC2MESSAGECONTENT,
+						       t2.numpktotal,
+						       t2.numpknumber,
+						       t2.numreporttype,
+						       t2.vc2reserve1,
+						       t2.vc2reserve2,
+						       to_char(t2.datresponsetime, 'yyyy-mm-dd hh24:mi:ss') datresponsetime,
+						       t2.numresponsestatus,
+						       t2.vc2msgid,
+						       to_char(t2.datreporttime, 'yyyy-mm-dd hh24:mi:ss') datreporttime,
+						       t2.numreportstatus,
+						       t2.vc2reporterrorcode,
+						       t2.numoperatorid,
+						       t2.numproductid,
+						       t2.numchannelid,
+						       t2.numprovinceid,
+						       t2.numcityid,
+						       t2.numcountyid,
+						       t2.numsendgroupid,
+						       t2.numsysseqid,
+						       t2.numsrcseqid,
+						       t2.nummoseqid,
+						       t2.numsvcid,
+						       t2.nummessagetype,
+						       t2.vc2servicecode,
+						       t2.numfeetype,
+						       t2.numfeevalue,
+						       to_char(t2.datdealtime, 'yyyy-mm-dd hh24:mi:ss') datdealtime,
+						       t2.numdealflag,
+						       t2.numdepartid,
+						       to_char(t2.datsend, 'yyyy-mm-dd hh24:mi:ss') datsend,
+						       to_char(t2.datcreate, 'yyyy-mm-dd hh24:mi:ss') datcreate,
+						       to_char(t2.datcheck2, 'yyyy-mm-dd hh24:mi:ss') datcheck1,
+						       to_char(t2.datcheck2, 'yyyy-mm-dd hh24:mi:ss') datcheck2,
+						       t2.numcreaterid,
+						       t2.vc2spnum,
+						       t2.numgwid
+						  from (select t.*
+						          from (select rownum numrowasdf, rid
+						                  from (select rowid rid
+						                          from TL_SMS_LOG_STDSUBMIT_DAYS ts
+						                          where DATSENDTIME > to_date('{0}', 'yyyy-mm-dd hh24:mi:ss')
+						                          and DATSENDTIME &lt; to_date('{1}', 'yyyy-mm-dd hh24:mi:ss') + 1
+									  			
+						                         order by DATSENDTIME desc)
+						                  ) t
+						         ) t1,
+						       TLV_SMS_LOG_STDSUBMIT t2
+						 where t1.rid = t2.rid   #0#
+                         		)
+						    " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 短信内容 -->
+						<value>VC2MESSAGECONTENT like '%{0}%'</value>
+						<!-- 手机号码 -->
+						<value>VC2DESTMOBILE = '{0}'</value>
+						<!-- 发送状态(0成功，其他为失败) -->
+						<value>{0}</value>
+						<!-- 接收状态(0 成功 1 等待 2 失败) -->
+						<value>NUMREPORTSTATUS = '{0}'</value>
+						<!-- 创建人编号 -->
+						<value>NUMCREATERID = '{0}'</value>
+						<!-- 部门编号 -->
+						<value>NUMDEPARTID in ({0})</value>
+						<!-- 网关 -->
+						<value>NUMDESTCLIENTID = {0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<!-- 短信上行记录查询 -->
+		<property name="querySMSMOByArgsSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+								select 
+						          to_char(datlastsend,'yyyy-mm-dd hh24:mi:ss') datlastsend,
+					              numseqid,numsrcid,numdesid,numsendcount,vc2srcmobile,vc2longcode,
+					              vc2serviceid,vc2svc,vc2msgid,vc2linkid,numopid,numprovid,numcityid,
+					              numcountyid,vc2type,vc2format,nummsglength,vc2content,vc2seqid,
+					              to_char(datgen,'yyyy-mm-dd hh24:mi:ss') datgen,numsvcid,numchnid,
+					              to_char(datrecv,'yyyy-mm-dd hh24:mi:ss') datrecv,numprocessstate,vc2usercode,
+					              nummotype,vc2username,numdepartid,numuserid,vc2departname,
+					              vc2gatewayname,vc2spnum
+								from TLV_SMS_LOG_STDDELIVER_USER  
+								where 1=1 #0# 
+								order by datgen desc,numseqid desc
+						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*) 
+							from  TLV_SMS_LOG_STDDELIVER_USER 
+							where 1=1 #0# 
+							
+						    " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 开始时间 -->
+						<value>DATRECV > date '{0}' </value>
+						<!-- 结束时间 -->
+						<value>DATRECV &lt; date '{0}'+1</value>
+						<!-- 短信内容 -->
+						<value>VC2CONTENT like '%{0}%'</value>
+						<!-- 手机号码 -->
+						<value>vc2srcmobile like '%{0}%'</value>
+						<!-- 服务号码 -->
+						<value>VC2SPNUM = '{0}'</value>
+						<!-- 创建人编号 -->
+						<value>NUMUSERID = '{0}'</value>
+						<!-- 部门编号 -->
+						<value> NUMDEPARTID in ({0})</value>
+
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 待发数据查询 -->
+		<property name="querySendTaskSMSByArgsSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+								SELECT T.NUMSEQID,
+                               to_char(t.datcreatetime, 'yyyy-mm-dd hh24:mi:ss') datcreatetime,
+                               T.NUMSRCCLIENTID,
+                               T.VC2SRCCLIENT,
+                               T.VC2DESTMOBILE,
+                               to_char(t.DATDEALTIME, 'yyyy-mm-dd hh24:mi:ss') datdealtime,
+                               T.NUMCONTENTID,
+                               T.VC2CONTENT,
+                               T.NUMPRODUCTID,
+                               T.VC2NAME,
+                               T.NUMDEALSTATUS,
+                               T.VC2DEALSTATUS
+                          FROM (SELECT TSSL.NUMSEQID,
+                                       TSSL.DATCREATETIME,
+                                       TSSL.NUMSRCCLIENTID,
+                                        CASE
+                                         WHEN TLSD.DATSENDTIME IS NULL THEN
+                                          '待处理'
+                                         ELSE
+                                          '已处理'
+                                       END VC2DEALSTATUS,
+                                       CASE
+                                         WHEN TLSD.DATSENDTIME IS NULL THEN
+                                          0
+                                         ELSE
+                                          1
+                                       END NUMDEALSTATUS,
+                                       (SELECT TCI.VC2CLIENTNAME
+                                             FROM TL_CLIENT TCI
+                                            WHERE TCI.NUMCLIENTID =
+                                                  TSSL.NUMSRCCLIENTID)
+                                        VC2SRCCLIENT,
+                                       TSSL.VC2DESTMOBILE,
+                                       TLSD.DATSENDTIME,
+                                       TSSL.DATDEALTIME,
+                                       TSSL.NUMSENDGROUPID NUMCONTENTID,
+                                       TSSL.VC2MESSAGECONTENT VC2CONTENT,
+                                       TSSL.NUMPRODUCTID,
+                                       (select VC2NAME from TL_PRODUCTS where NUMPRODID=TSSL.NUMPRODUCTID) VC2NAME
+                                  FROM TL_SMS_SENDTASKLIST TSSL left outer join
+                                       tl_sms_log_stdsubmit_days TLSD
+                                 on TSSL.NUMSENDGROUPID = TLSD.NUMSENDGROUPID
+                                 and TSSL.VC2DESTMOBILE=TLSD.VC2DESTMOBILE
+                                 where 1=1 #0#
+                 order by TLSD.DATSENDTIME desc,TSSL.NUMSEQID desc )T
+      			) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select count(TLSD.numseqid)
+							FROM TL_SMS_SENDTASKLIST TSSL left outer join
+     						tl_sms_log_stdsubmit_days TLSD
+							on TSSL.NUMSENDGROUPID = TLSD.NUMSENDGROUPID
+							and TSSL.VC2DESTMOBILE=TLSD.VC2DESTMOBILE
+							where 1=1 #0#
+						"/>
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 处理时间 -->
+						<value>TLSD.DATSENDTIME > to_date('{0}','yyyy-mm-dd hh24:mi:ss') and TLSD.DATSENDTIME &lt; to_date('{0}','yyyy-mm-dd hh24:mi:ss')+1 and TSSL.datcreatetime > to_date('{0}','yyyy-mm-dd hh24:mi:ss') and TSSL.datcreatetime &lt; to_date('{0}','yyyy-mm-dd hh24:mi:ss')+1 </value>
+						<!-- 短信内容 -->
+						<value>TSSL.VC2MESSAGECONTENT  like '%{0}%'</value>
+						<!-- 手机号码 -->
+						<value>TSSL.vc2destmobile = '{0}'</value>
+						<!-- 批次号 -->
+						<value>TSSL.NUMSENDGROUPID = '{0}'</value>
+						<!-- 处理状态 -->
+						<value>CASE WHEN TLSD.DATSENDTIME IS NULL THEN 0 ELSE 1 END = {0}</value>
+						<!-- 通道组编号 -->
+						<value>TSSL.numproductid = '{0}'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+<!--待发数据单表查询-->
+		<property name="querySendTaskSMSNewByArgsSQL">
+		<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="SELECT NUMSEQID,
+                      NUMSRCCLIENTID,
+                      CASE NUMDEALFLAG
+                        WHEN 1 THEN
+                         '已处理'
+                        ELSE
+                         '待处理'
+                      END VC2DEALSTATUS,
+                      CASE NUMDEALFLAG
+                        WHEN 1 THEN
+                         1
+                        ELSE
+                         0
+                      END NUMDEALSTATUS,
+                      (SELECT TCI.VC2CLIENTNAME
+                         FROM TL_CLIENT TCI
+                        WHERE TCI.NUMCLIENTID = tr.NUMSRCCLIENTID) VC2SRCCLIENT,
+                      tr.VC2DESTMOBILE,
+                      to_char(datcreatetime, 'yyyy-mm-dd hh24:mi:ss') datcreatetime,
+                      to_char(DATDEALTIME, 'yyyy-mm-dd hh24:mi:ss') datdealtime,
+                      tr.NUMSENDGROUPID NUMCONTENTID,
+                      tr.VC2MESSAGECONTENT VC2CONTENT,
+                      tr.NUMPRODUCTID,
+                      (select VC2NAME
+                         from TL_PRODUCTS
+                        where NUMPRODID = tr.NUMPRODUCTID) VC2NAME
+                 from (select rid
+                         from (select rid, rownum rw
+                                 from (SELECT rowid as rid
+                                         FROM TL_SMS_SENDTASKLIST
+                                        where 1 = 1
+										#0#
+                                        order by datcreatetime desc)
+                                where rownum &lt; {0}+{1}+1) t
+                        where t.rw > {0}) tl,
+                      TL_SMS_SENDTASKLIST tr
+                where tl.rid = tr.rowid" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(numseqid) from TL_SMS_SENDTASKLIST tssl
+							where 1=1 #0#
+						"/>
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 处理时间 -->
+						<value>datcreatetime > to_date('{0}','yyyy-mm-dd hh24:mi:ss') and datcreatetime &lt; to_date('{0}','yyyy-mm-dd hh24:mi:ss')+1 </value>
+						<!-- 短信内容 -->
+						<value>VC2MESSAGECONTENT  like '%{0}%'</value>
+						<!-- 手机号码 -->
+						<value>vc2destmobile = '{0}'</value>
+						<!-- 批次号 -->
+						<value>NUMSENDGROUPID = '{0}'</value>
+						<!-- 处理状态 -->
+						<value>NUMDEALFLAG = {0}</value>
+						<!-- 通道组编号 -->
+						<value>numproductid = '{0}'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<!-- 短信发送详情查询 -->
+		<property name="querySendDetail">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+			                adsfsds.* from (
+			                	select  
+								  a.*, 
+								  round(decode(a.nummtcnt,0,0,a.numrep_succnt/a.nummtcnt),4) numsuc_rate  
+								from 
+								  (select 
+								    NUMSENDGROUPID, 
+								    COUNT(*) NUMMTCNT, 
+								    COUNT(CASE WHEN NUMRESPONSESTATUS = '0' THEN VC2DESTMOBILE END) NUMRESP_SUCCNT, 
+								    COUNT(CASE WHEN NUMRESPONSESTATUS &lt;> '0' THEN VC2DESTMOBILE END) NUMRESP_FAICNT, 
+								    COUNT(CASE WHEN NUMREPORTSTATUS = '0' THEN VC2DESTMOBILE END) NUMREP_SUCCNT, 
+								    COUNT(CASE WHEN NUMREPORTSTATUS = '2' THEN VC2DESTMOBILE END) NUMREP_FAICNT, 
+								    COUNT(CASE WHEN NUMRESPONSESTATUS IS NULL THEN VC2DESTMOBILE END) NUMRESP_NOCNT, 
+								    COUNT(CASE WHEN NUMREPORTSTATUS ='1' THEN VC2DESTMOBILE END) NUMREP_NOCNT 
+								  from TLV_SMS_LOG_STDSUBMIT where 1=1 #0# group by NUMSENDGROUPID ) a
+			                ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL" value="select count(0)  from (
+						select NUMSENDGROUPID, 
+		                COUNT(*) NUMMTCNT, 
+		                COUNT(CASE WHEN NUMRESPONSESTATUS = '0' THEN VC2DESTMOBILE END) NUMRESP_SUCCNT, 
+		                COUNT(CASE WHEN NUMRESPONSESTATUS &lt;>'0' THEN VC2DESTMOBILE END) NUMRESP_FAICNT, 
+		                COUNT(CASE WHEN NUMREPORTSTATUS = '0' THEN VC2DESTMOBILE END) NUMREP_SUCCNT, 
+		                COUNT(CASE WHEN NUMREPORTSTATUS &lt;> '0' THEN VC2DESTMOBILE END) NUMREP_FAICNT, 
+		                COUNT(CASE WHEN NUMRESPONSESTATUS IS NULL THEN VC2DESTMOBILE END) NUMRESP_NOCNT, 
+		                COUNT(CASE WHEN NUMREPORTSTATUS IS NULL THEN VC2DESTMOBILE END) NUMREP_NOCNT 
+		         from TLV_SMS_LOG_STDSUBMIT where 1=1 #0# group by NUMSENDGROUPID) a" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>NUMSENDGROUPID = {0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<!-- 根据内容ID导出错误手机号码信息 -->
+		<property name="loadErrDetails" value="
+		select  distinct 
+			t.VC2DESTMOBILE, 
+			t.NUMSENDGROUPID, 
+			NUMREPORTSTATUS, 
+			t.VC2REPORTERRORCODE 
+		from TLV_SMS_LOG_STDSUBMIT t 
+		where 
+		t.NUMSENDGROUPID = {0}  order by NUMREPORTSTATUS"></property>
+	</bean>
+
+
+	<!--模板短信-->
+	<bean id="TlSmsTemplateDAO" class="com.lxt2.business.dal.sms.TlSmsTemplateDAL"
+		scope="prototype">
+		<!-- 根据模板名称得到模板列表 -->
+		<property name="querySmsTemplateByNameSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+						select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+								select tls.numtemplateid, tls.vc2content,tlu.vc2username,tld.vc2departname,tls.datcreatetime,tls.numreftime 
+								from tl_sms_template tls
+                                     left join tl_user tlu on tls.numuserid = tlu.numuserid
+                                     left join tl_department tld on tld.numdepartid=tlu.numdepartid
+                                     where 1=1 #0#
+						 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*) 
+									from tl_sms_template tls
+	                                     left join tl_user tlu on tls.numuserid = tlu.numuserid
+	                                     left join tl_department tld on tld.numdepartid=tlu.numdepartid 
+                                    where 1=1 #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>vc2content like '%{0}%'</value>
+			     	<!-- 修改人 -->
+					<value>tlu.NUMUSERID = {0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+
+	</bean>
+	<!--短信统计-->
+	<bean id="MtStaticDAO" class="com.lxt2.business.dal.sms.MtStaticDAL"
+		scope="prototype">
+		<property name="queryTimeSMSStat" value="
+			select * from TLV_STAT_SMS_SVC where NUMSVCID is not null {0}
+		">
+		</property>
+		
+		<property name="countByUsergroup" value="
+		select
+			decode(vc2departname,'','总计',vc2departname) as vc2departname,
+			decode(vc2svcname,'',decode(vc2departname,'','--','小计'),vc2svcname) as vc2svcname, 
+			sum(numall) as NUMALL, 
+			sum(numsuccess) as NUMSUCCESS 
+		from TLV_STAT_SMS_DEPARTBYGRP 
+		where  
+			DATSTAT >= to_date('{0}','yyyy-mm-dd') and 
+			DATSTAT &lt; to_date('{1}','yyyy-mm-dd')+1 {2} 
+			and numdepartid is not null group by rollup(vc2departname, vc2svcname)
+		"></property>
+
+		<property name="countByProductSql" value="select 
+			vc2PRODNAME,
+			SUM(NUMALL) NUMALL,
+			SUM(NUMSUCCESS) NUMSUCCESS,
+  			SUM(NUMNOREPORT) NUMNOREPORT,
+			SUM(NUMFAILED)-SUM(NUMNOREPORT) NUMFAILED,
+			to_char(ROUND(DECODE(SUM(NUMALL),0,0,SUM(NUMSUCCESS)/SUM(NUMALL)),4) * 100, '990.99') || '%' NUM_RATE 
+		from TLV_STAT_SMS_PROD4DEP_SEND 
+		where 
+			DATSTAT >= to_date('{0}','yyyy-mm-dd') and 
+			DATSTAT &lt; to_date('{1}','yyyy-mm-dd')+1 {2}  
+			group by vc2PRODNAME  
+			order by vc2prodname"></property>
+		
+		<property name="countByCustomer" value="select 
+			to_char(datstat,'yyyy-mm-dd') datstat,
+			vc2username,to_char(numorder) numorder,
+			vc2departname,
+			vc2opname,
+			sum(numall) as numall,
+			sum(numsuccess) as numsuccess,
+			sum(numfailed)-sum(numnoreport) as numfailed,
+      		sum(numnoreport) as numnoreport,
+			sum(num_all_fee) as num_all_fee,
+			to_char(TRUNC((sum(numsuccess)/sum(numall)),4)*100, '990.99')||'%' as num_rate 
+		from TLV_SMS_STAT_USER_DEPART  sus  
+		where 
+			1=1 {0}  
+		group by to_char(datstat, 'yyyy-mm-dd'),vc2username,to_char(numorder),vc2departname,vc2opname
+		union all 
+		select 
+			'总计' datstat,
+			'-' vc2username ,
+			'' numorder,
+			'-' vc2departname,
+			'-' vc2opname,
+			sum(NUMALL) NUMALL,
+			sum(NUMSUCCESS) NUMSUCCESS,
+			sum(NUMFAILED) NUMFAILED,
+      		sum(NUMNOREPORT) NUMNOREPORT,
+			SUM(NUM_ALL_FEE) NUM_ALL_FEE,
+			to_char(TRUNC(sum(NUMSUCCESS)/sum(NUMALL),4) * 100 , '990.99') || '%' NUM_RATE 
+		from ( 
+			select 
+				to_char(datstat,'yyyy-mm-dd') datstat,
+				vc2username,to_char(numorder) numorder,
+				vc2departname,
+				vc2opname,
+				sum(numall) as numall,
+				sum(numsuccess) as numsuccess,
+				sum(numfailed)-sum(numnoreport) as numfailed,
+        		sum(numnoreport) as numnoreport,
+				sum(num_all_fee) as num_all_fee,
+				to_char(TRUNC((sum(numsuccess)/sum(numall)),4)*100, '990.99')||'%' as num_rate 
+			from TLV_SMS_STAT_USER_DEPART  sus  
+			where 
+				1=1 {0}  
+			group by to_char(datstat, 'yyyy-mm-dd'),vc2username,to_char(numorder),vc2departname,vc2opname
+			)  
+		order by datstat,NUMORDER
+		"></property>
+	
+		<property name="countByDepartment" value="select 
+				to_char(datstat,'yyyy-mm-dd') datstat,
+				to_char(NUMORDER) NUMORDER, 
+				vc2departname,
+				vc2opname,
+				sum(numall) as NUMALL,
+				sum(numsuccess) as NUMSUCCESS,
+				sum(numfailed)-sum(numnoreport) as NUMFAILED,
+  				sum(numnoreport) as NUMNOREPORT,
+				to_char(TRUNC((sum(numsuccess)/sum(numall)),4)*100, '990.99')||'%' as NUM_RATE, 
+				sum(num_all_fee) as NUM_ALL_FEE 
+			from TLV_SMS_STAT_DEPART  
+			where 
+				DATSTAT >= to_date('{0}','yyyy-mm-dd') and 
+				DATSTAT &lt; to_date('{1}','yyyy-mm-dd')+1 {2}  
+			group by to_char(datstat, 'yyyy-mm-dd'),to_char(numorder),vc2departname,vc2opname
+				union all 
+			select 
+				'总计' datstat,'','-','-',sum(NUMALL),sum(NUMSUCCESS),sum(NUMFAILED),sum(NUMNOREPORT),
+				to_char(trunc(SUM(NUMSUCCESS)/SUM(NUMALL),4) * 100, '990.99') || '%' NUMSUC_RATE,sum(NUM_ALL_FEE) NUM_ALL_FEE 
+			from (
+				select to_char(datstat,'yyyy-mm-dd') datstat,to_char(NUMORDER) NUMORDER, vc2departname,
+					vc2opname,sum(numall) as NUMALL,sum(numsuccess) as NUMSUCCESS,sum(numfailed)- sum(numnoreport) as NUMFAILED,
+					sum(numnoreport) as NUMNOREPORT, 
+					to_char(TRUNC((sum(numsuccess)/sum(numall)),4)*100, '990.99')||'%' as NUM_RATE, 
+					sum(num_all_fee) as NUM_ALL_FEE 
+				from TLV_SMS_STAT_DEPART  
+				where 
+					DATSTAT >= to_date('{0}','yyyy-mm-dd') and 
+					DATSTAT &lt; to_date('{1}','yyyy-mm-dd')+1 {2}
+				group by to_char(datstat, 'yyyy-mm-dd'),to_char(numorder),vc2departname,vc2opname
+				) 
+					order by datstat,NUMORDER">
+		</property>
+		
+		<property name="countByDepartmentAllDay" value="select 	
+				to_char(NUMORDER) NUMORDER, 
+				to_char(numdepartid) NUMDEPARTID,
+				VC2DEPARTNAME, 
+				sum(NUMSUCCESS) NUMSUCCESS,
+				sum(NUM_ALL_FEE) NUM_ALL_FEE,
+				'' NOTE 
+			from TLV_SMS_STAT_DEPART 
+			where 
+				DATSTAT >= to_date('{0}','yyyy-mm-dd') and 
+				DATSTAT &lt; to_date('{1}','yyyy-mm-dd') +1 {2}
+			group by numdepartid,VC2DEPARTNAME,NUMORDER
+				union all
+			select '' ,'','合计',sum(NUMSUCCESS) NUMSUCCESS,sum(NUM_ALL_FEE) NUM_ALL_FEE,'' 
+			from (
+				select 	
+					to_char(NUMORDER) NUMORDER, to_char(numdepartid) NUMDEPARTID,VC2DEPARTNAME, 
+					sum(NUMSUCCESS) NUMSUCCESS,sum(NUM_ALL_FEE) NUM_ALL_FEE,'' NOTE 
+				from TLV_SMS_STAT_DEPART 
+				where 
+					DATSTAT >= to_date('{0}','yyyy-mm-dd') and 
+					DATSTAT &lt; to_date('{1}','yyyy-mm-dd')+1 {2}
+				group by numdepartid,VC2DEPARTNAME,NUMORDER
+				)
+			order by NUMORDER asc,numdepartid asc">
+		</property>
+	</bean>
+
+</beans>

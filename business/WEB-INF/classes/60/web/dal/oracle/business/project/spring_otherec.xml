@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="OtherDataDAO" class="com.yxt.business.dal.otherec.OtherDataDAL" scope="prototype">
+		<!-- 其他号码查询 -->
+		<property name="queryOtherDataSql">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							select * from (select rownum numrowasdf, 
+				                adsfsds.* from (select a.vc2month, a.vc2ecid, b.vc2shortname,  a.vc2servcode,  a.numopid,  c.vc2name, a.numsvctype, 
+									decode(a.numsvctype, '1',  '短信','2', '彩信') vc2svctype,  a.nummtcnt 
+									from tl_stat_otherec_mtinfo a, (select vc2ecid,vc2shortname from tl_otherec_info group by vc2ecid, vc2shortname) b, 
+										tl_operator c
+									where a.vc2ecid = b.vc2ecid and a.numopid = c.numopid #0# order by vc2month,vc2ecid,vc2servcode,numsvctype,numopid
+							 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(1)  from (select *  from tl_stat_otherec_mtinfo a, 
+								(select vc2ecid,vc2shortname from tl_otherec_info group by vc2ecid, vc2shortname) b,  tl_operator c
+								where a.vc2ecid = b.vc2ecid and a.numopid = c.numopid  #0# order by vc2month) t" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>to_date(a.vc2month, 'yyyy-mm') >= to_date('{0}', 'yyyy-mm')</value>
+						<value>to_date(a.vc2month, 'yyyy-mm') &lt;= to_date('{0}', 'yyyy-mm')</value>
+						<value>b.vc2shortname like '%{0}%'</value>
+						<value>a.vc2servcode like '%{0}%'</value>
+						<value>a.numsvctype = {0}</value>
+						<value>a.numopid = {0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 按条件查询 -->
+		<property name="queryOtherDataByIdSql"  
+				value="select a.vc2month, a.vc2ecid, b.vc2shortname, a.vc2servcode,  a.numopid, c.vc2name, a.numsvctype, 
+									decode(a.numsvctype, '1', '短信', '2', '彩信') vc2svctype, a.nummtcnt, a.nummtsuccnt, a.datinsert
+							from tl_stat_otherec_mtinfo a, tl_otherec_info b, tl_operator c
+							where a.vc2ecid = b.vc2ecid and a.numopid = c.numopid  and a.vc2ecid = '{0}' and a.vc2servcode = '{1}'
+					       			and a.vc2month = '{2}' and a.numsvctype = {3} and a.numopid = {4}" />
+		
+		<!-- 查询ecid是否存在其他客户表中 -->
+		<property name="queryOtherECByECIdSql"  value="select * from tl_otherec_info where vc2ecid = '{0}' and vc2validflag = '1'" />
+	</bean>
+	<bean id="TlOtherecInfoDAO" class="com.yxt.business.dal.otherec.TlOtherecInfoDAL" scope="prototype">
+		<!--其他平台客户列表 -->
+		<property name="queryOtherEcListSql">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL" value="
+							select * from (select rownum numrowasdf, 
+							adsfsds.* from(
+							select  numseqid, vc2ecid, vc2ecfullname, vc2shortname, vc2ismas, 
+							vc2industry, vc2custype, vc2gwtype, vc2status, vc2opname, vc2servcode, 
+							vc2manager, numcuslevel, vc2feemode, vc2subcode, vc2conperson, 
+							vc2contact, numlimit, numfeearea, numbusarea, vc2svc, vc2feetype, 
+							vc2feerule, vc2putintime, vc2gwputin, vc2gwfeerule, vc2validflag, vc2signname,VC2BRANCHCOMPANY
+							from TL_OTHEREC_INFO A ,TL_BRANCHCOMPANY_LIST B where A.NUMBUSAREA = B.NUMBRANCHCOMPANY
+							And VC2VALIDFLAG = '1' #0# 
+							order by numseqid desc 
+							)
+							adsfsds where rownum &lt; {0}+{1}+1
+							) where numrowasdf > {0} 
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+							   select count(1) From TL_OTHEREC_INFO A ,TL_BRANCHCOMPANY_LIST B where A.NUMBUSAREA = B.NUMBRANCHCOMPANY And VC2VALIDFLAG = '1' #0# 
+							" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>vc2shortname like '%{0}%'</value>
+						<value>vc2gwtype = '{0}'</value>
+						<value>vc2opname = '{0}'</value>
+						<value>vc2servcode like '%{0}%'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+
+		<!-- 查询其他客户名称 -->
+		<property name="queryOtherECNameByECIdSql"  value="select vc2ecid, vc2ecfullname, vc2shortname from tl_otherec_info
+			where vc2validflag = '1' and vc2ecid = '{0}' group by vc2ecid, vc2ecfullname, vc2shortname" />
+
+		<!-- 修改其他客户名称 -->
+		<property name="updateOtherECNameByECId"  value= "update tl_otherec_info set vc2ecfullname = '{1}', vc2shortname = '{2}'
+			where vc2ecid = '{0}'" />
+	</bean>
+</beans>

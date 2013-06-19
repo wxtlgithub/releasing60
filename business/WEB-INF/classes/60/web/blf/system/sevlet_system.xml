@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<sevlet>
+		<servlet-name>UserLoginSimple</servlet-name>
+		<servlet-class>com.lxt2.systemapp.blf.simplepurview.TlUserSev
+		</servlet-class>
+		<url-pattern>/URL/loginSimple.ashx</url-pattern>
+	</sevlet>
+
+	<sevlet>
+		<servlet-name>UserExitSimple</servlet-name>
+		<servlet-class>com.lxt2.systemapp.blf.simplepurview.TlUserSev
+		</servlet-class>
+		<url-pattern>/URL/Exit.ashx</url-pattern>
+	</sevlet>
+
+	<sevlet>
+		<servlet-name>UserInfoSimple</servlet-name>
+		<servlet-class>com.lxt2.systemapp.blf.simplepurview.TlUserSev
+		</servlet-class>
+		<url-pattern>/URL/Temp_Purview/User/UserQuerySimple.ashx</url-pattern>
+	</sevlet>
+
+	<sevlet>
+		<servlet-name>UpdateUserSimple</servlet-name>
+		<servlet-class>com.lxt2.systemapp.blf.simplepurview.TlUserSev
+		</servlet-class>
+		<url-pattern>URL/Temp_Purview/User/UserUpdateSimple.ashx</url-pattern>
+	</sevlet>
+	
+	<sevlet>
+		<servlet-name>getRegMobileTesSimplet</servlet-name>
+		<servlet-class>com.lxt2.systemapp.blf.simplepurview.TlUserSev
+		</servlet-class>
+		<url-pattern>/URL/GetMobileRegSimple.ashx</url-pattern>
+	</sevlet>
+
+	<sevlet>
+		<servlet-name>IsLogInSimple</servlet-name>
+		<servlet-class>com.lxt2.systemapp.blf.simplepurview.TlUserSev
+		</servlet-class>
+		<url-pattern>/url/IsLogInSimple.ashx</url-pattern>
+	</sevlet>
+
+	<sevlet>
+		<servlet-name>RoleTreeQuery</servlet-name>
+		<servlet-class>com.lxt2.systemapp.blf.simplepurview.TlRoleSev
+		</servlet-class>
+		<url-pattern>/treesimple.ashx</url-pattern>
+	</sevlet>
+
+
+
+	<sevlet>
+		<servlet-name>TlRoute</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlRouteSev
+		</servlet-class>
+		<url-pattern>/URL/business/morouter/morouter.ashx</url-pattern>
+	</sevlet>
+
+	<!-- 通道组管理。 -->
+	<sevlet>
+		<servlet-name>Products</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlProductsSev
+		</servlet-class>
+		<url-pattern>/URL/system/product/products.ashx</url-pattern>
+	</sevlet>
+<!--  Gateway start -->
+	<sevlet>
+		<servlet-name>Gateway</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlGatewaySev
+		</servlet-class>
+		<url-pattern>/URL/system/gateway/gatewayquery.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>Gateway</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlGatewaySev
+		</servlet-class>
+		<url-pattern>/URL/business/gateway/gatewayquery.ashx</url-pattern>
+	</sevlet>	
+
+	<sevlet>
+		<servlet-name>Gateway</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlGatewaySev
+		</servlet-class>
+		<url-pattern>/URL/system/gateway/gatewayupdate.ashx</url-pattern>
+	</sevlet>
+
+
+<!--  GateWay end  -->
+	<sevlet>
+		<servlet-name>TlServicecode</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlServicecodeSev
+		</servlet-class>
+		<url-pattern>URL/business/servicecode/servicecode.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>TlServicecodeQuery</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlServicecodeSev
+		</servlet-class>
+		<url-pattern>URL/business/servicecode/servicecodequery.ashx
+		</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>TlServicecodeQuery</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlServicecodeSev
+		</servlet-class>
+		<url-pattern>URL/business/servicecode/servicecodeupdate.ashx
+		</url-pattern>
+	</sevlet>
+
+	<sevlet>
+		<servlet-name>TlClient</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.client.TlClientSev
+		</servlet-class>
+		<url-pattern>/URL/business/program/clientprogram.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>TlClient</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.client.TlClientSev
+		</servlet-class>
+		<url-pattern>URL/business/Program/ProgramUpdate.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>TlClient</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.client.TlClientSev
+		</servlet-class>
+		<url-pattern>URL/business/Program/ProgramQuery.ashx</url-pattern>
+	</sevlet>
+
+	<sevlet>
+		<servlet-name>TlRoute</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlRouteSev
+		</servlet-class>
+		<url-pattern>/URL/business/morouter/morouter.ashx</url-pattern>
+	</sevlet>
+
+	<!-- 运营商。 -->
+	<sevlet>
+		<servlet-name>TlOperator</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlOperatorSev
+		</servlet-class>
+		<url-pattern>/URL/business/operator/operatorquery.ashx</url-pattern>
+	</sevlet>
+
+	<!-- 地区。 -->
+	<sevlet>
+		<servlet-name>TlInst</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlInstSev
+		</servlet-class>
+		<url-pattern>/URL/business/inst/instquery.ashx</url-pattern>
+	</sevlet>
+		<!-- 公告 -->
+	<sevlet>
+		<servlet-name>TlNotice</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.notice.TlLNoticeSev
+		</servlet-class>
+		<url-pattern>/URL/business/noitce/noticequery.ashx</url-pattern>
+	</sevlet>
+	<!--  special mobile routes start -->
+	<sevlet>
+		<servlet-name>specialMobileQuery</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlSpecialMobileSev
+		</servlet-class>
+		<url-pattern>URL/system/tlspecialmobile/tlspecialmobilequery.ashx</url-pattern>
+	</sevlet>
+	
+	<sevlet>
+		<servlet-name>specialMobileQuery</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlSpecialMobileSev
+		</servlet-class>
+		<url-pattern>URL/system/tlspecialmobile/tlspecialmobileupdate.ashx</url-pattern>
+	</sevlet>
+	
+	<sevlet>
+		<servlet-name>ElementManage</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.business.TlSystemconfigNodeSev
+		</servlet-class>
+		<url-pattern>URL/business/element/element.ashx</url-pattern>
+	</sevlet>
+</sevlets>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<sevlet>
+		<servlet-name>GJDirtyWordBLL</servlet-name>
+		<servlet-class>com.lxt2.business.blf.gjsystem.GJDirtyWordSev</servlet-class>
+		<url-pattern>/URL/system/dirtyword/dirtywordquerry.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>GJDirtyWordBLLInsert</servlet-name>
+		<servlet-class>com.lxt2.business.blf.gjsystem.GJDirtyWordSev</servlet-class>
+		<url-pattern>/URL/system/dirtyword/dirtyWordUpdate.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>SvcDirtyWordQuery</servlet-name>
+		<servlet-class>com.lxt2.business.blf.gjsystem.DirtyWordGwSev</servlet-class>
+		<url-pattern>/URL/system/svcDirtyWord/svcdirtywordquery.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>SvcDirtyWordUpdate</servlet-name>
+		<servlet-class>com.lxt2.business.blf.gjsystem.DirtyWordGwSev</servlet-class>
+		<url-pattern>/URL/system/svcDirtyWord/dirtyWordUpdate.ashx</url-pattern>
+	</sevlet>
+	
+	<sevlet>
+		<servlet-name>GJDirtyWordType</servlet-name>
+		<servlet-class>com.lxt2.business.blf.gjsystem.GJDirtyWordTypeSev</servlet-class>
+		<url-pattern>/URL/system/dirtywordtype/dirtywordtypequery.ashx</url-pattern>
+	</sevlet>	
+
+	<sevlet>
+		<servlet-name>GJLogOperationSev</servlet-name>
+		<servlet-class>com.lxt2.business.blf.gjsystem.GJLogOperationSev</servlet-class>
+		<url-pattern>/URL/system/operatorlog/operatorlogquerry.ashx</url-pattern>
+	</sevlet>
+<!--	<sevlet>-->
+<!--		<servlet-name>SystemQuery</servlet-name>-->
+<!--		<servlet-class>com.lxt2.business.blf.gjsystem.TlSystemSev</servlet-class>-->
+<!--		<url-pattern>/URL/System/SystemQuery.ashx</url-pattern>-->
+<!--	</sevlet>-->
+</sevlets>

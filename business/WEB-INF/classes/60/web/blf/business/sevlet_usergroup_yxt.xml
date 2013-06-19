@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<sevlet>
+		<servlet-name>UserGroupQuery</servlet-name>
+		<servlet-class>com.yxt.business.blf.usergroup.TlUserGroupYxtSev</servlet-class>
+		<url-pattern>/URL/Customer/UserGroup/UserGroupQuery.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>UserGroupUpdate</servlet-name>
+		<servlet-class>com.yxt.business.blf.usergroup.TlUserGroupYxtSev</servlet-class>
+		<url-pattern>/URL/Customer/UserGroup/UserGroupUpdate.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>ustomerBussinessQuery</servlet-name>
+		<servlet-class>com.yxt.business.blf.usergroup.TlUserGroupMemberYxtSev</servlet-class>
+		<url-pattern>/URL/Customer/CustomerBussiness/CustomerBussinessQuery.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>productSelectQuery</servlet-name>
+		<servlet-class>com.yxt.business.blf.usergroup.TlUserGroupSelSev</servlet-class>
+		<url-pattern>/URL/business/product/productSel.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>customerOperatorLogQuery</servlet-name>
+		<servlet-class>com.project.business.blf.usergroup.TlUserGroupOperatorLogQuerySev</servlet-class>
+		<url-pattern>/URL/Customer/UserGroup/CustomerOperatorLogQuery.ashx</url-pattern>
+	</sevlet>
+</sevlets>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="907" name="business_task_smssendfileoperate" desc="短信按文件上传服务配置文件">
+	<item key="comandArg"
+		value="yxtec/yxtec@yxtec control={0} data={1}  rows=50000  bindsize=2000000"
+		desc="sqlloader数据库配置" />
+	<item key="commandFile" value="sqlldr" desc="sqlloader执行文件地址" />
+	<item key="crlSMS" value="${WORKDIR}WEB-INF/classes/Service/Tasks/SMSListSvr/SendList_tmp.ctl"
+		desc="短信按文件上传控制文件" />
+	<item key="backupDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/SMSListSvr/file/SMSListFileBackUp/"
+		desc="短信按文件上传备份文件目录" />
+	<item key="errorDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/SMSListSvr/file/SMSListFileBackUpError/"
+		desc="短信按文件上传错误文件目录" />
+	<item key="smsListDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/SMSListSvr/file/SMSListFile/" desc="处理目录" />
+	<item key="smsLoadLogFileDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/SMSListSvr/file/SMSLoadLogFile/" desc="入库日志文件目录" />
+	<item key="smsLoadLogBackUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/SMSListSvr/file/SMSLoadLogBackUp/" desc="入库日志文件备份目录" />
+	<item key="sqlLoaderMaxNum" value="3" desc="sqlloader最大并发数" />
+	<item key="isneedinit" value="true" desc="服务Session失效时候是否重新加载" />
+</function>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<function desc="默认配置文件" id="802" name="default">
+	<item desc="发件人姓名" key="sender" value="lizhihong@ihandy.cn"/>
+	<item desc="服务器地址" key="server" value="ihandy.cn"/>
+	<item desc="用户名" key="user" value="lizhihong"/>
+	<item desc="密码" key="password" value="lizhihong"/>
+	<item desc="默认主题" key="subject" value="email alert topic"/>
+	<item desc="接收邮件地址列表" key="receiverlist" value="lizhihong@ihandy.cn"/>
+	<item desc="默认通道组" key="defaultproduct" value="1"/>
+	<item desc="接收号码列表" key="mobilelist" value="13488664511,13810432504"/>
+	<item desc="默认总部ID" key="departId" value="1"/>
+	<item desc="默认系统管理员用户ID" key="managerId" value="900000"/>
+	<component desc="网关监控规则" id="GatewayStateRule" name="GatewayStateRule">
+		<item desc="断开时长" key="duration" value="2"/>
+		<item desc="报警方式，1短信 2邮件" key="mode" value="1"/>
+		<item desc="报警次数" key="times" value="0"/>
+		<item desc="报警间隔" key="interval" value="5"/>
+		<item desc="报警信息" key="message" value="截止{0}，连续{1}分钟处于断开状态的网关有：{2}"/>
+		<item desc="已报警次数" key="alertedtimes" value="0"/>
+		<item desc="上次报警时间" key="lastalerttime" value="1978-1-1 00:00:00"/>
+	</component>
+	<component desc="Report规则" id="ReportRule" name="ReportRule">
+		<item desc="时长" key="duration" value="2"/>
+		<item desc="失败率" key="failurerate" value="60"/>
+		<item desc="发送量" key="sendvolume" value="200"/>
+		<item desc="报警方式，1短信 2邮件" key="mode" value="1"/>
+		<item desc="报警次数" key="times" value="0"/>
+		<item desc="报警间隔" key="interval" value="5"/>
+		<item desc="报警信息" key="message" value="截止{0}，最近{1}分钟内 Report失败率超过{2}％，且累计发送量超过{3}条的网关有：{4}"/>
+		<item desc="已报警次数" key="alertedtimes" value="0"/>
+		<item desc="上次报警时间" key="lastalerttime" value="1978-1-1 00:00:00"/>
+	</component>
+	<component desc="Response规则" id="ResponseRule" name="ResponseRule">
+		<item desc="时长" key="duration" value="2"/>
+		<item desc="失败率" key="failurerate" value="60"/>
+		<item desc="发送量" key="sendvolume" value="200"/>
+		<item desc="报警方式，1短信 2邮件" key="mode" value="1"/>
+		<item desc="报警次数" key="times" value="0"/>
+		<item desc="报警间隔" key="interval" value="5"/>
+		<item desc="报警信息" key="message" value="截止{0}，最近{1}分钟内，Response失败率超过{2}％，且累计发送量超过{3}条的网关有：{4}"/>
+		<item desc="已报警次数" key="alertedtimes" value="0"/>
+		<item desc="上次报警时间" key="lastalerttime" value="1978-1-1 00:00:00"/>
+	</component>
+	<component desc="发送延时规则" id="SendTimelagRule" name="SendTimelagRule">
+		<item desc="最近时长" key="duration" value="2"/>
+		<item desc="延时时长" key="timelagduration" value="2"/>
+		<item desc="报警方式，1短信 2邮件" key="mode" value="1"/>
+		<item desc="报警次数" key="times" value="0"/>
+		<item desc="报警间隔" key="interval" value="5"/>
+		<item desc="报警信息" key="message" value="截止{0}，{1}分钟内平均延时处理超过{2}分钟的网关有：{3}"/>
+		<item desc="已报警次数" key="alertedtimes" value="0"/>
+		<item desc="上次报警时间" key="lastalerttime" value="1978-1-1 00:00:00"/>
+	</component>
+</function>

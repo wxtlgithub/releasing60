@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+	<!-- 基于大小分文件的文件最大值 -->
+	<property name="SIZEBASE_MAX_SIZE" value="100MB" />
+	<!-- 基于大小分文件的最多文件数 -->
+	<property name="SIZEBASE_MAX_INDEX" value="5" />
+
+	<!-- 引入文件 -->
+	<property name="USER_HOME" value="${WORKDIR}../../../logs/" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/proxyservice.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/mtprocess.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/gateway1.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/gateway2.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/gateway3.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/gateway4.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/gateway5.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/gateway6.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/gateway7.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/gateway8.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/rptprocess.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/moprocess.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/hub.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/rescenter.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/datalog.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/clumpedprocess.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logback/platform.xml" />
+
+	<!-- 系统级配置文件 开始 -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>DEBUG</level>
+			<OnMatch>ACCEPT</OnMatch>
+			<OnMismatch>DENY</OnMismatch>
+		</filter>
+	</appender>
+	<!-- mms -->
+	<appender name="mms"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}mms/mms-stdout.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${USER_HOME}mms-stdout.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>5</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{HH:mm:ss.SSS} %-5p[%F:%L] - %msg%n</Pattern>
+		</layout>
+	</appender>
+	<!-- stdout -->
+	<appender name="rootstdout"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}rootstdout-stdout.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${USER_HOME}root-stdout.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>5</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{HH:mm:ss.SSS} %-5p[%F:%L] - %msg%n</Pattern>
+		</layout>
+	</appender>
+	<!-- debug -->
+	<appender name="rootDebug"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}root-debug.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${USER_HOME}root-debug.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>5</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>DEBUG</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	<!-- info -->
+	<appender name="rootInfo"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}root-info.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${USER_HOME}root-info.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>5</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L] - %msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	<!-- warn -->
+	<appender name="rootWarn"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}root-warn.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${USER_HOME}root-warn.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>5</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	<!-- error -->
+	<appender name="rootError"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}root-error.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${USER_HOME}root-error.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>10</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>Error</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	<!-- performance -->
+	<appender name="performance"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}performance.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${USER_HOME}performance.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>5</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+		</layout>
+	</appender>
+	<logger name="LOGGER_PERFORMANCE" level="debug" additivity="false">
+		<appender-ref ref="performance" />
+	</logger>
+	<root level="error">
+		<!-- 本地测试时使用，将日志打印到控制台,实际部署时请注释掉 -->
+		<!-- <appender-ref ref="STDOUT" /> 
+		<appender-ref ref="rootstdout" />
+		<appender-ref ref="rootDebug" />
+		<appender-ref ref="rootInfo" />
+		<appender-ref ref="rootWarn" />-->
+		<appender-ref ref="rootError" />
+	</root>
+	<!-- 系统级配置文件 结束 -->
+
+	<!-- 模块级配置文件 开始 -->
+	<!-- sqllog -->
+	<appender name="sqllog"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}sql.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${USER_HOME}sql.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>5</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+		</layout>
+	</appender>
+	<logger name="com.techcenter.dbcore.dbbase.jdbc" additivity="false">
+		<appender-ref ref="sqllog" />
+	</logger>
+	<!-- web log -->
+	<appender name="weblog"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}web.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${USER_HOME}web.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>5</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+		</layout>
+	</appender>
+	<logger name="com.lxt2.business" additivity="false">
+		<appender-ref ref="weblog" />
+	</logger>
+	<logger name="com.lxt2.common" additivity="false">
+		<appender-ref ref="weblog" />
+	</logger>
+	<logger name="com.lxt2.base.serverframe" additivity="false">
+		<appender-ref ref="weblog" />
+	</logger>
+	<!-- gateway log -->
+<!-- 	<appender name="appenderGateway" -->
+<!-- 		class="ch.qos.logback.core.rolling.RollingFileAppender"> -->
+<!-- 		<File>${USER_HOME}gateway.log</File> -->
+<!-- 		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy"> -->
+<!-- 			<FileNamePattern>${USER_HOME}gateway.%i.log.zip</FileNamePattern> -->
+<!-- 			<MinIndex>1</MinIndex> -->
+<!-- 			<MaxIndex>5</MaxIndex> -->
+<!-- 		</rollingPolicy> -->
+<!-- 		<triggeringPolicy -->
+<!-- 			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy"> -->
+<!-- 			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize> -->
+<!-- 		</triggeringPolicy> -->
+<!-- 		<layout class="ch.qos.logback.classic.PatternLayout"> -->
+<!-- 			<Pattern>%date{HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern> -->
+<!-- 		</layout> -->
+<!-- 	</appender> -->
+<!-- 	<logger name="com.lxt2.gateway.sms" level="debug" additivity="false"> -->
+<!-- 		<appender-ref ref="appenderGateway" /> -->
+<!-- 	</logger> -->
+	<!-- 接口数据错误日志 -->
+	<appender name="interfaceDataError"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}interfaceDataError.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${USER_HOME}interfaceDataError.log.%d{yyyy-MM-dd}
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>Error</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	<!--接口数据错误 -->
+	<logger name="com.lxt2.proxyservice.cbip20.Cbip20SmsMtReceiver"
+		level="info" additivity="false">
+		<appender-ref ref="interfaceDataError" />
+	</logger>
+	<!-- 模块级配置文件 结束 -->
+
+	<!-- 其它特殊控制 -->
+	<logger name="org.hibernate" level="debug" />
+	<!-- 系统框架日志 -->
+	<appender name="framework"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}framework.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${USER_HOME}framework.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>5</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+		</layout>
+	</appender>
+	<logger name="com.lxt2.framework" level="info">
+		<appender-ref ref="framework" />
+	</logger>
+	<logger name="com.lxt2.common" level="info">
+		<appender-ref ref="framework" />
+	</logger>
+</configuration>

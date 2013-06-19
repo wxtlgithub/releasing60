@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<sevlet>
+		<servlet-name>SmsContentQuery</servlet-name>
+		<servlet-class>
+			com.project.business.blf.sms.TlSmsContentSev
+		</servlet-class>
+		<url-pattern>/URL/SendSMS/Send/SMSContentQuery.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>YXTSmsContentQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.sms.TlSmsContentSev
+		</servlet-class>
+		<url-pattern>/URL/SendSMS/Send/YXTSMSContentQuery.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>SmsContentUpdate</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.sms.TlSmsContentSev
+		</servlet-class>
+		<url-pattern>/URL/sendSMS/send/smscontentupdate.ashx</url-pattern>
+	</sevlet>
+	<sevlet>
+		<servlet-name>YXTSmsContentUpdate</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.sms.TlSmsSendSev
+		</servlet-class>
+		<url-pattern>/URL/sendSMS/send/yxtsmscontentupdate.ashx</url-pattern>
+	</sevlet>
+	
+	<!-- 上传失败白名单查询 -->
+	<sevlet>
+		<servlet-name>WhiteListLogSev</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.sms.TlWhiteListLogSev
+		</servlet-class>
+		<url-pattern>/URL/BlackWhilteList/WhilteLogQuery.ashx</url-pattern>
+	</sevlet>
+	
+	<!-- 短信发送任务查询 -->
+	<sevlet>
+		<servlet-name>SmsSendQuery</servlet-name>
+		<servlet-class>
+			com.project.business.blf.sms.TlSmsSendQuerySev
+		</servlet-class>
+		<url-pattern>/URL/SendSMS/SendQuery/SendQuery.ashx</url-pattern>
+	</sevlet>
+	<!-- 短信上行记录查询 -->
+	<sevlet>
+		<servlet-name>SmsMOQuery</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.sms.TlSmsMOQuerySev
+		</servlet-class>
+		<url-pattern>/URL/sendSMS/MOQuery/MOQuery.ashx</url-pattern>
+	</sevlet>
+	
+	<!-- 	宜信通记录查询 -->
+	<sevlet>
+		<servlet-name>YXTSmsMTQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.sms.TlSmsSendQuerySev
+		</servlet-class>
+		<url-pattern>/URL/sendSMS/SendQuery/YXTSendQuery.ashx</url-pattern>
+	</sevlet>
+	<!-- 宜信通短信上行记录查询 -->
+	<sevlet>
+		<servlet-name>YXTSmsMOQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.sms.TlSmsMOQuerySev
+		</servlet-class>
+		<url-pattern>/URL/sendSMS/MOQuery/YXTMOQuery.ashx</url-pattern>
+	</sevlet>
+		<!-- 宜信通短信上行记录查询2(本部门查询) -->
+	<sevlet>
+		<servlet-name>YXTSmsSelfMOQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.sms.TlSmsMOQuerySev
+		</servlet-class>
+		<url-pattern>/URL/sendSMS/MOQuery/YXTMOSelfQuery.ashx</url-pattern>
+	</sevlet>
+	<!-- 短信统计 -->
+	<sevlet>
+		<servlet-name>Ysmsstatisticmtquery</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.sms.StatisticMtQuerySev
+		</servlet-class>
+		<url-pattern>/URL/statistics/mt/statisticmtquery.ashx</url-pattern>
+	</sevlet>
+	<!-- YXT短信统计 -->
+	<sevlet>
+		<servlet-name>YXTsmsstatisticmtquery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.sms.YXTStatisticMtQuerySev
+		</servlet-class>
+		<url-pattern>/URL/statistics/mt/YXTStatisticMtQuery.ashx</url-pattern>
+	</sevlet>
+		<!-- 接口短信审核查询 -->
+	<sevlet>
+		<servlet-name>ClientSmsQuery</servlet-name>
+		<servlet-class>
+			com.lxt2.business.blf.sms.ClientSmsQuerySev
+		</servlet-class>
+		<url-pattern>/URL/clientSms/clientSmsQuery/clientSmsQuery.ashx</url-pattern>
+	</sevlet>
+</sevlets>

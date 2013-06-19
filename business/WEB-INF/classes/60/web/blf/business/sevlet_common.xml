@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<!-- 查询行业数据源 -->
+	<sevlet>
+		<servlet-name>dustryDataQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.common.DataSev
+		</servlet-class>
+		<url-pattern>/URL/Common/Data/IndustryQuery.ashx</url-pattern>
+	</sevlet>
+	<!-- 查询签约主体数据源 -->
+	<sevlet>
+		<servlet-name>signDataQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.common.DataSev
+		</servlet-class>
+		<url-pattern>/URL/Common/Data/SignQuery.ashx</url-pattern>
+	</sevlet>
+	<!-- 查询网关所在地数据源 -->
+	<sevlet>
+		<servlet-name>gatawayAreaDataQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.common.DataSev
+		</servlet-class>
+		<url-pattern>/URL/Common/Data/GatawayAreaQuery.ashx</url-pattern>
+	</sevlet>
+	<!-- 查询分公司数据源 -->
+	<sevlet>
+		<servlet-name>branchcompanyDataQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.common.DataSev
+		</servlet-class>
+		<url-pattern>/URL/Common/Data/BranchcompanyQuery.ashx</url-pattern>
+	</sevlet>
+	<!-- 查询EC数据源 -->
+	<sevlet>
+		<servlet-name>ecListDataQuery</servlet-name>
+		<servlet-class>
+			com.yxt.business.blf.common.DataSev
+		</servlet-class>
+		<url-pattern>/URL/Common/Data/EcListQuery.ashx</url-pattern>
+	</sevlet>
+	<!-- 查询网元数据源 -->
+	<sevlet>
+		<servlet-name>NodeDataQuery</servlet-name>
+		<servlet-class>com.lxt2.business.blf.common.CommonDataSev</servlet-class>
+		<url-pattern>/URL/Common/Data/NodeQuery.ashx</url-pattern>
+	</sevlet>
+</sevlets>

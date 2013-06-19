@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+
+	<sevlet>
+		<servlet-name>whiteListUpdate</servlet-name>
+		<servlet-class>com.yxt.business.blf.blackwhitelist.YXTWhiteListSev
+		</servlet-class>
+		<url-pattern>/URL/BlackWhilteList/WhilteUpdate.ashx</url-pattern>
+	</sevlet>
+
+</sevlets>

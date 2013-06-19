@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<!-- 动态加载配置 -->
+	<bean id="dynamicLoadService" class="com.lxt2.dynamicload.springload.DynamicLoadService">		
+		<property name="configLocationPath" value="classpath*:${nodeID}/dynamicLoad/" />
+		<!-- 用于加载完成后删除 -->
+		<property name="dynamicLoadPath" value="${CLASSPATH}/${nodeID}/dynamicLoad/" />
+	</bean>
+	<!-- 网元Module加载 -->
+	<bean id="updateNetworkUnitService" class="com.lxt2.dynamicload.springload.UpdateNetworkUnitService">
+	</bean>
+	<!-- 文件搬移 -->
+	<bean id="fileMove" class="com.lxt2.dynamicload.filereadwrite.FileReadWrite">
+		<property name="dynamicLoadPath" value="${CLASSPATH}/${nodeID}/dynamicLoadfile/" />
+		<property name="cover" ref="iscover"/>
+		<property name="mvFilePathProName" value="mmsg.properties"/>
+	</bean>
+	<bean id="iscover" class="java.lang.Boolean">
+		<constructor-arg index="0" value="true" />
+	</bean>
+	<!-- 命令加载 -->
+	<bean id="dynamicLoadCmd" class="com.lxt2.dynamicload.springload.DynamicLoadCmd">
+		<property name="dynamicLoadService" ref="dynamicLoadService"/>
+		<property name="updateNetworkUnitService" ref="updateNetworkUnitService"/>
+		<property name="fileMove" ref="fileMove"/>		
+	</bean>
+	<!-- 服务 -->
+	<bean id="dynamicLoadTask" class="com.lxt2.dynamicload.springload.DynamicLoadTask">
+		<property name="id" value="400"/>
+		<property name="name" value="动态网关加载"/>
+		<property name="dynamicLoadService" ref="dynamicLoadService"/>
+		<property name="updateNetworkUnitService" ref="updateNetworkUnitService"/>
+		<property name="fileMove" ref="fileMove"/>
+        <property name="commandMap">
+            <map>
+                <entry key="sync" value-ref="dynamicLoadCmd"/>
+            </map>
+        </property>
+	</bean>
+	<!-- systemconfig.xml配置操作类 -->
+	<bean id="systemconfigFileOper" class="com.lxt2.dynamicload.systemconfig.SystemconfigFile" init-method="init">
+		<!-- SysConfigHelper注入 -->
+		<property name="sysConfigHelper" ref="sysconfighelper" />
+		<!-- 配置临时备份存储路径 -->
+		<property name="cfgXmlSavePath" value="${WORKDIR}../../../data/config_store/"/>
+		<!-- 配置文件路径 -->
+		<property name="configXmlPathBase" value="${WORKDIR}WEB-INF/classes"/>
+		<!-- CMD -->
+		<property name="cmd" value="-U{0} -F{1} -Cgetsystemconfig -P${nodeID}"/> 
+	</bean>
+	<!-- LOAD XML CONFIG  -->
+	<bean id="loadXmlConfigCmd" class="com.lxt2.dynamicload.systemconfig.LoadXmlConfigCmd">
+		<property name="syscfgFile" ref="systemconfigFileOper"/>
+	</bean>
+	<!-- VIEW SYSTEMCONFIG CMD -->
+	<bean id="viewSysemconfigCmd" class="com.lxt2.dynamicload.systemconfig.ViewXmlConfigCmd">
+		<property name="syscfgFile" ref="systemconfigFileOper"/>
+	</bean>
+	<!-- LOAD NODELIST CMD TEST -->
+	<bean id="loadNodeListCmd" class="com.lxt2.dynamicload.systemconfig.LoadNodeList2MemoryCmd">
+		<property name="syscfgFile" ref="systemconfigFileOper"/>
+	</bean>
+	<!-- GOBACK -->
+	<bean id="GoBackConfigCmd" class="com.lxt2.dynamicload.systemconfig.GoBackConfigCmd">
+			<property name="syscfgFile" ref="systemconfigFileOper"/>
+	</bean>
+	<!-- go back original SystemConfig -->
+	<bean id="GoBackOriginalCmd" class="com.lxt2.dynamicload.systemconfig.GoBackOriginalCmd">
+		<property name="syscfgFile" ref="systemconfigFileOper"/>
+	</bean>
+</beans>

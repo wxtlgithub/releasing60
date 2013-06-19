@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="0" name="fgjj_fundmms_task" desc="国金日志功能描述">
+	<item key="save" value="保存" desc="保存" />
+	<item key="delete" value="删除" desc="删除" />
+	<item key="update" value="更新" desc="更新" />
+	<item key="export" value="导出" desc="导出" />
+	<item key="success" value="成功" desc="成功" />
+	<item key="failed" value="失败" desc="失败" />
+	<component id="1" name="operate" desc="菜单">
+		<item key="1" value="登录" desc="登录" />
+		<item key="2" value="通道管理" desc="通道管理" />
+		<item key="3" value="注销" desc="注销" />
+		<item key="4" value="部门权限管理" desc="部门权限管理" />
+		<item key="5" value="用户权限管理" desc="用户权限管理" />
+		<item key="6" value="权限角色管理" desc="权限角色管理" />
+		<item key="7" value="菜单管理" desc="菜单管理" />
+		<item key="8" value="系统黑名单" desc="系统黑名单" />
+		<item key="9" value="系统白名单" desc="系统白名单" />
+		<item key="10" value="修改个人信息" desc="修改个人信息" />
+		<item key="11" value="客户组管理" desc="客户组管理" />
+		<item key="12" value="客户业务查询" desc="客户业务查询" />
+		<item key="13" value="短信发送" desc="短信发送" />
+		<item key="14" value="非法词过滤" desc="非法词过滤" />
+		<item key="15" value="号码提取" desc="号码提取" />
+		<item key="16" value="报备签名" desc="报备签名" />
+		<item key="17" value="通道敏感词" desc="通道敏感词" />
+		<item key="18" value="通道黑名单" desc="通道黑名单" />
+		<item key="19" value="预付费" desc="预付费" />
+		<item key="20" value="通道批量替换" desc="通道批量替换" />
+		<item key="21" value="定时短信审批" desc="定时短信审批" />
+		<item key="22" value="可视化网元部署" desc="可视化网元部署" />
+	</component>
+</function>

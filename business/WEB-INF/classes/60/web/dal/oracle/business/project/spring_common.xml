@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!-- 通用数据源 -->
+	<bean id="DataDAO" class="com.yxt.business.dal.common.DataDAL"
+		scope="prototype">
+		<!-- 行业数据源 -->
+		<property name="queryByIndustrySQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select numindustry,vc2industry  from TL_INDUSTRY_LIST"></property>
+			</bean>
+		</property>
+		<!-- 分公司数据源 -->
+		<property name="queryByBranchcompanySQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+			select numbranchcompany, vc2branchcompany  from tl_branchcompany_list"></property>
+			</bean>
+		</property>
+		<!-- EC数据源 -->
+		<property name="queryByECSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="  select numecid,vc2ecname, vc2fullname from tl_ec_info where numstatus =1 "></property>
+			</bean>
+		</property>
+		<!-- 签约数据源 -->
+		<property name="queryBySignSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select numsign ,vc2sign  from tl_sign_list"></property>
+			</bean>
+		</property>
+		<!-- 网关所在地数据源 -->
+		<property name="queryByGatewayAreaSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select numinstid,vc2name from tl_inst where vc2level='2' and numinstid>0"></property>
+			</bean>
+		</property>
+	</bean>
+</beans>

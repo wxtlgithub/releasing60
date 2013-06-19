@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="TlTaskDAO" class="com.lxt2.systemapp.dal.deployment.TlTaskDAL"
+		scope="prototype">
+		<property name="retreiveUnitId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select t1.numtaskid, t1.numprogramid, t1.vc2taskname, t1.vc2taskdesc
+									  from tl_task t1, tl_program t2
+									 where t1.numprogramid = t2.numprogramid
+									   and t2.numtypeid = 1"></property>
+			</bean>		
+		</property>
+		
+		<property name="queryTaskItemByProIdAndTaskId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					select a.vc2key    as VC2KEY,
+					       a.vc2name   as VC2NAME,
+					       a.numtypeid as NUMTYPEID,
+					       a.vc2desc   as VC2DESC,
+					       nvl(b.vc2value,a.vc2value)  as ITEMVALUE,
+					       a.vc2value  as VC2VALUE,
+					       a.vc2range  as VC2RANGE
+					  from (select t3.vc2key,
+					               t3.vc2name,
+					               t3.numtypeid,
+					               t3.vc2range,
+					               t3.vc2desc,
+					               t3.vc2value
+					          from tl_program t1, tl_pro_opt t2, tl_pro_opt_item t3
+					         where t1.numprogramid = t2.numprogramid
+					           and t2.numoptid = t3.numoptid
+					           and t1.numprogramid = (select t1.numprogramid
+					                   from tl_task t1
+					                  where t1.numtaskid = {0})
+					           and t3.vc2key != 'MODULE_LIST') a
+					  left join (select t3.vc2key, t3.vc2value
+					               from tl_task t1, tl_task_opt t2, tl_task_opt_item t3
+					              where t1.numtaskid = t2.numtaskid
+					                and t2.numoptid = t3.numoptid
+					                and t1.numtaskid = {0}
+					                and t3.vc2key != 'MODULE_LIST') b
+					    on a.vc2key = b.vc2key
+					"></property>
+			</bean>
+		</property>
+		
+		<property name="queryTaskListByProId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					 select p.numprogramid || ':' || t.numtaskid as PROGRAMID,
+        					t.vc2taskname  as TASKNAME,
+        					t.numtaskid  as TASKID,
+        					p.numtypeid as PROGRAMTYPE,
+        					t.numprogramid as PARENTID
+					from tl_task t, tl_program p
+					where t.numprogramid=p.numprogramid
+							and t.numprogramid={0}
+							and p.numtypeid={1} 
+							and t.vc2taskdesc={2} 
+					  order by t.numprogramid
+					"></property>
+			</bean>
+		</property>
+		
+		
+		<property name="queryTaskListByProIdAndTaskId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					 select a.vc2value || ':' || b.vc2value as PROGRAMID,
+					        b.vc2value  as TASKID,
+					        a.vc2name   as TASKNAME,
+					        c.numtypeid as PROGRAMTYPE
+					   from (select t3.numoptid,
+					                t3.vc2key,
+					                t3.vc2value,
+					                t3.vc2name,
+					                t1.numtypeid
+					           from tl_program t1, tl_pro_opt t2, tl_pro_opt_item t3
+					          where t1.numprogramid = t2.numprogramid
+					            and t2.numoptid = t3.numoptid           
+					            and t3.vc2key = 'MODULE_LIST'
+					            and t1.numprogramid = (select t1.numprogramid
+					                   from tl_task t1
+					                  where t1.numtaskid = {0})) a
+					   left join (select t3.numoptid, t3.vc2key, t3.vc2value, t3.vc2name
+					                from tl_task t1, tl_task_opt t2, tl_task_opt_item t3
+					               where t1.numtaskid = t2.numtaskid
+					                 and t2.numoptid = t3.numoptid                 
+					                 and t3.vc2key = 'MODULE_LIST'
+					                 and t3.vc2value not in(select t.numtaskid from tl_task t where to_char(t.numprogramid)=t.vc2taskdesc)
+					                 and t1.numtaskid = {0}) b
+					     on a.vc2value = b.vc2name, tl_program c
+					  where a.vc2value = c.numprogramid
+					    and c.numtypeid = {1}
+					  order by c.numtypeid
+					"></property>
+			</bean>
+		</property>
+		
+		<property name="queryProgramItem">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					   select t3.vc2key as VC2KEY,
+					       t3.vc2name as VC2NAME,
+					       t3.vc2desc as ITEMDESC,
+					       t3.numtypeid as NUMTYPEID,
+					       t3.vc2value as ITEMVALUE,
+					       '' as VC2VALUE,
+					       t3.vc2range as VC2RANGE
+					  from tl_program t1, tl_pro_opt t2, tl_pro_opt_item t3
+					 where t1.numprogramid = t2.numprogramid
+					   and t2.numoptid = t3.numoptid
+					   and t1.numprogramid = {0}
+					   and t3.vc2key != 'MODULE_LIST'
+					"></property>
+			</bean>
+		</property>
+		
+		<property name="queryProgramList">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					 select t3.vc2value || ':' as PROGRAMID,
+					       '' as TASKID,
+					       t3.vc2name as TASKNAME,
+					       t3.numtypeid as PROGRAMTYPE
+					  from tl_program t1, tl_pro_opt t2, tl_pro_opt_item t3
+					 where t1.numprogramid = t2.numprogramid
+					   and t2.numoptid = t3.numoptid
+					   and t1.numprogramid = {0}
+					   and t3.vc2key = 'MODULE_LIST'
+					"></property>
+			</bean>
+		</property>
+		
+		<property name="getOptIdByTaskId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					select t1.numoptid as NUMOPTID from tl_task_opt t1 where t1.numtaskid = {0}
+					"></property>
+			</bean>
+		</property>
+		
+		<property name="deleteItemsByOptId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					delete from tl_task_opt_item t1 where t1.vc2key !='MODULE_LIST' and t1.numoptid = {0}
+					"></property>
+			</bean>
+		</property>
+		
+		<property name="queryTasksByName">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="PageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from (select rownum numrowasdf, 
+			                adsfsds.* from (
+									select t1.numtaskid, t1.numprogramid, t1.vc2taskname, t1.vc2taskdesc
+									  from tl_task t1, tl_program t2
+									 where t1.numprogramid = t2.numprogramid
+									   and t2.numtypeid = 1 #0#  
+									 order by t1.numtaskid desc
+	                         ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}							
+							" />
+					</bean>
+				</property>
+				<property name="CountSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select  count(*) from  (	
+			                		select t1.numtaskid, t1.numprogramid, t1.vc2taskname, t1.vc2taskdesc
+									  from tl_task t1, tl_program t2
+									 where t1.numprogramid = t2.numprogramid
+									   and t2.numtypeid = 1		#0# 
+									 order by t1.numtaskid desc
+	                         )	
+							" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>t1.vc2taskname like '%{0}%'</value>
+					</list>
+				</property>
+			</bean>
+		</property>	
+		
+		<property name="getModelIdByTaskId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					select
+				        t3.numitemid as ITEMID,
+				        t3.vc2value as TASKID        
+				    from
+				        tl_task t1,
+				        tl_task_opt t2,
+				        tl_task_opt_item t3       
+				    where
+				        t1.numtaskid = t2.numtaskid         
+				        and t2.numoptid = t3.numoptid         
+				        and t3.vc2key = 'MODULE_LIST'         
+				        and t1.numtaskid = {0}
+					"></property>
+			</bean>
+		</property>
+		
+		<property name="deleteTaskItemByTaskId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					delete from tl_task_opt_item toi
+     					where toi.numitemid in
+           					(select t3.numitemid as ITEMID
+              					from tl_task t1, tl_task_opt t2, tl_task_opt_item t3
+             					where t1.numtaskid = t2.numtaskid
+               						and t2.numoptid = t3.numoptid
+               						and t3.vc2key = 'MODULE_LIST'
+               						and t3.vc2value = {0})
+					
+					"></property>
+			</bean>
+		</property>
+		
+		<property name="queryProgramNameById">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					select * from tl_program p where p.numprogramid={0}
+					"></property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="TlDeploymentDAO" class="com.lxt2.systemapp.dal.deployment.TlDeploymentDAL"
+		scope="prototype">
+		<property name="getTaskItem">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					select a.vc2key    as VC2KEY,
+					       a.vc2name   as VC2NAME,
+					       a.numtypeid as NUMTYPEID,
+					       a.vc2desc   as VC2DESC,
+					       b.vc2value  as ITEMVALUE,
+					       ''  as VC2VALUE,
+					       a.vc2range  as VC2RANGE
+					  from (select t3.vc2key,
+					               t3.vc2name,
+					               t3.numtypeid,
+					               t3.vc2range,
+					               t3.vc2desc,
+					               t3.vc2value
+					          from tl_program t1, tl_pro_opt t2, tl_pro_opt_item t3
+					         where t1.numprogramid = t2.numprogramid
+					           and t2.numoptid = t3.numoptid
+					           and t1.numprogramid =
+					                (select t1.numprogramid
+					                   from tl_task t1
+					                  where t1.numtaskid = {0})
+					            and t3.vc2key != 'MODULE_LIST') a
+					   left join (select t3.vc2key, t3.vc2value, t3.vc2desc
+					                from tl_task t1, tl_task_opt t2, tl_task_opt_item t3
+					               where t1.numtaskid = t2.numtaskid
+					                 and t2.numoptid = t3.numoptid
+					                 and t1.numtaskid = {0}
+					                 and t3.vc2key != 'MODULE_LIST') b
+					     on a.vc2key = b.vc2key
+					"></property>
+			</bean>
+		</property>
+		<property name="getTaskList">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					  select a.vc2value || ':' || b.vc2value as PROGRAMID,
+					        b.vc2value  as TASKID,
+					        a.vc2name   as TASKNAME,
+					        b.vc2desc   as TASKDESC,
+					        c.numtypeid as PROGRAMTYPE
+					   from (select t3.numoptid,
+					                t3.vc2key,
+					                t3.vc2value,
+					                t3.vc2name,
+					                t1.numtypeid
+					           from tl_program t1, tl_pro_opt t2, tl_pro_opt_item t3
+					          where t1.numprogramid = t2.numprogramid
+					            and t2.numoptid = t3.numoptid
+					            and t1.numprogramid =
+					                (select t1.numprogramid
+					                   from tl_task t1
+					                  where t1.numtaskid = {0})
+					            and t3.vc2key = 'MODULE_LIST') a
+					   left join (select t3.numoptid,
+					                     t3.vc2key,
+					                     t3.vc2value,
+					                     t3.vc2name,
+					                     t3.vc2desc
+					                from tl_task t1, tl_task_opt t2, tl_task_opt_item t3
+					               where t1.numtaskid = t2.numtaskid
+					                 and t2.numoptid = t3.numoptid
+					                 and t1.numtaskid = {0}
+					                 and t3.vc2key = 'MODULE_LIST') b
+					     on a.vc2value = b.vc2value, tl_program c
+					  where a.vc2value = c.numprogramid
+					"></property>
+			</bean>
+		</property>
+		<property name="getProgramItem">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					 select t3.vc2key   as ITEMKEY,
+					          t3.vc2value as ITEMNAME,
+					          t3.vc2desc  as ITEMDESC
+					     from tl_program t1, tl_pro_opt t2, tl_pro_opt_item t3
+					    where t1.numprogramid = t2.numprogramid
+					      and t2.numoptid = t3.numoptid
+					      and t1.numprogramid = {0}
+					      and t3.vc2key != 'MODULE_LIST'
+					"></property>
+			</bean>
+		</property>
+		<property name="getProgramList">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					 select t3.vc2value as PROGRAMID,
+					         t3.vc2name  as PROGRAMNAME,
+					         t3.vc2desc  as PROGRAMDESC
+					    from tl_program t1, tl_pro_opt t2, tl_pro_opt_item t3
+					   where t1.numprogramid = t2.numprogramid
+					     and t2.numoptid = t3.numoptid
+					     and t1.numprogramid = {0}
+					     and t3.vc2key = 'MODULE_LIST'
+					"></property>
+			</bean>
+		</property>
+		<property name="getNodeForXml">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select t1.numtaskid, t1.numprogramid, t1.vc2taskname, t1.vc2taskdesc
+									  from tl_task t1, tl_program t2
+									 where t1.numprogramid = t2.numprogramid
+									   and t2.numtypeid = 1
+                     order by t1.numtaskid
+					"></property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="TlTaskOptItemDAO" class="com.lxt2.systemapp.dal.deployment.TlTaskOptItemDAL"
+		scope="prototype">
+		<property name="deleteOptItem">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="delete from tl_task_opt_item 
+						where numoptid = {0} and vc2key = '{1}'"></property>
+			</bean>
+		</property>
+
+		<property name="updateOptItem">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="insert into tl_task_opt_item(numoptid, numtypeid, vc2key, vc2value) values({0}, 1, '{1}', '{2}')"></property>
+			</bean>
+		</property>
+
+		<property name="selectAlertAll">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select vc2key as key  ,vc2value as value from tl_task_opt_item"></property>
+			</bean>
+		</property>
+		<!-- 
+		<property name="queryModuleListByTypeSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					 select a.vc2value || ':' || b.vc2value as PROGRAMID,
+					        b.vc2value  as TASKID,
+					        a.vc2name   as TASKNAME,
+					        c.numtypeid as PROGRAMTYPE,
+					        nvl(b.vc2desc,a.vc2desc) as VC2DESC 
+					   from (select t3.numoptid,
+					                t3.vc2key,
+					                t3.vc2value,
+					                t3.vc2name,
+					                t3.vc2desc,
+					                t1.numtypeid
+					           from tl_program t1, tl_pro_opt t2, tl_pro_opt_item t3
+					          where t1.numprogramid = t2.numprogramid
+					            and t2.numoptid = t3.numoptid           
+					            and t3.vc2key = 'MODULE_LIST'
+					            and t1.numprogramid = (select t1.numprogramid
+					                   from tl_task t1
+					                  where t1.numtaskid = {0})) a
+					   right join (select t3.numoptid, t3.vc2key, t3.vc2value, t3.vc2name,t3.vc2desc
+					                from tl_task t1, tl_task_opt t2, tl_task_opt_item t3
+					               where t1.numtaskid = t2.numtaskid
+					                 and t2.numoptid = t3.numoptid                 
+					                 and t3.vc2key = 'MODULE_LIST'
+					                 and t1.numtaskid = {0}) b
+					     on a.vc2value = b.vc2name, tl_program c
+					  where a.vc2value = c.numprogramid
+					    and c.numtypeid = {1}
+					  order by c.numtypeid
+					"></property>
+			</bean>
+		</property>	
+		 -->	
+	</bean>
+</beans> 

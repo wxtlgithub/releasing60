@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.systemapp.model.alert.TlAlertKpiLog" table="TL_ALERT_KPI_LOG">
+
+		<!--(NUMBER:22)-->
+		<id name="numlogid" type="java.lang.Integer">
+			<column name="NUMLOGID" precision="22" scale="0" />
+			<generator class="increment"></generator>
+		</id>
+
+		<!--任务编号(NUMBER:22)-->
+		<property name="numtaskid" type="java.lang.Integer">
+			<column name="NUMTASKID" length="22" />
+		</property>
+
+		<!--指标Key(VARCHAR2:50)-->
+		<property name="vc2key" type="java.lang.String">
+			<column name="VC2KEY" length="50" />
+		</property>
+
+		<!--指标名称(VARCHAR2:50)-->
+		<property name="vc2name" type="java.lang.String">
+			<column name="VC2NAME" length="50" />
+		</property>
+
+		<!--指标Value(VARCHAR2:50)-->
+		<property name="vc2value" type="java.lang.String">
+			<column name="VC2VALUE" length="50" />
+		</property>
+
+		<!--采集时间(DATE:7)-->
+		<property name="datcreatetime" type="java.util.Date">
+			<column name="DATCREATETIME" length="7" />
+		</property>
+
+	</class>
+</hibernate-mapping>
+  

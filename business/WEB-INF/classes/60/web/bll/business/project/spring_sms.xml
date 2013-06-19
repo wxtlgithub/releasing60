@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	
+	<bean id="YXTTlSmsContentBLL" class="com.yxt.business.bll.sms.TlSmsContentBLL" init-method="main" scope="prototype">
+	</bean>
+
+	<bean id="YXTMtStaticBLL" class="com.yxt.business.bll.sms.YXTMtStaticBLL" init-method="main" scope="prototype">
+	</bean>
+
+	<bean id="YXTTlSmsSendQueryBLL" class="com.yxt.business.bll.sms.YXTTlSmsSendQueryBLL" init-method="main" scope="prototype">
+	</bean>
+	
+	<bean id="TlSmsSendQueryYXTBLL" class="com.yxt.business.bll.sms.TlSmsSendQueryBLL" init-method="main" scope="prototype">
+	</bean>
+	
+	<bean id="projectTlSmsContentBLL" class="com.project.business.bll.sms.ProjectTlSmsContentBLL" init-method="main" scope="prototype">
+	</bean>
+	
+	<bean id="TlClientSmsQueryBLL" class="com.lxt2.business.bll.sms.TlClientSmsQueryBLL" init-method="main" scope="prototype">
+	</bean>
+</beans>

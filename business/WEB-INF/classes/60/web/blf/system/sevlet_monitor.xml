@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sevlets>
+	<sevlet>
+		<servlet-name>TLSystemMonitor</servlet-name>
+		<servlet-class>
+			com.yxt.systemapp.blf.monitor.TLSystemMonitorYxtSev
+		</servlet-class>
+		<url-pattern>URL/Monitor/SysMonitor/SysMonitorQuery.ashx</url-pattern>
+	</sevlet>
+
+	<!-- 告警数据servlet -->
+	<sevlet>
+		<servlet-name>TlAlarmData</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.monitor.TlAlarmDataSev
+		</servlet-class>
+		<url-pattern>/URL/monitor/alarmdata.ashx</url-pattern>
+	</sevlet>
+
+	<!-- 公式定义servlet -->
+	<sevlet>
+		<servlet-name>TlKpiDef</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.monitor.TlKpiDefSev
+		</servlet-class>
+		<url-pattern>/URL/monitor/kpidef.ashx</url-pattern>
+	</sevlet>
+
+	<!-- 指标servlet -->
+	<sevlet>
+		<servlet-name>TlKpiValue</servlet-name>
+		<servlet-class>
+			com.lxt2.systemapp.blf.monitor.TlKpiValueSev
+		</servlet-class>
+		<url-pattern>/URL/monitor/kpivalue.ashx</url-pattern>
+	</sevlet>
+
+</sevlets>

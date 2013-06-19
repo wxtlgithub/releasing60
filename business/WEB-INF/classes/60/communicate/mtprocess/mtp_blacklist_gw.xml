@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<bean id="gwBlackMaxIDSqlDB"  class="com.techcenter.dbcore.dbbase.jdbc.JdbcSimpleFindDAO" parent="abstractDAO">
+		<constructor-arg type="java.lang.Class" value="com.standardsm.blacklist.gw.GwBlackEntity"/>
+		<property name="sql">
+			<value><![CDATA[select max(NUMSEQID) as id from tl_black_list_gw]]></value>
+		</property>
+	</bean> 
+	<!-- 网关通道黑名单DAO -->	 
+	<bean id="gwDbFmBlackListDAO" class="com.standardsm.blacklist.gw.GwDbFmBlackListDao">
+		<property name="tlGwBlackListDAO" ref="tlGwBlackListDAO" />
+		<property name="maxSeqIDSqlDB" ref="gwBlackMaxIDSqlDB"></property>
+		<property name="queryMaxCount" value="50000" />
+	</bean>	
+	<!-- 网关通道黑名单校验类 -->
+	<bean id="gwBlackList" class="com.standardsm.blacklist.gw.GwBlackList" init-method="init">
+		<constructor-arg index="0">
+			<value>${WORKDIR}../../../data/biz/</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>${WORKDIR}../../../data/gwblackfiles/</value>
+		</constructor-arg>
+		<property name="gwBlackDAO" ref="gwDbFmBlackListDAO" />
+	</bean>
+	<!-- 系统黑名单全量加载任务 -->
+    <bean id="blkGwSyncAllCmd" class="com.standardsm.blacklist.gw.BlackListIncrementSyncCmd">
+        <property name="gwBlackListSync" ref="gwBlackList"/>
+    </bean>
+	<bean id="gwBlkSyncAllTask" class="com.standardsm.blacklist.gw.BlackListSyncAllTask">
+		<property name="id" value="126"/>
+		<property name="name" value="通道黑名单全量加载"/>
+		<property name="gwBlackListSync" ref="gwBlackList"/>
+        <property name="commandMap">
+            <map>
+                <entry key="sync" value-ref="blkGwSyncAllCmd"/>
+            </map>
+        </property>
+		<!-- 每天凌晨2点执行 -->
+		<property name="taskSchRule" value="@{sch(0,2)}"/>
+	</bean>
+	<!-- 系统黑名单增量加载任务 -->
+     <bean id="blkGwIncrementSyncCmd" class="com.standardsm.blacklist.gw.BlackListIncrementSyncCmd">
+        <property name="gwBlackListSync" ref="gwBlackList"/>
+    </bean>
+	<bean id="gwBlkSyncIncTask" class="com.standardsm.blacklist.gw.BlackListIncrementSyncTask">
+		<property name="id" value="124"/>
+		<property name="name" value="通道黑名单增量加载"/>
+		<property name="gwBlackListSync" ref="gwBlackList"/>
+         <property name="commandMap">
+            <map>
+                <entry key="sync" value-ref="blkGwIncrementSyncCmd"/>
+            </map>
+        </property>
+		<!-- 每小时的0点10分执行 -->
+		<property name="taskSchRule" value="@{sch(10)}"/>
+	</bean>
+	
+	<!-- 网关通道黑名单文件同步加载任务 -->
+    <bean id="gwSyncBlkFileCmd" class="com.standardsm.blacklist.gw.BlackListIncrementSyncCmd">
+        <property name="gwBlackListSync" ref="gwBlackList"/>
+    </bean>
+	<bean id="gwSyncBlkFileTask" class="com.standardsm.blacklist.gw.BlackListFileSyncTask">
+		<property name="id" value="127"/>
+		<property name="name" value="通道黑名单文件同步加载"/>
+		<property name="gwBlackListSync" ref="gwBlackList"/>
+        <property name="commandMap">
+            <map>
+                <entry key="sync" value-ref="gwSyncBlkFileCmd"/>
+            </map>
+        </property>
+		<!-- 每小时的第10分执行 -->
+		<property name="taskSchRule" value="@{sch(10)}"/>
+	</bean>
+	<!-- 任务结束 -->
+	
+</beans>

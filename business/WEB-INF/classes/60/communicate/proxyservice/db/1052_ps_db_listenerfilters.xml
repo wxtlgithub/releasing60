@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+
+	<bean id="mmsContentService" class="com.yxt.interfaceservice.dbservice.MmsContentService" />
+	<bean id="userGroupMemberService" class="com.yxt.interfaceservice.dbservice.UserGroupMemberService">
+		<property name="userGroupMemberSqlDB" ref="userGroupMemberSqlDB"/>
+		<property name="contenSql">
+					<value><![CDATA[	 select t4.numsendgroupid as subBatch ,t4.numcontentid as numcontentid from tl_sms_sendgroup t4  where  t4.numcontentid=? and t4.numusergroupid=?]]></value> 
+		</property>
+		<property name="contenSqlMMS">
+					<value><![CDATA[	 select t4.numsendgroupid as subBatch ,t4.numcontentid as numcontentid from tl_mms_sendgroup t4  where  t4.numcontentid=? and t4.numusergroupid=?]]></value> 
+		</property>
+	</bean>
+	<bean id="userGroupMemberSqlDB" class="com.techcenter.dbcore.dbbase.jdbc.JdbcSimpleFindDAO"
+		parent="abstractDAO">
+		<constructor-arg type="java.lang.Class"
+			value="com.standardsm.db.model.HandSendMobile" />
+	</bean>
+	<bean id="mmsSendListService" class="com.yxt.interfaceservice.dbservice.MmsSendListService" >
+	<property name="mmsSendListDB" ref="userGroupMemberSqlDB"/>
+		<property name="contenSql">
+					<value><![CDATA[	 select t4.numsendgroupid as subBatch ,t4.numcontentid as numcontentid from tl_mms_sendgroup t4  where  t4.numcontentid=? ]]></value> 
+		</property>
+	</bean>
+	<bean id="columnNumberService" class="com.yxt.interfaceservice.dbservice.ColumnNumberService" />
+
+	<bean id="smsContentService" class="com.yxt.interfaceservice.dbservice.SmsContentService" />
+	<bean id="smsSendListService" class="com.yxt.interfaceservice.dbservice.SmsSendListService">
+	<property name="smsSendListDB" ref="userGroupMemberSqlDB"/>
+		<property name="contenSql">
+					<value><![CDATA[	 select t4.numsendgroupid as subBatch ,t4.numcontentid as numcontentid from tl_sms_sendgroup t4  where  t4.numcontentid=? ]]></value> 
+		</property>
+	</bean>
+
+	<!-- API短信内容表监听器 -->
+	<bean id="apiSmsContentTblListener" class="com.yxt.interfaceservice.listener.SmsContentTblListener"
+		init-method="init" destroy-method="destroy">
+		<property name="verifyService" ref="ndClientVerify"/>
+		<property name="path" value="${WORKDIR}../../../data/"/>
+		<property name="smsContentService" ref="smsContentService" />
+		<property name="smsSendListService" ref="smsSendListService" />
+		<property name="userGroupMemberService" ref="userGroupMemberService" />
+		<property name="columnNumberService" ref="columnNumberService" />
+		<!-- 属性配置文件 -->
+		<property name="propertyFileName"
+			value="${CLASSPATH}/${nodeID}/persistent/statistics/recordSendPhone1052.properties" />
+		<!-- 一次读取的手机号码最大个数 -->
+		<property name="mobileMaxGetCount" value="10000" />
+		<property name="sendMaxGetCount"   value="100"/>
+		<property name="maxWorkder" value="2" />
+		<property name="filters">
+			<list>
+				<ref bean="smsMtFilter1052" />
+			</list>
+		</property>
+	</bean>
+	<!-- log入库 -->
+	<bean id="sendTaskListDaoLog" class="com.lxt20.interfaceservice.filter.SendTaskListDaoLog"
+		destroy-method="stop">
+		<property name="saveFlag" value="true"></property>
+	</bean>
+	<!-- mt开始 -->
+	<bean id="smsMtFilter1052" class="com.lxt20.interfaceservice.filter.SmsMtFilter">
+		<property name="smsMt" ref="ps20SubmitReceiver1052" />
+			<!-- 计数统计服务 -->
+		<property name="countService" ref="psCounterService1052" />
+		<property name="clientId" value="1" />
+	</bean>
+	<!-- mt结束 -->
+
+	<!-- 彩信配置开始 -->
+
+	<!-- API彩信内容表监听器 -->
+	<bean id="apiMmsContentTblListener"
+		class="com.yxt.interfaceservice.listener.SubmitMmsQueueListener"
+		init-method="init" destroy-method="destroy">
+		<property name="verifyService" ref="ndClientVerify"/>
+		<property name="path" value="${WORKDIR}../../../data/"/>
+		<property name="mmsContentService" ref="mmsContentService" />
+		<property name="userGroupMemberService" ref="userGroupMemberService" />
+		<property name="mmsSendListService" ref="mmsSendListService" />
+		<property name="columnNumberService" ref="columnNumberService" />
+		<!-- 属性配置文件 -->
+		<property name="propertyFileName"
+			value="${CLASSPATH}/${nodeID}/persistent/statistics/mmsrecordSendPhone1052.properties" />
+		<!-- 一次读取的手机号码最大个数 -->
+		<property name="mobileMaxGetCount" value="100" />
+		<property name="maxWorkder" value="2" />
+		<property name="filters">
+			<list>
+				<ref bean="mmsMtFilter1052" />
+			</list>
+		</property>
+	</bean>
+	<bean id="mmsMtFilter1052" class="com.lxt20.interfaceservice.filter.MmsMtFilter">
+		<property name="smsMt" ref="ps20MmsMtReceiver1052" />
+			<!-- 计数统计服务 -->
+		<property name="countService" ref="psCounterService1052" />
+		<property name="clientId" value="1" />
+	</bean>
+</beans>

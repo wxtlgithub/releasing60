@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="BlackWhiteListDAO" class="com.lxt2.business.dal.blackwhitelist.BlackWhiteListDAL"
+		scope="prototype">
+
+		<property name="selectAll">
+			<bean class="com.lxt2.common.common.model.PageSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="countSQL"
+					value="select count(0) from ( select * from TLV_LOG_BWList where datcreattime > date '{0}' and datcreattime &lt; (date '{1}'+1) and numlisttype in ({2}) and numsvcid={3}  ) a "></property>
+				<!-- and vc2username like '{4}' -->
+				<property name="pageSQL"
+					value="
+					select * from (select rownum numrowasdf, 
+				adsfsds.* from
+					(
+					select numlogid,numuserid,
+					to_char(datcreattime,'yyyy-mm-dd hh24:mi:ss') datcreattime,
+					to_char(datmodifytime,'yyyy-mm-dd hh24:mi:ss') datmodifytime,
+					Nvl(numtotalnum,0) as numtotalnum ,
+					Nvl(numsuccessnum,0) as numsuccessnum ,
+					Nvl(numfailed,0) as numfailed,vc2filename,
+					numlisttype,numsrc,numsvcid,vc2backuppath,vc2svcname,
+					vc2departname,vc2username,numstate from TLV_LOG_BWList  
+					where NUMLOGID in (
+					   ( select numlogid from TLV_LOG_BWList 
+					  where datcreattime > date '{0}' and 
+					  datcreattime &lt; (date '{1}'+1) and 
+					  numlisttype in ({2}) and numsvcid={3}  ) 
+					  ) order by DATCREATTIME desc,NUMLOGID desc)
+					  adsfsds where rownum &lt; {5}+1) where numrowasdf > {4}" />
+			</bean>
+		</property>
+
+		<property name="queryBWListLogDetailSQL"
+			value="select VC2MOBILE,VC2STATE  from TLV_DETAILS_BWLIST where NUMLOGID={0}" />
+	</bean>
+	
+	<bean id="SvcBlackListDAO" class="com.lxt2.business.dal.blackwhitelist.SvcBlacListDAL" scope="prototype">
+		<property name="selectAll">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+								select * from (select rownum numrowasdf,
+					                adsfsds.* from (
+								          select numlogid,numuserid,
+								          to_char(datcreattime,'yyyy-mm-dd hh24:mi:ss') datcreattime,
+								          to_char(datmodifytime,'yyyy-mm-dd hh24:mi:ss') datmodifytime,
+								          Nvl(numtotalnum,0) as numtotalnum ,
+								          Nvl(numsuccessnum,0) as numsuccessnum ,
+								          Nvl(numfailed,0) as numfailed,vc2filename,
+								          numlisttype,numsrc,numsvcid,vc2backuppath,vc2svcname,
+								          vc2departname,vc2username,numstate, vc2remark,
+								          g.numgwid,g.vc2gatewayname
+                  						  from TLV_LOG_BWList l,tl_gateway g
+                 						  where l.numsvcid = g.numgwid (+)  #0#
+								          order by DATCREATTIME desc,NUMLOGID desc
+								 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(1) from TLV_LOG_BWList l,tl_gateway g where l.numsvcid = g.numgwid #0#" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 开始时间 -->
+						<value>datcreattime > date '{0}' </value>
+						<!-- 结束时间 -->
+						<value>datcreattime &lt; date '{0}'+1</value>
+						<!-- 网关ID -->
+						<value>numgwid={0}</value>
+						<!-- 类型 -->
+						<value>numlisttype in ({0})</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 通道黑名单按批次查询网关数据详情 -->
+		
+		<property name="selectGwSuccnum">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+								select * from (select rownum numrowasdf,
+					                adsfsds.* from (
+								           select gate.vc2gatewayname vc2gatewayname, 
+										       gwlog.numlogid numlogid,
+										       gwlog.numgwid numgwid,
+										       gwlog.numtotalnum numtotalnum,
+										       gwlog.numsuccessnum numsuccessnum,
+										       gwlog.numstatus numstatus,
+										       gwlog.numtotalnum - gwlog.numsuccessnum as  numfaliednum,
+										       gwlog.datinsert datinsert
+										  from tl_log_bwlist_gw gwlog, tl_gateway gate
+										 where gwlog.numgwid = gate.numgwid
+										   #0#
+								        order by  gwlog.datinsert desc
+								 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(1) from tl_log_bwlist_gw where 1=1 #0#" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 批次号 -->
+						<value> numlogid =  '{0}' </value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		
+		<!-- 网关黑名单表导出查询 -->
+		<property name="queryBWListLogDetailGwSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select vc2mobile,vc2state from tlv_details_bwlist #0# " ></property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>numlogid = {0}</value>
+						<value>numgwid = {0}</value>
+						<value>datcreatetime > date '{0}' and datcreatetime &lt; date '{0}' + 1</value>
+						<value> {0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		
+		
+		<property name="queryBWListLogDetailSQL"
+			value="select VC2MOBILE,VC2STATE  from TLV_DETAILS_BWLIST where NUMLOGID={0} and datcreatetime > date '{1}' and datcreatetime &lt; date '{1}' + 1" />
+
+	</bean>
+	
+	<!-- 黑名单信息查询 -->
+	<bean id="blackQueryListDAO" class="com.lxt2.business.dal.blackwhitelist.BlackQueryListDAL" scope="prototype">
+		<!-- 黑名单表查询 -->
+		<property name="queryBlackPageByArgsSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+								select * from (select rownum numrowasdf, 
+					                adsfsds.* from (select * from tl_black_list where numtype in (1, 2) #0# order by datcreate desc, vc2mobile, numseqid 
+								 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL" value="select count(1) from (select * from tl_black_list where numtype in (1, 2) #0# )" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>vc2mobile in ({0})</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 黑名单表导出查询 -->
+		<property name="queryBlackListByArgsSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select vc2mobile, decode(numtype, 1, '系统黑名单', 2, '彩信黑名单') numtype, datcreate
+					from tl_black_list #0# and numtype in (1, 2) order by datcreate desc, vc2mobile, numseqid"></property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>vc2mobile in ({0})</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 网关黑名单表查询 -->
+		<property name="queryGwBlackPageByArgsSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+								select * from (select rownum numrowasdf, 
+					                adsfsds.* from (select b.*, g.vc2gatewayname, l.vc2remark from tl_black_list_gw b, tl_log_bwlist l, tl_gateway g 
+					                				where b.numlogid = l.numlogid and b.numgwid = g.numgwid and b.numtype = 1 #0# 
+					                				order by datcreate desc, vc2mobile, numseqid 
+								 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL" value="select count(1) from (select * from tl_black_list_gw b, tl_log_bwlist l, tl_gateway g 
+							where b.numlogid = l.numlogid and b.numgwid = g.numgwid and b.numtype = 1 #0# )" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>vc2mobile in ({0})</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 网关黑名单表导出查询 -->
+		<property name="queryGwBlackListByArgsSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select b.*, g.vc2gatewayname, l.vc2remark from tl_black_list_gw b, tl_log_bwlist l, tl_gateway g 
+						#0# and b.numlogid = l.numlogid and b.numgwid = g.numgwid order by datcreate desc, vc2mobile, numseqid"></property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>vc2mobile in ({0})</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 黑名单退出记录表查询 -->
+		<property name="queryBlackLogPageByArgsSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+								select * from (select rownum numrowasdf, 
+					                adsfsds.* from (select b.numseqid, b.numsvcid, g.vc2gatewayname, b.vc2mobile, l.numlisttype, b.datdisord, l.vc2remark
+													from tl_black_list_his b, tl_gateway g, tl_log_bwlist l
+													where b.numsvcid = g.numgwid(+) and b.numdisordid = l.numlogid #0# 
+													order by datdisord desc, vc2mobile, numseqid 
+								 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL" value="select count(1) from (
+							select b.* from tl_black_list_his b, tl_gateway g, tl_log_bwlist l
+							where b.numsvcid = g.numgwid(+) and b.numdisordid = l.numlogid #0# )" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>vc2mobile in ({0})</value>
+						<value>numlisttype in ({0})</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 黑名单退出记录表导出查询 -->
+		<property name="queryBlackLogListByArgsSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="select b.numseqid, b.numsvcid, g.vc2gatewayname, b.vc2mobile, 
+								decode(l.numlisttype, 3, '退出系统黑名单', 5, '退出彩信黑名单', 7, '退出通道黑名单') numlisttype, b.datdisord, l.vc2remark
+							from tl_black_list_his b, tl_gateway g, tl_log_bwlist l
+							#0# and b.numsvcid = g.numgwid(+) and b.numdisordid = l.numlogid 
+							order by datdisord desc, vc2mobile, numseqid"></property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 模板内容 -->
+						<value>vc2mobile in ({0})</value>
+						<value>numlisttype in ({0})</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+</beans>

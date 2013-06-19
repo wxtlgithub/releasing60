@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="990" name="business_task_customeroperate" desc="客户组成员数据处理配置文件">
+	<item key="maxNum" value="10000" desc="一次最大处理条数" />
+	<item key="numSvcid" value="1" desc="默认通道组编号" />
+	<item key="bwListDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/WhiteListSvr/file/BWListFile/" desc="白名单上传目录" />
+	<item key="customerLoadLogFileDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/UserGroups/file/UserGroupsLoadLogFile/" desc="客户组入库log文件目录" />
+	<item key="customerLoadLogBackUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/UserGroups/file/UserGroupsLoadLogBackUp/" desc="客户组入库log文件备份目录" />
+	<item key="whiteUploadDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/UserGroups/file/UserGroupsWhiteUpload/" desc="白名单上传文件目录" />
+	<item key="isneedinit" value="true" desc="服务Session失效时候是否重新加载" />
+</function>

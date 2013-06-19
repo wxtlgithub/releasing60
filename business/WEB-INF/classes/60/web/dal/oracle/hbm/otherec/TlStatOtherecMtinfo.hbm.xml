@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.yxt.business.model.otherec.TlStatOtherecMtinfo" table="TL_STAT_OTHEREC_MTINFO">
+		<composite-id  name="pkOtherData" class="com.yxt.business.model.otherec.PKOtherData">
+			<key-property name="vc2ecid" type="java.lang.String">
+				<column name="VC2ECID" length="10"/>
+			</key-property>
+			    
+			<key-property name="vc2servcode" type="java.lang.String">
+				<column name="VC2SERVCODE" length="30"/>
+			</key-property>
+			    
+			<key-property name="vc2month" type="java.lang.String">
+				<column name="VC2MONTH" length="7"/>
+			</key-property>
+			
+			<key-property name="numsvctype" type="java.lang.Integer">
+				<column name="NUMSVCTYPE" length="20"/>
+			</key-property>
+			
+			<key-property name="numopid" type="java.lang.Integer">
+				<column name="NUMOPID" length="20"/>
+			</key-property>
+		</composite-id>
+		
+		<property name="nummtcnt" type="java.lang.Integer">
+			<column name="NUMMTCNT" length="20"/>
+		</property>
+		
+		<property name="nummtsuccnt" type="java.lang.Integer">
+			<column name="NUMMTSUCCNT" length="20"/>
+		</property>
+		
+		<property name="datinsert" type="java.util.Date">
+			<column name="DATINSERT"/>
+		</property>
+	</class>
+</hibernate-mapping>

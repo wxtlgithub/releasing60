@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="GJDirtyWordDAO" class="com.lxt2.business.dal.gjsystem.GJDirtyWordDAL" scope="prototype">
+	<property name="queryDirtyWordList">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from (select rownum numrowasdf, 
+								     adsfsds.* from(
+								         select 
+								dw.numdirtywordid,
+								dw.vc2dirtyword,
+								dw.numcreaterid,
+		                        to_char(dw.datcreatetime,'yyyy-mm-dd hh24:mi:ss') as datcreatetime,
+								dw.nummodifierid,
+								dw.numflag,
+	                            to_char(dw.datlastmodifytime,'yyyy-mm-dd hh24:mi:ss') as datlastmodifytime,
+								dt.vc2name,
+								dt.numdirtytype,
+								u.vc2username,
+								dw.dateffectend	
+			         		from tl_dirtyword dw, tl_dirtywordtype dt, tl_user u  
+			         		where 
+					        dw.numdirtytype=dt.numdirtytype 
+                            and dw.numcreaterid = u.numuserid(+) #0#
+					        order by dw.dateffectend asc,dw.datcreatetime desc,dw.numdirtywordid desc
+					      ) adsfsds 
+								where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+							" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(1) from tl_dirtyword dw, tl_dirtywordtype dt, tl_user u  
+			         		where 
+					        dw.numdirtytype=dt.numdirtytype 
+                            and dw.numcreaterid = u.numuserid(+) #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 敏感词 -->
+						<value>vc2dirtyword like '%{0}%'</value>
+						<value>dateffectend >= date '{0}' </value>
+						<value>dateffectend &lt; date '{0}'+1</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="queryAllContents"
+			value="select vc2dirtyword from TL_DIRTYWORD where numdirtytype ={0}" />
+	</bean>
+
+	<bean id="DirtyWordGwDAO" class="com.lxt2.business.dal.gjsystem.DirtyWordGwDAL" scope="prototype">
+		<property name="queryDirtyWordGwList">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from (select rownum numrowasdf, 
+								     adsfsds.* from(
+								            select dw.numdirtywordid,
+								                dw.vc2dirtyword,
+								                dw.numcreaterid,
+								                dw.numgwid,
+								                gw.vc2gatewayname,
+								                to_char(dw.datcreatetime,'yyyy-mm-dd hh24:mi:ss') as datcreatetime,
+								                dw.nummodifierid,
+								                dw.numflag,
+								                to_char(dw.datlastmodifytime,'yyyy-mm-dd hh24:mi:ss') as datlastmodifytime,
+								                dt.vc2name,
+								                dt.numdirtytype,
+								                u.vc2username,
+												dw.dateffectend  
+								              from tl_dirtyword_gw dw, tl_dirtywordtype dt, tl_user u,tl_gateway gw
+								              where dw.numdirtytype=dt.numdirtytype 
+								              and dw.numcreaterid = u.numuserid 
+								              and dw.numgwid = gw.numgwid #0#
+								              order by dw.dateffectend  asc,dw.datcreatetime desc,dw.numdirtywordid desc
+								     ) adsfsds 
+								where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+							" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(1) from tl_dirtyword_gw dw, tl_dirtywordtype dt, tl_user u,tl_gateway gw
+                   					where dw.numdirtytype=dt.numdirtytype 
+              						and dw.numcreaterid = u.numuserid 
+              						and dw.numgwid = gw.numgwid #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 敏感词 -->
+						<value>vc2dirtyword like '%{0}%'</value>
+						<!-- 网关id -->
+						<value>dw.numgwid = {0}</value>
+						<value>dateffectend >= date '{0}' </value>
+						<value>dateffectend &lt; date '{0}'+1</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="queryAllContents"
+			value="select vc2dirtyword from tl_dirtyword_gw where numdirtytype ={0} and numgwid ={1}" />
+		<property name="queryDirtyWordGwByProdIdSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select dg.vc2dirtyword from tlv_routestra_base rb, tl_dirtyword_gw dg
+							where rb.NUMGWID = dg.numgwid and numprodid = {0}">
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+
+	<bean id="GJDirtyWordTypeDAO" class="com.lxt2.business.dal.gjsystem.GJDirtyWordTypeDAL"
+		scope="prototype">
+		<property name="queryAllDirtyWordType" value="select {0} from tl_dirtywordtype" />
+	</bean>
+
+	<bean id="GJOperationTypeDAO" class="com.lxt2.business.dal.gjsystem.GJOperationTypeDAL"
+		scope="prototype">
+		<property name="queryAllOperationType" value="select {0} from tl_businessoperation_type" />
+	</bean>
+
+
+	<bean id="GJLogOperationDAO" class="com.lxt2.business.dal.gjsystem.GJLogOperationDAL"
+		scope="prototype">
+		<property name="queryAll">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="pageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from 
+						(select rownum rn, o.* from (select * FROM TLV_LOG_OPERATION where 1=1 #0#) o 
+						where rownum &lt; {0}+{1}+1) where rn > {0}" />
+					</bean>
+				</property>
+				<property name="countSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(*) from TLV_LOG_OPERATION #0# " />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<!-- 开始时间 -->
+						<value>datopertimeSelect > date '{0}' </value>
+						<!-- 结束时间 -->
+						<value>datopertimeSelect &lt; date '{0}'+1</value>
+						<!-- 操作类型ID，对应t_operation_type表中的ID -->
+						<value>numopertypeid={0}</value>
+						<!-- 用户名 -->
+						<value>vc2username like '%{0}%'</value>
+						<!-- 日志描述 -->
+						<value>vc2operdetail like '%{0}%'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+
+		<property name="saveOperationLog"
+			value="insert into TL_LOG_OPERATION 
+				          (NUMLOGID, 
+				          NUMOPERID, 
+				          VC2OPERENAME,
+				          VC2OPERNAME,
+				          VC2OPERDETAIL,
+				          VC2OPERIP,
+				          NUMBOPERID,
+				          VC2BOPERNAME,
+				          VC2TABLE,				          
+				          DATOPERTIME, 
+				          NUMOPERTYPEID,
+				          VC2ISAUDIT) 
+				         values 
+				         (TLSEQ_LOG_OPERATION.nextval, 
+				         '{0}', '{1}', '{2}', '{3}','{4}','{5}',
+				         '{6}','{7}', sysdate, '{9}', '{10}')"></property>
+
+	</bean>
+
+</beans>

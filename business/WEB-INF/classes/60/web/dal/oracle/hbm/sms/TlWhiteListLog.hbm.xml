@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.business.model.sms.TlWhiteListLog" table="TL_GJ_WHITELISTLOG" dynamic-insert="true" dynamic-update="true">
+		<id name="numberId" type="java.lang.Integer">
+			<column name="NUMBERID" precision="20" scale="0" />
+			<generator class="sequence">
+				<param name="sequence">TLSEQ_USER</param>
+			</generator>
+		</id>
+		<property name="vc2Mobile" type="java.lang.String" >
+			<column name="VC2MOBILE" length="20" />
+		</property>
+		<property name="datreportTime" type="java.util.Date">
+			<column name="DATREPORTTIME" />
+		</property>
+		<property name="datcreateTime" type="java.util.Date">
+			<column name="DATCREATETIME" />
+		</property>
+		<property name="numsvcId" type="java.lang.Integer">
+			<column name="NUMSVCID" length="20" />
+		</property>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!-- 路由策略dal -->
+	<bean id="TlRoutestraDAO" class="com.lxt2.systemapp.dal.routestra.TlRoutestraDAL"
+		scope="prototype">
+        <property name="queryAllServiceCodes">
+            <bean class="com.lxt2.common.common.model.SimpleSQL">
+                <property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+                <property name="theSQL" value="select (sc.numgwid || '') as GATEWAYID,
+       gw.numgwtypeid as GATEWAYTYPE,
+       (t7.modelid || '') as MODULEID,
+       to_char(sc.numsvcid) as SVCID,
+       sc.vc2svc as SERVICECODE,
+       sc.vc2feevalue as FEEVALUE,
+       sc.vc2type as FEETYPE,
+       sc.vc2longcode as LONGCODE
+  from tl_servicecode sc,
+       tl_gateway gw,
+       (select c.vc2value as numgwid, to_char(a.numtaskid) as modelid
+          from tl_task a, tl_task_opt b, tl_task_opt_item c
+         where a.numtaskid = b.numtaskid
+           and b.numoptid = c.numoptid
+           and c.vc2key = 'gatewayId') t7
+ where sc.numgwid = gw.numgwid
+   and gw.numgwid = t7.numgwid"/>
+            </bean>
+        </property>		
+		<property name="queryBaseForXML">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+          select b .numstraid,
+                to_char(b .PRODUCTID)  AS PRODUCTID,
+                b . OPERATORID     AS OPERATORID,
+                b2 .Numinstid   AS PROVICEID,
+                b .STRATEGYTYPE   AS STRATEGYTYPE,
+                to_char(b .GATEWAYID)     AS GATEWAYID,
+               b .GATEWAYTYPE    AS GATEWAYTYPE,
+                b .modelid || ''    AS MODELID,
+                b .SERVICECODE      AS SERVICECODE,
+                b .FEEVALUE AS FEEVALUE,
+                b .FEETYPE    AS FEETYPE,
+                b .vc2longcode AS LONGCODE,
+                b .PROVINCEID   AS PROVINCEID,
+                b .NUMCHNLID  AS NUMCHNLID,
+                b .SERVICECODEID    AS SERVICECODEID,
+                b .vc2longcode from (
+                SELECT t6.numstraid,
+                t2.numprodid   AS PRODUCTID,
+                t4.NUMOPID     AS OPERATORID,
+                t4.Numinstid   AS PROVICEID,
+                t5.numtypeid   AS STRATEGYTYPE,
+                t4.numgwid     AS GATEWAYID,
+                t4.vc2type     AS GATEWAYTYPE,
+                t7.modelid || ''    AS MODELID,
+                t3.vc2svc      AS SERVICECODE,
+                t3.vc2feevalue AS FEEVALUE,
+                t3.VC2TYPE     AS FEETYPE,
+                t3.vc2longcode AS LONGCODE,
+                t4.numinstid   AS PROVINCEID,
+                t2.numchnid    AS NUMCHNLID,
+                t3.NUMSVCID    AS SERVICECODEID,
+                t3.vc2longcode
+           FROM tl_products t2, tl_servicecode t3, tl_gateway t4
+           left join (select c.vc2value as numgwid, a.numtaskid as modelid
+                        from tl_task a, tl_task_opt b, tl_task_opt_item c
+                       where a.numtaskid = b.numtaskid
+                         and b.numoptid = c.numoptid
+                         and c.vc2key = 'gatewayId') t7
+             on t4.numgwid = t7.numgwid, tl_routestra t5, tl_routestra_base t6
+          WHERE t5.numstraid = t6.numstraid
+            AND t2.NUMPRODID = t5.numprodid
+            AND t6.numsvcid = t3.NUMSVCID
+            AND t3.numgwid = t4.numgwid
+          ) b
+          left join(TL_SVC_INST)   b2 on b.SERVICECODEID = b2.numsvcid
+        ORDER BY b.STRATEGYTYPE, b.numstraid
+ 					">
+				</property>
+			</bean>
+		</property>
+<!-- 		<property name="querySvcInst"> -->
+<!-- 			<bean class="com.lxt2.common.common.model.SimpleSQL"> -->
+<!-- 				<property name="sqlType"> -->
+<!-- 					<value type="com.lxt2.common.common.model.SQLType">SQL</value> -->
+<!-- 				</property> -->
+<!-- 				<property name="theSQL" -->
+<!-- 					value=" -->
+<!-- 					 SELECT    tl.numsvcid as SERVICECODEID ,tl.numinstid as PROVICEID from   TL_SVC_INST tl  -->
+<!--  					"> -->
+<!-- 				</property> -->
+<!-- 			</bean> -->
+<!-- 		</property> -->
+		<property name="queryAsForXML">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					select to_char(a.PRODUCTID)     AS PRODUCTID,
+					       a.OPERATORID    AS OPERATORID,
+					       a.PROVICEID     AS PROVICEID,
+					       a.STRATEGYTYPE  AS STRATEGYTYPE,
+					       to_char(a.GATEWAYID)     AS GATEWAYID,
+					       a.GATEWAYTYPE   AS GATEWAYTYPE,
+					       a.MODELID       AS MODELID,
+					       a.SERVICECODE   AS SERVICECODE,
+					       a.FEEVALUE      AS FEEVALUE,
+					       a.FEETYPE       AS FEETYPE,
+					       a.LONGCODE      AS LONGCODE,
+					       a.PROVINCEID    AS PROVINCEID,
+					       a.NUMCHNLID     AS NUMCHNLID,
+					       a.SERVICECODEID AS SERVICECODEID,
+					       a.NUMASFLAG     AS NUMASFLAG,
+					       b.PRODUCTID     AS PRODUCTID2,
+					       b.OPERATORID    AS OPERATORID2,
+					       b.PROVICEID     AS PROVICEID2,
+					       b.STRATEGYTYPE  AS STRATEGYTYPE2,
+					       b.GATEWAYID     AS GATEWAYID2,
+					       b.GATEWAYTYPE   AS GATEWAYTYPE2,
+					       b.MODELID       AS MODELID2,
+					       b.SERVICECODE   AS SERVICECODE2,
+					       b.FEEVALUE      AS FEEVALUE2,
+					       b.FEETYPE       AS FEETYPE2,
+					       b.LONGCODE      AS LONGCODE2,
+					       b.PROVINCEID    AS PROVINCEID2,
+					       b.NUMCHNLID     AS NUMCHNLID2,
+					       b.SERVICECODEID AS SERVICECODEID2,
+					       b.NUMASFLAG     AS NUMASFLAG2
+					  from (SELECT t6.numstraid AS NUMSTRAID,
+					               t2.numprodid AS PRODUCTID,
+					               t4.NUMOPID AS OPERATORID,
+					               t4.Numinstid AS PROVICEID,
+					               t5.numtypeid AS STRATEGYTYPE,
+					               t4.numgwid AS GATEWAYID,
+					               t4.vc2type AS GATEWAYTYPE,
+					               t7.modelid || '' AS MODELID,
+					               t3.vc2svc AS SERVICECODE,
+					               t3.vc2feevalue AS FEEVALUE,
+					               t3.VC2TYPE AS FEETYPE,
+					               t3.vc2longcode AS LONGCODE,
+					               t4.numinstid AS PROVINCEID,
+					               t2.numchnid AS NUMCHNLID,
+					               t3.NUMSVCID AS SERVICECODEID,
+					               t6.numasflag || '' AS NUMASFLAG,
+					               t3.vc2longcode
+					          FROM tl_products t2, tl_servicecode t3, tl_gateway t4
+					          left join (select c.vc2value as numgwid, a.numtaskid as modelid
+					                      from tl_task a, tl_task_opt b, tl_task_opt_item c
+					                     where a.numtaskid = b.numtaskid
+					                       and b.numoptid = c.numoptid
+					                       and c.vc2key = 'gatewayId') t7
+					            on t4.numgwid = t7.numgwid, tl_routestra t5, tl_routestra_as t6
+					         WHERE t5.numstraid = t6.numstraid
+					           AND t2.NUMPRODID = t5.numprodid
+					           AND t6.numsvcid = t3.NUMSVCID
+					           AND t3.numgwid = t4.numgwid
+					           AND t6.numasflag = 1
+					         ORDER BY t5.numtypeid, t5.numstraid, t6.numasflag) a
+					  left join (SELECT t6.numstraid AS NUMSTRAID,
+					                    t2.numprodid AS PRODUCTID,
+					                    t4.NUMOPID AS OPERATORID,
+					                    t4.Numinstid AS PROVICEID,
+					                    t5.numtypeid AS STRATEGYTYPE,
+					                    t4.numgwid AS GATEWAYID,
+					                    t4.vc2type AS GATEWAYTYPE,
+					                    t7.modelid || '' AS MODELID,
+					                    t3.vc2svc AS SERVICECODE,
+					                    t3.vc2feevalue AS FEEVALUE,
+					                    t3.VC2TYPE AS FEETYPE,
+					                    t3.vc2longcode AS LONGCODE,
+					                    t4.numinstid AS PROVINCEID,
+					                    t2.numchnid AS NUMCHNLID,
+					                    t3.NUMSVCID AS SERVICECODEID,
+					                    t6.numasflag || '' AS NUMASFLAG,
+					                    t3.vc2longcode
+					               FROM tl_products t2, tl_servicecode t3, tl_gateway t4
+					               left join (select c.vc2value  as numgwid,
+					                                a.numtaskid as modelid
+					                           from tl_task a, tl_task_opt b, tl_task_opt_item c
+					                          where a.numtaskid = b.numtaskid
+					                            and b.numoptid = c.numoptid
+					                            and c.vc2key = 'gatewayId') t7
+					                 on t4.numgwid = t7.numgwid, tl_routestra t5,
+					              tl_routestra_as t6
+					              WHERE t5.numstraid = t6.numstraid
+					                AND t2.NUMPRODID = t5.numprodid
+					                AND t6.numsvcid = t3.NUMSVCID
+					                AND t3.numgwid = t4.numgwid
+					                AND t6.numasflag = 2
+					              ORDER BY t5.numtypeid, t5.numstraid, t6.numasflag) b
+					    on a.NUMSTRAID = b.NUMSTRAID
+					  ">
+				</property>
+			</bean>
+		</property>
+		<property name="queryBalanceForXML">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					 SELECT t6.numstraid,
+			        t2.numprodid   AS PRODUCTID,
+			        t4.NUMOPID     AS OPERATORID,
+			        t4.Numinstid   AS PROVICEID,
+			        t5.numtypeid   AS STRATEGYTYPE,
+			        t4.numgwid     AS GATEWAYID,
+			        t4.vc2type     AS GATEWAYTYPE,
+			        t7.modelid || ''    AS MODELID,
+			        t3.vc2svc      AS SERVICECODE,
+			        t3.vc2feevalue AS FEEVALUE,
+			        t3.VC2TYPE     AS FEETYPE,
+			        t3.vc2longcode AS LONGCODE,
+			        t4.numinstid   AS PROVINCEID,
+			        t2.numchnid    AS NUMCHNLID,
+			        t3.NUMSVCID    AS SERVICECODEID,
+			        t3.vc2longcode
+			   FROM tl_products t2, tl_servicecode t3, tl_gateway t4
+			   left join (select c.vc2value as numgwid, a.numtaskid as modelid
+			                from tl_task a, tl_task_opt b, tl_task_opt_item c
+			               where a.numtaskid = b.numtaskid
+			                 and b.numoptid = c.numoptid
+			                 and c.vc2key = 'gatewayId') t7
+			     on t4.numgwid = t7.numgwid, tl_routestra t5, tl_routestra_balance t6
+			  WHERE t5.numstraid = t6.numstraid
+			    AND t2.NUMPRODID = t5.numprodid
+			    AND t6.numsvcid = t3.NUMSVCID
+			    AND t3.numgwid = t4.numgwid
+			  ORDER BY t5.numtypeid, t5.numstraid
+					  ">
+				</property>
+			</bean>
+		</property>
+		
+		<property name="deleteByNumStraId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					DELETE FROM tl_routestra 
+					WHERE 
+					  numprodid = {0}
+					"></property>
+			</bean>
+		</property>
+		
+		<property name="deleteRoutestraByNumProductId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					delete from tl_routestra t1
+					 where t1.numprodid = {0} and t1.numtypeid != {1}
+					"></property>
+			</bean>
+		</property>
+		
+		<property name="deleteRoutestraByProId1">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					delete from {0} 
+					  where numstraid in
+					        (select t1.numstraid from tl_routestra t1 where t1.numprodid = {1})
+					"></property>
+			</bean>
+		</property>
+		<property name="deleteRoutestraByProId2">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="delete from tl_routestra where numprodid = {1} and numtypeid = 1"></property>
+			</bean>
+		</property>		
+	</bean>
+
+	<!-- 基本策略dal。 -->
+	<bean id="TlRoutestraBaseDAO" class="com.lxt2.systemapp.dal.routestra.TlRoutestraBaseDAL"
+		scope="prototype">
+		<property name="queryByNameSS">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">HQL</value>
+				</property>
+				<property name="theSQL"
+					value="from TlRoutestraBase t where t.vc2testname like '%{0}%'"></property>
+			</bean>
+		</property>
+		<property name="queryRoutestraBase">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select c.*,a.numprodid,b.numtypeid  
+						from tl_products a,tl_routestra b,tl_routestra_base c 
+						where 
+						a.numprodid = b.numprodid and 
+						b.numstraid = c.numstraid and 
+						b.numtypeid = 1 and 
+						a.numprodid = {0} "></property>
+			</bean>
+		</property>
+		<property name="deleteByNumStraId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					DELETE FROM tl_routestra_base 
+					WHERE 
+					  numstraid IN 
+					    ( 
+					      SELECT 
+					        a.numstraid 
+					      FROM 
+					        tl_routestra_base a , 
+					        tl_routestra b 
+					      WHERE 
+					        b.numprodid = {0} AND a.numstraid = b.numstraid 
+					    )
+					"></property>
+			</bean>
+		</property>
+	</bean>
+
+	<!-- 主备策略dal。 -->
+	<bean id="TlRoutestraAsDAO" class="com.lxt2.systemapp.dal.routestra.TlRoutestraAsDAL"
+		scope="prototype">
+		<property name="queryRoutestra">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select b.* 
+						from tl_products a, tl_routestra b 
+						where a.numprodid = b.numprodid and 
+						b.numtypeid = 2 and 
+						b.numprodid = {0} "></property>
+			</bean>
+		</property>
+		<property name="deleteByNumStraId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="delete from tl_routestra_as where numstraid = {0}"></property>
+			</bean>
+		</property>
+		<property name="queryRoutestraAsByProdId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					SELECT 
+					  a.numstraid numstraid , 
+					  a.numprodid numprodid , 
+					  a.vc2name vc2name , 
+					  nvl( b.numsvcid , 
+					  '' ) numsvcid , 
+					  nvl( b.vc2svcname , 
+					  '' ) vc2svcname , 
+					  nvl( c.numassvcid , 
+					  '' ) numassvcid , 
+					  nvl( c.vc2assvcname , 
+					  '' ) vc2assvcname 
+					FROM 
+					  ( 
+					    SELECT 
+					      a.numstraid , 
+					      a.numprodid , 
+					      b.vc2name 
+					    FROM 
+					      tl_routestra a , 
+					      tl_products b 
+					    WHERE 
+					      a.numtypeid = 2 AND a.numprodid = b.numprodid 
+					  ) a , 
+					  ( 
+					    SELECT 
+					      a.numstraid , 
+					      a.numsvcid , 
+					      b.vc2svcname 
+					    FROM 
+					      tl_routestra_as a , 
+					      tl_servicecode b 
+					    WHERE 
+					      a.numsvcid = b.numsvcid AND a.numasflag = 1 
+					  ) b , 
+					  ( 
+					    SELECT 
+					      a.numstraid , 
+					      a.numsvcid numassvcid , 
+					      b.vc2svcname vc2assvcname 
+					    FROM 
+					      tl_routestra_as a , 
+					      tl_servicecode b 
+					    WHERE 
+					      a.numsvcid = b.numsvcid AND a.numasflag = 2 
+					  ) c 
+					WHERE 
+					  a.numstraid = b.numstraid AND a.numstraid = c.numstraid AND a.numprodid = {0}"></property>
+			</bean>
+		</property>
+	</bean>
+
+	<!-- 均衡策略dal。 -->
+	<bean id="TlRoutestraBalanceDAO" class="com.lxt2.systemapp.dal.routestra.TlRoutestraBalanceDAL"
+		scope="prototype">
+		<property name="queryRoutestraBalanceStore">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="  
+					SELECT DISTINCT 
+					  b.numsvcid AS numsvcid , 
+					  b.vc2svcname AS vc2svcname 
+					FROM 
+					  tl_servicecode b  where b.vc2validflag = 1"></property>
+			</bean>
+		</property>
+		<property name="queryRoutestraBalanceStoreForUpdate">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					 SELECT t1.numsvcid   AS numsvcid,
+					       t1.vc2svcname AS vc2svcname,
+					       t2.numid      AS NUMID
+					  FROM tl_servicecode t1
+					 inner join tl_routestra_balance t2
+					    on t1.numsvcid = t2.numsvcid
+					 inner join tl_routestra t3
+					    on t3.numstraid = {0}
+					   and t3.numprodid = {1}
+					   and t2.numstraid = t3.numstraid
+					union all
+					SELECT t1.numsvcid AS numsvcid, t1.vc2svcname AS vc2svcname, null AS NUMID
+					  FROM tl_servicecode t1
+					 where not exists
+					 (select * from tl_routestra_balance t2
+					         where t1.numsvcid = t2.numsvcid
+					           and exists (select *
+					                  from tl_routestra t3
+					                 where t3.numstraid = {0}
+					                   and t3.numprodid = {1}
+					                   and t2.numstraid = t3.numstraid)) 
+					"></property>
+			</bean>
+		</property>
+		<property name="queryRoutestra">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT A.NUMSTRAID NUMSTRAID, A.NUMPRODID NUMPRODID,
+							D.VC2NAME VC2NAME,C.NUMSVCID NUMSVCID,C.VC2SVCNAME VC2SVCNAME 
+							FROM TL_ROUTESTRA A,TL_ROUTESTRA_BALANCE B,TL_SERVICECODE C,TL_PRODUCTS D 
+							WHERE A.NUMSTRAID = B.NUMSTRAID 
+							AND B.NUMSVCID = C.NUMSVCID 
+							AND A.NUMPRODID = D.NUMPRODID 
+							AND A.NUMTYPEID = 3 
+							AND A.NUMPRODID = {0} "></property>
+			</bean>
+		</property>
+		<property name="deleteByNumStraId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="delete from tl_routestra_balance where numstraid = {0}"></property>
+			</bean>
+		</property>
+	</bean>
+</beans> 

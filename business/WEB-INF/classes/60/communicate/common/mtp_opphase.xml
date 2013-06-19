@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	
+	<bean id="ndMobileValidator" class="com.standardsm.phasenew.DefaultMobileValidator" init-method="init" >
+		<property name="filePath" value="${CLASSPATH}/60/persistent"></property>
+	</bean>
+
+	<bean id="tlOpPhase" class="com.techcenter.dbcore.dbbase.jdbc.JdbcSimpleFindDAO" parent="abstractDAO">
+		<constructor-arg type="java.lang.Class"
+			value="com.lxt2.mtprocess.opphase.TlOpPhase" />
+		<property name="sql">
+			<value><![CDATA[select numopid,vc2phase from tl_opphase]]></value>
+		</property>
+	</bean> 
+	
+	<bean id="tlOpPhaseSysTask" class="com.lxt2.mtprocess.task.OpPhaseSysTask">
+		<property name="id" value="121"/>
+		<property name="name" value="大号段同步加载"/>
+		<!-- 每天凌晨2点执行 -->
+		<property name="taskSchRule" value="@{cycle(30)}"/>
+		<property name="dao" ref="tlOpPhase"/>
+		<property name="mobileValidator" ref="ndMobileValidator"/>
+	</bean> 
+</beans>

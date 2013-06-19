@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="TlUserSimpleDAO" class="com.lxt2.systemapp.dal.simplepurview.TlUserDAL"
+		scope="prototype">
+		<property name="checkUserAccountByIdSQL"
+			value="select count(1) as nums from tl_user where VC2UACCOUNT='{0}' and NUMUSERID != '{1}' and NUMSTATE != -1"></property>
+		<property name="checkUserAccountSQL"
+			value="select count(1) as nums from tl_user where VC2UACCOUNT='{0}' and NUMSTATE != -1"></property>
+		<property name="getAuthorizeByDepartIdWithRoleIdSQL"
+			value="select {0} from (SELECT U.*  FROM TL_USER U 
+			INNER JOIN TL_USER_ROLE UR ON U.Numuserid = UR.NUMUSERID  
+			AND U.NUMDEPARTID = {1} AND U.NUMSTATE=1  AND UR.NUMROLEID = {2}) "></property>
+		<property name="getNoAuthorizeByDepartIdWithRoleIdSQL"
+			value="select {0}
+			  from tl_user tu
+			 where tu.numuserid not in
+			       (SELECT U.numuserid
+			          FROM TL_USER U, TL_USER_ROLE UR
+			         where U.Numuserid = UR.NUMUSERID
+			           AND U.NUMDEPARTID = {1}
+			           AND U.NUMSTATE = 1
+			           AND UR.NUMROLEID = {2})
+			   AND tu.NUMSTATE = 1
+			   AND tu.NUMTYPE = 2
+			   and tu.NUMDEPARTID = {1}"></property>
+		<property name="queryByNameAndPwd"
+			value=" from TlUser t where t.vc2uaccount = '{0}' and t.vc2upassword='{1}'"></property>
+		<property name="queryUserInfoById"
+			value="select {0} from tlv_user_role_drole where NUMUSERID ={1} order by vc2username"></property>
+		<property name="updateUserDeleteFlagSQL"
+			value="update tl_user set NUMSTATE = -1 where numuserid in ({0})"></property>
+		<property name="QueryUserByArgs">
+			<bean class="com.lxt2.common.common.model.PageSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="countSQL"
+					value="select count(1) from (select u1.*,d.vc2departname,u2.vc2username vc2creatorname,
+					u2.vc2username vc2lastmodifyname from 
+					((tl_user u1 inner join tl_user u2 on u1.numcreator = u2.numuserid and u1.numstate = 1) 
+					left join tl_department d on u1.numdepartid = d.numdepartid)
+			        left join tl_user u3 on u1.numlastmodifyuser = u3.numuserid where u1.vc2username like '%{0}%' {1} order by u1.numuserid desc) "></property>
+				<property name="pageSQL"
+					value="
+					select * from (select rownum numrowasdf, 
+						adsfsds.* from (select u1.*,d.vc2departname,u2.vc2username vc2creatorname,
+						u2.vc2username vc2lastmodifyname 
+					from  ((tl_user u1 inner join tl_user u2 on u1.numcreator = u2.numuserid and u1.numstate = 1) 
+						left join tl_department d on u1.numdepartid = d.numdepartid)
+				        left join tl_user u3 on u1.numlastmodifyuser = u3.numuserid where u1.vc2username like '%{0}%' {1}  
+			        order by u1.numuserid desc) adsfsds where rownum &lt; {2}+{3}+1) where numrowasdf > {3}
+					" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="TlRightSimpleDAO" class="com.lxt2.systemapp.dal.simplepurview.TlRightDAL"
+		scope="prototype">
+		<property name="queryRightListByRoleIds"
+			value="  select NUMRIGHTID, NUMPARENTID, VC2RIGHTNAME, VC2TYPE,VC2CODEGROUPURL
+					from tl_right2
+					group by Numrightid, numparentid, VC2rightname, vc2type, vc2codegroupurl
+  					order by max(numorder)"></property>
+		<property name="queryPageGetRightListByName">
+			<bean class="com.lxt2.common.common.model.PageSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="countSQL"
+					value="select count(1) from tl_right2 where vc2rightname like '%{0}%'  order by numrightid desc"></property>
+				<property name="pageSQL"
+					value="
+					select * from (select rownum numrowasdf,  adsfsds.* from  (
+						select * from tl_right2 where vc2rightname like '%{0}%' order by numrightid desc
+					)  adsfsds where rownum &lt; {1}+{2}+1) where numrowasdf > {2}
+					" />
+			</bean>
+		</property>
+		<property name="queryRight2ParentListByColumns"
+			value="select {0} from tlv_right2 where vc2type = '0' and vc2enabledflag = '1'  order by numrightid"></property>
+		<property name="GetCountRightIdByPermission"
+			value="select count(1) nums from tl_permission2 where numrightid in ({0})"></property>
+		<property name="DeleteRightIds"
+			value="delete from tl_right2 where numrightid in ({0})"></property>
+
+
+	</bean>
+</beans>

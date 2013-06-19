@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.lxt2.business.model.gjsystem.TlDirtyWordGw" table="TL_DIRTYWORD_GW">
+		<id name="numdirtywordid" type="java.lang.Integer">
+			<column name="NUMDIRTYWORDID" precision="22" scale="0" />
+			<generator class="sequence">
+				<param name="sequence">TLSEQ_DIRTYWORD_GW</param>
+			</generator>
+		</id>
+		<property name="numgwid" type="java.lang.Integer">
+			<column name="NUMGWID" length="22" />
+		</property>
+		<property name="vc2dirtyword" type="java.lang.String">
+			<column name="VC2DIRTYWORD" length="100" />
+		</property>
+		<property name="numdirtytype" type="java.lang.Integer">
+			<column name="NUMDIRTYTYPE" length="22" />
+		</property>
+		<property name="numcreaterid" type="java.lang.Integer">
+			<column name="NUMCREATERID" length="22" />
+		</property>
+		<property name="datcreatetime" type="java.util.Date">
+			<column name="DATCREATETIME" length="7" />
+		</property>
+		<property name="nummodifierid" type="java.lang.Integer">
+			<column name="NUMMODIFIERID" length="22" />
+		</property>
+		<property name="datlastmodifytime" type="java.util.Date">
+			<column name="DATLASTMODIFYTIME" length="7" />
+		</property>
+		<property name="numflag" type="java.lang.Integer">
+			<column name="NUMFLAG" length="22" />
+		</property>
+		<property name="dateffectend" type="java.util.Date">
+			<column name="DATEFFECTEND" length="7" />
+		</property>
+	</class>
+</hibernate-mapping>
+  

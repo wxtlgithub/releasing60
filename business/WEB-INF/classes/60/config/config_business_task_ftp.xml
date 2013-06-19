@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="902" name="business_task_whitelistftp" desc="白名单ftp配置文件">
+	<component id="masmms" name="masmms" desc="masmms">
+		<item key="server" value="192.168.4.89" desc="masmmsftp Server配置" />
+		<item key="port" value="21" desc="ftp port" />
+		<item key="username" value="administrator" desc="登录名" />
+		<item key="password" value="12345678" desc="密码" />
+		<item key="backUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpMasWithMMS/file/backUp/" desc="白名单备份文件目录" />
+		<item key="rootdir" value="" desc="白名单上传目录" />
+		<item key="dayDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpMasWithMMS/file/OpDay/" desc="白名单当日处理文件目录" />
+		<item key="ftpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpMasWithMMS/file/UpLoadFile/" desc="黑白名单ftp发送文件目录" />
+	</component>
+	<component id="massms" name="massms" desc="massms">
+		<item key="server" value="192.168.4.89" desc="massmsftp Server配置" />
+		<item key="port" value="21" desc="ftp port" />
+		<item key="username" value="administrator" desc="登录名" />
+		<item key="password" value="12345678" desc="密码" />
+		<item key="backUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpMasWithSMS/file/backUp/" desc="白名单备份文件目录" />
+		<item key="rootdir" value="" desc="白名单上传目录" />
+		<item key="dayDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpMasWithSMS/file/OpDay/" desc="白名单当日处理文件目录" />
+		<item key="ftpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpMasWithSMS/file/UpLoadFile/" desc="黑白名单ftp发送文件目录" />
+	</component>
+
+	<component id="ecmms" name="ecmms" desc="ecmms">
+		<item key="server" value="192.168.4.89" desc="ecmmsftp Server配置" />
+		<item key="port" value="21" desc="ftp port" />
+		<item key="username" value="administrator" desc="登录名" />
+		<item key="password" value="12345678" desc="密码" />
+		<item key="backUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpEcWithMMS/file/backUp/" desc="白名单备份文件目录" />
+		<item key="rootdir" value="" desc="白名单上传目录" />
+		<item key="dayDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpEcWithMMS/file/OpDay/" desc="白名单当日处理文件目录" />
+		<item key="ftpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpEcWithMMS/file/UpLoadFile/" desc="黑白名单ftp发送文件目录" />
+	</component>
+
+	<component id="ecsms" name="ecsms" desc="ecsms">
+		<item key="server" value="192.168.4.89" desc="ecsmsftp Server配置" />
+		<item key="port" value="21" desc="ftp port" />
+		<item key="username" value="administrator" desc="登录名" />
+		<item key="password" value="12345678" desc="密码" />
+		<item key="backUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpEcWithSMS/file/backUp/" desc="白名单备份文件目录" />
+		<item key="rootdir" value="" desc="白名单上传目录" />
+		<item key="dayDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpEcWithSMS/file/OpDay/" desc="白名单当日处理文件目录" />
+		<item key="ftpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/FtpEcWithSMS/file/UpLoadFile/" desc="黑白名单ftp发送文件目录" />
+	</component>
+</function>

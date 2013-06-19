@@ -1,0 +1,40 @@
+td {
+	font-family: "宋体";
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: normal;
+	color: #000000;
+	text-decoration: none;
+}
+a:link {
+	font-family: "宋体";
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: normal;
+	color: #000000;
+	text-decoration: none;
+}
+a:visited {
+	font-family: "宋体";
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: normal;
+	color: #000000;
+	text-decoration: none;
+}
+a:hover {
+	font-family: "宋体";
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: normal;
+	color: #FF0000;
+	text-decoration: underline;
+}
+input {
+	font-family: "宋体";
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: normal;
+	color: #2b2b2b;
+	text-decoration: none;
+}

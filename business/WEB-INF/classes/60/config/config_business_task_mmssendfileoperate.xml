@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<function id="915" name="business_task_mmssendfileoperate" desc="彩信按文件上传服务配置文件">
+	<item key="comandArg"
+		value="yxtec/yxtec@yxtec control={0} data={1}  rows=50000  bindsize=2000000"
+		desc="sqlloader数据库配置" />
+	<item key="commandFile" value="sqlldr"
+		desc="sqlloader执行文件地址" />
+	<item key="crlMMS" value="${WORKDIR}WEB-INF/classes/Service/Tasks/MMSListSvr/SendList_tmp.ctl"
+		desc="彩信按文件上传控制文件" />
+	<item key="backupDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/MMSListSvr/file/MMSListFileBackUp/"
+		desc="彩信按文件上传备份文件目录" />
+	<item key="errorDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/MMSListSvr/file/MMSListFileBackUpError/"
+		desc="彩信按文件上传错误文件目录" />
+	<item key="mmsListDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/MMSListSvr/file/MMSListFile/" desc="处理目录" />
+	<item key="mmsLoadLogFileDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/MMSListSvr/file/MMSLoadLogFile/" desc="入库文件目录" />
+	<item key="mmsLoadLogBackUpDir" value="${WORKDIR}WEB-INF/classes/Service/Tasks/MMSListSvr/file/MMSLoadLogBackUp/" desc="入库文件目录" />
+	<item key="sqlLoaderMaxNum" value="2" desc="sqlloader最大并发数" />
+	<item key="isneedinit" value="true" desc="服务Session失效时候是否重新加载" />
+</function>

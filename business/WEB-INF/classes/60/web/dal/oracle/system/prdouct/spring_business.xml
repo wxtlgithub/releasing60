@@ -1,0 +1,794 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="TlMytestDAO" class="com.lxt2.systemapp.dal.business.TlMytestDAL"
+		scope="prototype">
+		<property name="queryByNameString"
+			value="select * from tl_mytest t where t.vc2testname like '%{0}%'"></property>
+		<property name="queryByArgsString"
+			value="select * from tl_mytest t where vc2createtime between {0} and {1}" />
+		<property name="queryByArgsPS">
+			<bean class="com.lxt2.common.common.model.PageSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="countSQL" value="select count(*) from tl_sms_content"></property>
+				<property name="pageSQL" value="select * from tl_sms_content" />
+			</bean>
+		</property>
+	</bean>
+	<!-- gateway configuration define start  -->
+	<bean id="TlGatewayDAO" class="com.lxt2.systemapp.dal.business.TlGatewayDAL"
+		scope="prototype">
+		<property name="querySome">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">HQL</value>
+				</property>
+				<property name="theSQL"
+					value="select t.numgwid,t.vc2gatewayname from TlGateway t where t.vc2type = {0}"></property>
+			</bean>
+		</property> 
+		<property name="queryAllGateWayListSQL" value="select numgwid,vc2gatewayname from tl_gateway " />
+		
+		<property name="deleteGatewayConfigByGWIDSQL" value="delete from tl_gateway_config where numgwid={0} " />
+		
+        <property name="queryAllGateWaySQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">HQL</value>
+				</property>
+				<property name="theSQL"
+					value="from TlGateway"></property>
+			</bean>
+		</property>
+		
+		<property name="queryAllGateWayConfSQL" value="select * from TL_GATEWAY_CONFIG" />
+		
+<!--		<property name="checkExistRcordSQL" value="select NUMCONFIGID from TL_GATEWAY_CONFIG where NUMGWID = {0} and VC2ITEM = '{1}' " />-->
+		
+		<property name="queryGateWayItemByTypeIDAndGatewayIDSQL" value="select i.*,c.vc2value as itemvalue
+from TL_GATEWAY_ITEM i
+left outer join TL_GATEWAY_CONFIG c
+on (i.vc2key = c.vc2item and  c.numgwid ={1})
+where  i.numgwtypeid = {0} order by i.numitemid" />
+		
+		<property name="queryAllGateWayTypeSQL" value="select NUMGWTYPEID,VC2GWTYPENAME,case when VC2GWTYPENAME like 'cbip%' then 'cbip'  else VC2GWTYPENAME end as VC2GWTYPENAMECONFIG from TL_GATEWAY_TYPE" />
+		
+		<property name="queryBynumgwidSQL" value="select * from tl_gateway_config where numgwid = {0}" />
+		
+		<property name="queryAllSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="countSQL"
+					value="select count(0) 
+						from tl_gateway g,tl_operator o,tl_inst i,tl_gateway_type t
+						where o.vc2opid = g.numopid and i.numinstid = g.numinstid and t.numgwtypeid = g.numgwtypeid order by g.numgwid desc"></property>
+				<property name="pageSQL"
+					value="select * from (select rownum numrowasdf, 
+			                adsfsds.* from (	
+								select g.*,o.vc2name as vc2opname,t.vc2gwtypename,i.vc2name as vc2instname 
+								from tl_gateway g,tl_operator o,tl_inst i,tl_gateway_type t
+								where o.vc2opid = g.numopid and i.numinstid = g.numinstid and t.numgwtypeid = g.numgwtypeid
+								order by g.numgwid desc
+							) adsfsds where rownum &lt; ({0}+{1}+1)) where numrowasdf > {0} " />
+			</bean>							
+		</property>
+		
+		<property name="queryByKEYSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="PageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value = "
+							select * from (select rownum numrowasdf, 
+			                adsfsds.* from (
+									select g.NUMGWID,g.NUMGWTYPEID,g.VC2GATEWAYNAME,g.VC2TYPE,g.NUMOPID,g.VC2GWIP,g.VC2GWPORT,g.VC2MOIP,g.VC2MOPORT,g.VC2SPID,g.VC2SPNUM,g.VC2GWUSERNAME,g.VC2GWPASSWORD,g.NUMGROUPMEMBERMAX,g.VC2SPEED,g.NUMINSTID,o.vc2name as VC2OPNAME,t.VC2GWTYPENAME,i.vc2name as VC2INSTNAME 
+											,g.NUMGROUPLIMIT
+								from tl_gateway g,tl_operator o,tl_inst i,tl_gateway_type t
+								where  o.vc2opid = g.numopid  and i.numinstid = g.numinstid and t.numgwtypeid = g.numgwtypeid #0#
+								order by g.numgwid desc
+	                         ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+							"/>
+					</bean>
+				</property>
+				<property name="CountSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value= "
+								select count(0) 	from 
+									  tl_gateway g , 
+									  tl_operator o , 
+									  tl_inst i , 
+									  tl_gateway_type t 
+								where  o.vc2opid = g.numopid #0# AND i.numinstid = g.numinstid AND t.numgwtypeid = g.numgwtypeid  
+								order by g.numgwid desc
+							"/>
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>g.vc2gatewayname LIKE '%{0}%'</value>
+						<value>g.numopid = '{0}'</value>
+					</list>
+				</property>
+			</bean>
+									
+		</property>	
+			
+	</bean>
+
+	<bean id="TlServicecodeDAO" class="com.lxt2.systemapp.dal.business.TlServicecodeDAL"
+		scope="prototype">
+		
+		<property name="findServiceCodeNameSql">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT count(*) FROM TL_SERVICECODE TS WHERE VC2SVCNAME = '{0}'"></property>
+			</bean>
+		</property>
+		
+		<property name="checkSvcNameUpdateSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select count(*) from tl_servicecode where vc2svcname = '{0}'  and  numsvcid != {1}"></property>
+			</bean>
+		</property>
+		
+		<property name="queryGatewayCount">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select * from tl_servicecode where  numgwid = {0} and vc2validflag = '1' "></property>
+			</bean>
+		</property>
+		
+		<property name="deleteChannelAreaByIDSQL" value="delete from tl_svc_inst where numsvcid = {0}" />
+		<property name="querySvcInst">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select * from TL_SVC_INST WHERE numsvcid ={0}"/>
+			</bean>
+		</property>		
+		<property name="queryPermitSC">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					SELECT DISTINCT 
+					  a.numsvcid AS NUMSVCID , 
+					  c.VC2SVCNAME AS VC2SVCNAME 
+					FROM 
+					  tl_routestra_base a , 
+					  tl_routestra b , 
+					  tl_servicecode c 
+					WHERE 
+					  a.numstraid = b.numstraid AND a.numsvcid = c.NUMSVCID AND b.numtypeid = 1 AND b.numprodid = {0}  
+					ORDER BY 
+					  c.VC2SVCNAME
+					"></property>
+			</bean>
+		</property>
+		<property name="queryNoPermitSC">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					SELECT 
+					  A.NUMSVCID NUMSVCID , 
+					  A.VC2SVCNAME VC2SVCNAME,
+					  B.NUMOPID    NUMOPID,
+                      B.NUMINSTID  NUMINSTID
+					FROM 
+					  TL_SERVICECODE A,
+					  TL_GATEWAY B 
+					WHERE 
+					  a.NUMSVCID NOT IN 
+					    ( 
+					      SELECT DISTINCT 
+					        a.numsvcid AS NUMSVCID 
+					      FROM 
+					        tl_routestra_base a , 
+					        tl_routestra b , 
+					        tl_servicecode c 
+					      WHERE 
+					        a.numstraid = b.numstraid AND a.numsvcid = c.NUMSVCID AND b.numtypeid = 1 AND b.numprodid = {0})
+					AND A.NUMGWID = B.NUMGWID       
+					ORDER BY 
+					  a.VC2SVCNAME
+					"></property>
+			</bean>
+		</property>
+		
+		<property name="queryPermitByProSvcSC">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					SELECT DISTINCT 
+					  a.numsvcid AS NUMSVCID , 
+					  c.VC2SVCNAME AS VC2SVCNAME 
+					FROM 
+					  tl_routestra_base a , 
+					  tl_routestra b , 
+					  tl_servicecode c 
+					WHERE 
+					  a.numstraid = b.numstraid AND a.numsvcid = c.NUMSVCID AND b.numtypeid = 1 AND b.numprodid = {0} and c.VC2SERVICETYPE = {1} 
+					ORDER BY 
+					  c.VC2SVCNAME
+					"></property>
+			</bean>
+		</property>
+		<property name="queryNoPermitByProSvcSC">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="
+					SELECT 
+					  A.NUMSVCID NUMSVCID , 
+					  A.VC2SVCNAME VC2SVCNAME,
+					  B.NUMOPID    NUMOPID,
+                      B.NUMINSTID  NUMINSTID
+					FROM 
+					  TL_SERVICECODE A,
+					  TL_GATEWAY B 
+					WHERE 
+					  a.NUMSVCID NOT IN 
+					    ( 
+					      SELECT DISTINCT 
+					        a.numsvcid AS NUMSVCID 
+					      FROM 
+					        tl_routestra_base a , 
+					        tl_routestra b , 
+					        tl_servicecode c 
+					      WHERE 
+					        a.numstraid = b.numstraid AND a.numsvcid = c.NUMSVCID AND b.numtypeid = 1 AND b.numprodid = {0})
+					AND A.NUMGWID = B.NUMGWID  and A.VC2SERVICETYPE = {1}       
+					ORDER BY 
+					  a.VC2SVCNAME
+					"></property>
+			</bean>
+		</property>
+		<property name="queryByArgs">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="PageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from (select rownum numrowasdf, 
+			                adsfsds.* from ( 
+									select a.numsvcid, a.vc2svcname,a.vc2svc,a.vc2type,a.vc2servicetype,b.vc2gatewayname,a.VC2LONGCODE, a.vc2feevalue, a.numgwid, a.vc2dsc 
+									from tl_servicecode a, tl_gateway b 
+									where numsvcid > 0 and a.numgwid = b.numgwid #0# 
+									order by a.numsvcid desc	 								                         
+	                         ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}							
+							" />
+					</bean>
+				</property>
+				<property name="CountSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select  count(*) from  (	
+									select a.numsvcid, a.vc2svcname,a.vc2svc,a.vc2type,a.vc2servicetype,b.vc2gatewayname,a.VC2LONGCODE, a.vc2feevalue, a.numgwid, a.vc2dsc 
+									from tl_servicecode a, tl_gateway b 
+									where numsvcid > 0 and a.numgwid = b.numgwid #0# 
+									order by a.numsvcid desc
+	                         )
+							" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>a.vc2svcname like '%{0}%'</value>
+						<value>a.vc2svc like '%{0}%'</value>
+						<value>a.numgwid = {0}</value>
+						<value>a.vc2servicetype={0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="TlProductsDAO" class="com.lxt2.systemapp.dal.business.TlProductsDAL"
+		scope="prototype">
+		<property name="queryByArgs">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="PageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from (select rownum numrowasdf, 
+			                adsfsds.* from (
+									select a.numprodid,a.vc2name,a.vc2servicetype,to_char(a.datcreattime,'yyyy-mm-dd hh24:mi:ss')  as datcreattime,b.vc2username,a.vc2dsc  
+									from tl_products a, tl_user b 
+									where a.numprodid > 0 
+									and a.numuserid = b.numuserid #0# order by a.numprodid desc
+	                         ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+							" />
+					</bean>
+				</property>
+				<property name="CountSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select  count(*) from  (	
+									select a.numprodid,a.vc2name,a.vc2servicetype,a.datcreattime,b.vc2username,a.vc2dsc  
+									from tl_products a, tl_user b 
+									where a.numprodid > 0 
+									and a.numuserid = b.numuserid #0# order by a.numprodid desc
+	                         )
+							" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>a.vc2name like '%{0}%'</value>
+						<value>a.vc2servicetype = '{0}'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="queryAllSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" select PR.VC2NAME,PR.NUMPRODID from TL_PRODUCTS PR WHERE PR.VC2VALIDFLAG = '1' ORDER BY PR.NUMPRODID DESC "></property>
+			</bean>
+		</property>
+		
+		<!-- 获得网关运营商与地区相同的通道 -->
+		<property name="querySameGwAndInstOperatorSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select sc2.* from Tl_ServiceCode sc1, Tl_Svc_Inst si1, Tl_GateWay gw1, Tl_ServiceCode sc2, Tl_Svc_Inst si2, Tl_GateWay gw2
+								where sc1.numsvcid = si1.numsvcid and sc1.numgwid = gw1.numgwid 
+								      and sc2.numsvcid = si2.numsvcid and sc2.numgwid = gw2.numgwid 
+								      and gw2.numopid = gw1.numopid and si2.numinstid = si1.numinstid 
+								      and sc1.numsvcid = {0} and sc2.numsvcid in ({1})">
+				</property>
+			</bean>
+		</property>
+		
+		<!-- 验证通道组名称是否可用 更新 -->
+		<property name="checkProductNameUpdateSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" select count(1) from tl_products tp where tp.vc2name = '{0}' and tp.numprodid!='{1}'"></property>
+			</bean>
+		</property>
+		
+		<!-- 验证通道组名称是否可用 -->
+		<property name="checkProductNameSQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value=" select count(1) from tl_products tp where tp.vc2name = '{0}'"></property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="TlClientDAO" class="com.lxt2.systemapp.dal.client.TlClientDAL"
+		scope="prototype">
+		<property name="queryByArgs">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="PageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from (select rownum numrowasdf, 
+			                adsfsds.* from (
+									select a.*,b.vc2departname 
+									from tl_client a, tl_department b 
+									where a.numdepartid = b.numdepartid and NUMCLIENTID !=0 #0# 
+									order by a.numclientid desc) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}							
+							" />
+					</bean>
+				</property>
+				<property name="CountSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select  count(*) from  (									              
+									select a.*,b.vc2departname 
+									from tl_client a, tl_department b 
+									where a.numdepartid = b.numdepartid and NUMCLIENTID !=0 #0# 
+									order by a.numclientid desc
+	                         )
+							" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>a.vc2clientname like '%{0}%'</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="queryAll">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">HQL</value>
+				</property>
+				<property name="theSQL"
+					value="select t.numclientid, t.vc2clientname from TlClient t "></property>
+			</bean>
+		</property>
+         <property name="queryClinetInfo">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select nvl(numclientid,'') as NUMCLIENTID,
+       nvl(vc2username,'') as VC2USERNAME,
+       nvl(vc2password,'') as VC2PASSWORD,
+       nvl(vc2clientip,'') as VC2CLIENTIP,
+       nvl(vc2sublongcode,'') as VC2SUBLONGCODE,
+       nvl(nummaxsendspeed,'') as NUMMAXSENDSPEED,
+       nvl(numclientlevel,'') as NUMCLIENTLEVEL,
+       nvl(numreturnlevel,'') as NUMRETURNLEVEL,
+       nvl(numawaittime,'') as NUMAWAITTIME,
+       nvl(vc2clientname,'') as VC2CLIENTNAME,
+       nvl(numdepartid,'') as NUMDEPARTID,
+       nvl(numlinkprotocolid,'') as NUMLINKPROTOCOLID,
+       nvl(protocoltype,'') as PROTOCOLTYPE,
+       nvl(moduleid,'') as MODULEID,
+       nvl(toexamine,'') as TOEXAMINE
+  from tl_client "></property>
+			</bean>
+		</property>
+		<property name="queryLinkProtocol">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select numlinkprotocolid, vc2linkprotocolname from    TL_LINK_PROTOCOL"></property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="TlRouteDAO" class="com.lxt2.systemapp.dal.business.TlRouteDAL"
+		scope="prototype">
+		<property name="queryServicecodeCount">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select numid from tl_routestra_as where numsvcid = {0}
+						union all
+						select numid from tl_routestra_balance where numsvcid = {0}
+						union all
+						select numid from tl_routestra_base where numsvcid = {0}"></property>
+			</bean>
+		</property>
+		<property name="queryGatewayCount">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select * from tl_route where numgwid = {0} "></property>
+			</bean>
+		</property>
+		<property name="queryRouteByProIdAndScId">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select a.numrouteid from TL_ROUTE a where a.numprodid = {0} and a.numsvcid = {1}"></property>
+			</bean>
+		</property>
+		<property name="queryByArgs">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="PageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select * from (select rownum numrowasdf, 
+			                adsfsds.* from (
+									select a.* ,b.vc2gatewayname,c.vc2clientname
+									from TL_ROUTE a , Tl_Gateway b ,Tl_Client c
+									where a.numgwid = b.numgwid
+									and a.numrpgmid = c.numclientid #0# 
+									order by a.numrouteid desc 
+	                         ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+							" />
+					</bean>
+				</property>
+				<property name="CountSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select  count(*) from  (									              
+									select a.* ,b.vc2gatewayname,c.vc2clientname
+									from TL_ROUTE a , Tl_Gateway b ,Tl_Client c
+									where a.numgwid = b.numgwid
+									and a.numrpgmid = c.numclientid #0# 
+									order by a.numrouteid desc 
+	                         )
+							" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>a.VC2LONGCODE like '%{0}%'</value>
+						<value>a.VC2CMD like '%{0}%'</value>
+						<value>a.NUMRPGMID = {0}</value>
+						<value>a.NUMGWID = {0}</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="queryAllRoute">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL" value="SELECT 
+									  nvl(NUMROUTEID, '' ) as NUMROUTEID , 
+									  nvl(NUMSVCID, '' ) as  NUMSVCID, 
+									  nvl(NUMPRODID, '' ) as  NUMPRODID, 
+									  nvl(VC2LONGCODE, '' ) as  VC2LONGCODE, 
+									  nvl(VC2LCMATCH, '' ) as  VC2LCMATCH, 
+									  nvl(VC2CMD, '' ) as  VC2CMD, 
+									  nvl(VC2CMDMATCH, '' ) as  VC2CMDMATCH, 
+									  nvl(VC2TYPE, '' ) as  VC2TYPE, 
+									  nvl(VC2VALIDFLAG, '' ) as  VC2VALIDFLAG, 
+									  nvl(DATSTART , '' ) as DATSTART, 
+									  nvl(DATEND ,   '' ) as DATEND, 
+									  nvl(VC2DSC, '' ) as  VC2DSC, 
+									  nvl(VC2ORDERFLAG , '') as VC2ORDERFLAG,
+									  nvl(NUMFLAG, '' ) as  NUMFLAG, 
+									  nvl(NUMRPGMID, '' ) as  NUMRPGMID, 
+									  nvl(VC2ISDEFAULT , '') as VC2ISDEFAULT,
+									  nvl(VC2GWNAME ,'') as VC2GWNAME, 
+									  nvl(NUMINSTID , '') as NUMINSTID,
+									  nvl(NUMGWID, '' ) as NUMGWID 
+									FROM TL_ROUTE"></property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="TlOperatorDAO" class="com.lxt2.systemapp.dal.business.TlOperatorDAL"
+		scope="prototype">
+		<property name="queryByNameSS">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">HQL</value>
+				</property>
+				<property name="theSQL"
+					value="from TlOperator t where t.vc2testname like '%{0}%'"></property>
+			</bean>
+		</property>
+		<property name="queryByArgsPS">
+			<bean class="com.lxt2.common.common.model.PageSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="countSQL" value="select count(*) from TlOperator"></property>
+				<property name="pageSQL" value="select * from TlOperator" />
+			</bean>
+		</property>
+		<property name="updateSS">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="update tl_mytest set TlOperator='{0}',DATCREATTIME='{1}' where NUMTESTID={2}"></property>
+			</bean>
+		</property>
+		<property name="queryAll">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">HQL</value>
+				</property>
+				<property name="theSQL"
+					value="select t.numopid,t.vc2name from TlOperator t where t.vc2validflag = 'Y' "></property>
+			</bean>
+		</property>
+	</bean>
+	<bean id="TlInstDAO" class="com.lxt2.systemapp.dal.business.TlInstDAL"
+		scope="prototype">
+		<property name="queryByNameSS">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">HQL</value>
+				</property>
+				<property name="theSQL"
+					value="from TlInst t where t.vc2testname like '%{0}%'"></property>
+			</bean>
+		</property>
+		<property name="queryByArgsPS">
+			<bean class="com.lxt2.common.common.model.PageSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="countSQL" value="select count(*) from TlInst"></property>
+				<property name="pageSQL" value="select * from TlInst" />
+			</bean>
+		</property>
+		<property name="updateSS">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="update tl_mytest set TlInst='{0}',DATCREATTIME='{1}' where NUMTESTID={2}"></property>
+			</bean>
+		</property>
+		<property name="queryAll">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">HQL</value>
+				</property>
+				<property name="theSQL"
+					value="select numinstid,vc2name from TlInst where vc2validflag = 'Y' and vc2level &lt; 3 order by vc2level"></property>
+			</bean>
+		</property>
+	</bean>
+
+	<!-- special mobile dal define  -->
+	<bean id="TlSpecialMobileDAL" class="com.lxt2.systemapp.dal.business.TlSpecialMobileDAL" scope="prototype">
+		<property name="deleteByMobileSQL"
+			value="delete from TL_SPECIALMOBILE where VC2MOBILE = '{0}'" />
+		<property name="retreiveByMobileSQL"
+			value="select sm.* from TL_SPECIALMOBILE sm where sm.VC2MOBILE = '{0}'" />
+
+		<property name="queryALLSQL">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="PageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="
+						select * from (select rownum numrowasdf,
+			                adsfsds.* from (
+							     select sm.vc2mobile,sm.numsvcid,sm.creator,sc.vc2svcname,
+              						to_char(sm.createtime,'yyyy-mm-dd hh24:mi:ss') createtime 
+              					from TL_SPECIALMOBILE sm,TL_SERVICECODE sc where sm.numsvcid = sc.numsvcid #0# 
+              					order by sm.vc2mobile, sm.createtime desc 
+						 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+						" />
+					</bean>
+				</property>
+				<property name="CountSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value="select count(0) from (select sm.vc2mobile,sm.numsvcid,sm.creator,sc.vc2svcname,
+              						to_char(sm.createtime,'yyyy-mm-dd hh24:mi:ss') createtime 
+              					from TL_SPECIALMOBILE sm,TL_SERVICECODE sc where sm.numsvcid = sc.numsvcid #0# 
+              					order by sm.vc2mobile, sm.createtime desc )" />
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>sm.vc2mobile = '{0}'</value>
+						<value>sm.numsvcid = '{0}'</value>
+					</list>
+				</property>				
+			</bean>
+		</property>
+		
+		<property name="queryAllSpecialMobileHQL">
+			<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="SELECT 
+					  to_char(nvl( vc2mobile , 
+					  '' )) AS vc2mobile , 
+					  nvl( numsvcid , 
+					  '' ) AS numsvcid , 
+					  nvl( vc2desc , 
+					  '' ) AS vc2desc , 
+					  nvl( createtime , 
+					  '' ) AS createtime , 
+					  nvl( creator , 
+					  '' ) AS creator 
+						FROM 
+  						TL_SPECIALMOBILE"></property>
+			</bean>
+		</property>
+	</bean>
+	<!-- 网元可视化配置 -->
+	<bean id="TlSystemconfigNodeDAO" class="com.lxt2.systemapp.dal.business.TlSystemconfigNodeDAL" scope="prototype">
+		<property name="queryConfigNodeList">
+			<bean class="com.lxt2.common.common.model.PageSQL4PartList">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="PageSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value = "
+							select * from (select rownum numrowasdf, 
+			                adsfsds.* from (
+									SELECT * from tl_systemconfig_node where 1 =1 #0#
+	                         ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
+							"/>
+					</bean>
+				</property>
+				<property name="CountSQLObj">
+					<bean class="com.lxt2.common.common.model.SQLObj">
+						<property name="SQL"
+							value= "
+								select count(0) from tl_systemconfig_node where 1 =1 #0#
+							"/>
+					</bean>
+				</property>
+				<property name="sqlPartList">
+					<list>
+						<value>NUMNODEID = '{0}' </value>
+						<value>NUMINDUSTRY = '{0}'</value>
+					</list>
+				</property>
+			</bean>	
+		</property>	
+		<property name="queryallusednode" value="SELECT * FROM TL_SYSTEMCONFIG_NODE WHERE NUMSTATUS = 1 AND NUMINDUSTRY = '{0}'" />
+	    <property name="querygatewaybynodeid" value=" select * from tl_systemconfig_node2gw where numnodeid = '{0}' order by numgwid asc" />
+	</bean>
+	<!-- RPT数据 -->
+	<bean id="TlRptDataDAO" class="com.lxt2.systemapp.dal.business.TlRptDataDAL" scope="prototype">
+		<property name="queryrptdatabynodeid" value="
+				select NUMSEQID,to_char(DATRECVTIME,'yyyymmddhh24miss') as DATRECVTIME,
+				DATCREATETIME,NUMSRCSEQID,NUMSYSSEQID,NUMSRCCLIENTID,NUMDESTCLIENTID,
+				NUMOPERATORID,VC2REPORTERRORCODE,VC2DESTMOBILE,NUMPKTOTAL,
+				NUMPKNUMBER,NUMMESSAGEFORMAT,VC2MSGID,NUMREPORTSTATUS,NUMMODULEID,
+				NUMRESPONSESTATUS,VC2RESERVE1,VC2MESSAGECONTENT,VC2RESPERRORCODE
+				from TL_REPUSH_STDREPORT where nummoduleid= '{0}' 
+				and datcreatetime > (sysdate - interval '{1}' hour)
+				and NUMSEQID> '{2}' and rownum &lt;= {2}+{3} order by NUMSEQID asc
+				 " />
+		<property name="queryrptdatatotalcount" value="
+				select count(1) COUNT from TL_REPUSH_STDREPORT where nummoduleid= '{0}'
+				and datcreatetime > (sysdate - interval '{1}' hour)" />
+	</bean>
+</beans>

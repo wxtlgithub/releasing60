@@ -4,6 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee   http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 	<description>史上最牛的短彩信平台</description>
 	<display-name>利信通2.0</display-name>
+	
 	<context-param>
 		<param-name>CharacterEncoding</param-name>
 		<param-value>UTF-8</param-value>

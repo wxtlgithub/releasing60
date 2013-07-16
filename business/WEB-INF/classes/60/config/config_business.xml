@@ -93,7 +93,7 @@
 		<item key="status" value="77" desc="短彩" />
 	</component>
 	
-		<component id="clientCheckCmd" name="" desc="监控中心命令配置">
+	<component id="clientCheckCmd" name="" desc="监控中心命令配置">
 		<item key="alertclientCheckCmd" value="-U{0} -Ckcupdate -F10{1} -P{2}" desc="命令"/>
 	</component>
 		<component id="clientSmsTimeOut" name="" desc="接口短信超时间隔">

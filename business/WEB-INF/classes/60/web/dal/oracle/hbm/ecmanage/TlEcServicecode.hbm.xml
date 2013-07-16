@@ -21,7 +21,12 @@
 		<property name="vc2ecid" type="java.lang.String">
 			<column name="VC2ECID" length="7" />
 		</property>
-
+		
+        <!--报备签名，tl_ec_servicecode表中numissigfilter(NUMBER:22) -->
+		<property name="numissigfilter" type="java.lang.Integer">
+			<column name="NUMISSIGFILTER" length="22" />
+		</property>
+		
 		<!--运营商编号，对应TL_OPERATOR表(NUMBER:22) -->
 		<property name="numopid" type="java.lang.Integer">
 			<column name="NUMOPID" length="22" />

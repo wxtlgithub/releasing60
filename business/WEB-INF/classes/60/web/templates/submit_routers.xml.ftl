@@ -20,7 +20,7 @@
     <#list routeBases as base>
         <!-- 基本策略 -->
         <submitRouter productId="${base["PRODUCTID"]}" operatorId="${base["OPERATORID"]}"
-                      provinceId="${base["PROVICEID"]}" strategyType="${base["STRATEGYTYPE"]}" subcodeFlag="${base["VC2SUBCODEFLAG"]}" filterLevel="${base["NUMDIRTYTYPE"]}">
+                      provinceId="${base["PROVICEID"]}" strategyType="${base["STRATEGYTYPE"]}" subcodeFlag="${base["VC2SUBCODEFLAG"]}" filterLevel="${base["NUMDIRTYTYPE"]}" ecid="${base["NUMECID"]}" isSign="${base["NUMISSIGFILTER"]}" >
             <baseStrategy>
                 <!-- 网关ID。 -->
                 <gatewayId>${base["GATEWAYID"]}</gatewayId>
@@ -47,7 +47,7 @@
     <#list routeAses as routeas>
         <!-- 主备策略。 -->
         <submitRouter productId="${routeas["PRODUCTID"]}" operatorId="${routeas["OPERATORID"]}"
-                      provinceId="${routeas["PROVICEID"]}" strategyType="${routeas["STRATEGYTYPE"]}" filterLevel="${routeas["NUMDIRTYTYPE"]}">
+                      provinceId="${routeas["PROVICEID"]}" strategyType="${routeas["STRATEGYTYPE"]}" filterLevel="${routeas["NUMDIRTYTYPE"]}"  ecid="${routeas["NUMECID"]}" isSign="${routeas["NUMISSIGFILTER"]}">
             <mainStrategy>
                 <!-- 网关ID。-->
                 <gatewayId>${routeas["GATEWAYID"]}</gatewayId>
@@ -91,7 +91,7 @@
 <#if routeBalances?size != 0>
     <!-- 均衡策略 -->
     <submitRouter productId="${routeBalanceInfo["PRODUCTID"]}" operatorId="${routeBalanceInfo["OPERATORID"]}"
-                  provinceId="${routeBalanceInfo["PROVICEID"]}" strategyType="${routeBalanceInfo["STRATEGYTYPE"]}" filterLevel="${routeBalanceInfo["NUMDIRTYTYPE"]}">
+                  provinceId="${routeBalanceInfo["PROVICEID"]}" strategyType="${routeBalanceInfo["STRATEGYTYPE"]}" filterLevel="${routeBalanceInfo["NUMDIRTYTYPE"]}"  ecid="${routeBalanceInfo["NUMECID"]}" isSign="${routeBalanceInfo["NUMISSIGFILTER"]}">
         <#list routeBalances as routeBalance>
             <balanceStrategy>
                 <!-- 网关ID。 -->

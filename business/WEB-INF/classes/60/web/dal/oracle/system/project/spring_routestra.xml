@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-<!-- 路由策略dal -->
+	<!-- 路由策略dal -->
 	<bean id="TlRoutestraDAO_Yxt" class="com.yxt.systemapp.dal.routestra.TlRoutestraDAL"
 		scope="prototype">
 		<property name="queryBaseForXML">
@@ -28,44 +28,53 @@
 					       to_char(b .SERVICECODEID) AS SERVICECODEID,
 					       b .vc2longcode,
 					       b.vc2subcodeflag,
-                 b.numdirtytype
-					  from (SELECT t6.numstraid,
-					               t2.numprodid AS PRODUCTID,
-					               t4.NUMOPID AS OPERATORID,
-					               t4.Numinstid AS PROVICEID,
-					               t5.numtypeid AS STRATEGYTYPE,
-					               t4.numgwid AS GATEWAYID,
-					               t4.vc2type AS GATEWAYTYPE,
-					               t7.modelid || '' AS MODELID,
-					               t3.vc2svc AS SERVICECODE,
-					               t3.vc2feevalue AS FEEVALUE,
-					               t3.VC2TYPE AS FEETYPE,
-					               t3.vc2longcode AS LONGCODE,
-					               t4.numinstid AS PROVINCEID,
-					               t2.numchnid AS NUMCHNLID,
-					               t3.NUMSVCID AS SERVICECODEID,
-					               t3.vc2longcode,
-					               t6.VC2SUBCODE,
-					               t2.VC2SUBCODEFLAG,
-                         t6.numdirtytype
-					          FROM tl_products t2, tl_servicecode t3, tl_gateway t4
-					          left join (select c.vc2value as numgwid, a.numtaskid as modelid
-					                      from tl_task a, tl_task_opt b, tl_task_opt_item c
-					                     where a.numtaskid = b.numtaskid
-					                       and b.numoptid = c.numoptid
-					                       and c.vc2key = 'gatewayId') t7
-					            on t4.numgwid = t7.numgwid, tl_routestra t5, tl_routestra_base t6
-					         WHERE t5.numstraid = t6.numstraid
-					           AND t2.NUMPRODID = t5.numprodid
-					           AND t6.numsvcid = t3.NUMSVCID
-					           AND t3.numgwid = t4.numgwid) b
-					  left join(TL_SVC_INST) b2
-					    on b.SERVICECODEID = b2.numsvcid
-					 ORDER BY b.STRATEGYTYPE, b.numstraid
+		                 b.numdirtytype,
+		                to_char( b.numecid)      AS NUMECID,
+		                 b.numissigfilter AS NUMISSIGFILTER
+							  from (SELECT t6.numstraid,
+							               t2.numprodid AS PRODUCTID,
+							               t4.NUMOPID AS OPERATORID,
+							               t4.Numinstid AS PROVICEID,
+							               t5.numtypeid AS STRATEGYTYPE,
+							               t4.numgwid AS GATEWAYID,
+							               t4.vc2type AS GATEWAYTYPE,
+							               t7.modelid || '' AS MODELID,
+							               t3.vc2svc AS SERVICECODE,
+							               t3.vc2feevalue AS FEEVALUE,
+							               t3.VC2TYPE AS FEETYPE,
+							               t3.vc2longcode AS LONGCODE,
+							               t4.numinstid AS PROVINCEID,
+							               t2.numchnid AS NUMCHNLID,
+							               t3.NUMSVCID AS SERVICECODEID,
+							               t3.vc2longcode,
+							               t6.VC2SUBCODE,
+							               t2.VC2SUBCODEFLAG,
+		                         t6.numdirtytype,
+		                         t2.numecid     AS NUMECID,
+		                         t8.numissigfilter AS NUMISSIGFILTER
+							          FROM tl_products t2, tl_servicecode t3,tl_ec_servicecode t8,  tl_gateway t4
+							          left join (select c.vc2value as numgwid, a.numtaskid as modelid
+							                      from tl_task a, tl_task_opt b, tl_task_opt_item c
+							                     where a.numtaskid = b.numtaskid
+							                       and b.numoptid = c.numoptid
+							                       and c.vc2key = 'gatewayId') t7
+							            on t4.numgwid = t7.numgwid, tl_routestra t5, tl_routestra_base t6
+							         WHERE t5.numstraid = t6.numstraid
+							           AND t2.NUMPRODID = t5.numprodid
+							           AND t6.numsvcid = t3.NUMSVCID
+							           AND t3.numgwid = t4.numgwid
+		                     AND t8.numsvcid = t3.numsvcid
+		                     AND t2.numecid = t8.numecid
+		                     AND t8.numstatus = 1
+		                     ) b
+		            left join(TL_SVC_INST) b2
+		              on b.SERVICECODEID = b2.numsvcid
+		           ORDER BY b.STRATEGYTYPE, b.numstraid
  					">
 				</property>
 			</bean>
 		</property>
+
 		<property name="queryAsForXML">
 			<bean class="com.lxt2.common.common.model.SimpleSQL">
 				<property name="sqlType">
@@ -73,67 +82,74 @@
 				</property>
 				<property name="theSQL"
 					value="select to_char(a.PRODUCTID) AS PRODUCTID,
-		                 a.OPERATORID    AS OPERATORID,
-		                 a.PROVICEID     AS PROVICEID,
-		                 a.STRATEGYTYPE  AS STRATEGYTYPE,
-		                 to_char(a.GATEWAYID)     AS GATEWAYID,
-		                 a.GATEWAYTYPE   AS GATEWAYTYPE,
-		                 a.MODELID       AS MODELID,
-		                 a.SERVICECODE   AS SERVICECODE,
-		                 a.FEEVALUE      AS FEEVALUE,
-		                 a.FEETYPE       AS FEETYPE,
-		                 a.LONGCODE      AS LONGCODE,
-		                 a.PROVINCEID    AS PROVINCEID,
-		                 a.NUMCHNLID     AS NUMCHNLID,
-		                 a.SERVICECODEID AS SERVICECODEID,
-		                 a.NUMASFLAG     AS NUMASFLAG,
-		                 b.PRODUCTID     AS PRODUCTID2,
-		                 b.OPERATORID    AS OPERATORID2,
-		                 b.PROVICEID     AS PROVICEID2,
-		                 b.STRATEGYTYPE  AS STRATEGYTYPE2,
-		                 b.GATEWAYID     AS GATEWAYID2,
-		                 b.GATEWAYTYPE   AS GATEWAYTYPE2,
-		                 b.MODELID       AS MODELID2,
-		                 b.SERVICECODE   AS SERVICECODE2,
-		                 b.FEEVALUE      AS FEEVALUE2,
-		                 b.FEETYPE       AS FEETYPE2,
-		                 b.LONGCODE      AS LONGCODE2,
-		                 b.PROVINCEID    AS PROVINCEID2,
-		                 b.NUMCHNLID     AS NUMCHNLID2,
-		                 b.SERVICECODEID AS SERVICECODEID2,
-		                 b.NUMASFLAG     AS NUMASFLAG2,
-		                 b.numdirtytype
-		            from (SELECT t6.numstraid AS NUMSTRAID,
-		                         t2.numprodid AS PRODUCTID,
-		                         t4.NUMOPID AS OPERATORID,
-		                         t4.Numinstid AS PROVICEID,
-		                         t5.numtypeid AS STRATEGYTYPE,
-		                         t4.numgwid AS GATEWAYID,
-		                         t4.vc2type AS GATEWAYTYPE,
-		                         t7.modelid || '' AS MODELID,
-		                         t3.vc2svc AS SERVICECODE,
-		                         t3.vc2feevalue AS FEEVALUE,
-		                         t3.VC2TYPE AS FEETYPE,
-		                         t3.vc2longcode AS LONGCODE,
-		                         t4.numinstid AS PROVINCEID,
-		                         t2.numchnid AS NUMCHNLID,
-		                         t3.NUMSVCID AS SERVICECODEID,
-		                         t6.numasflag || '' AS NUMASFLAG,
-		                         t3.vc2longcode
-		                    FROM tl_products t2, tl_servicecode t3, tl_gateway t4
-		                    left join (select c.vc2value as numgwid, a.numtaskid as modelid
-		                                from tl_task a, tl_task_opt b, tl_task_opt_item c
-		                               where a.numtaskid = b.numtaskid
-		                                 and b.numoptid = c.numoptid
-		                                 and c.vc2key = 'gatewayId') t7
-		                      on t4.numgwid = t7.numgwid, tl_routestra t5, tl_routestra_as t6
-		                   WHERE t5.numstraid = t6.numstraid
-		                     AND t2.NUMPRODID = t5.numprodid
-		                     AND t6.numsvcid = t3.NUMSVCID
-		                     AND t3.numgwid = t4.numgwid
-		                     AND t6.numasflag = 1
-		                   ORDER BY t5.numtypeid, t5.numstraid, t6.numasflag) a
-		            left join (SELECT t6.numstraid AS NUMSTRAID,
+                     a.OPERATORID    AS OPERATORID,
+                     a.PROVICEID     AS PROVICEID,
+                     a.STRATEGYTYPE  AS STRATEGYTYPE,
+                     to_char(a.GATEWAYID)     AS GATEWAYID,
+                     a.GATEWAYTYPE   AS GATEWAYTYPE,
+                     a.MODELID       AS MODELID,
+                     a.SERVICECODE   AS SERVICECODE,
+                     a.FEEVALUE      AS FEEVALUE,
+                     a.FEETYPE       AS FEETYPE,
+                     a.LONGCODE      AS LONGCODE,
+                     a.PROVINCEID    AS PROVINCEID,
+                     a.NUMCHNLID     AS NUMCHNLID,
+                     a.SERVICECODEID AS SERVICECODEID,
+                     a.NUMASFLAG     AS NUMASFLAG,
+                     b.PRODUCTID     AS PRODUCTID2,
+                     b.OPERATORID    AS OPERATORID2,
+                     b.PROVICEID     AS PROVICEID2,
+                     b.STRATEGYTYPE  AS STRATEGYTYPE2,
+                     b.GATEWAYID     AS GATEWAYID2,
+                     b.GATEWAYTYPE   AS GATEWAYTYPE2,
+                     b.MODELID       AS MODELID2,
+                     b.SERVICECODE   AS SERVICECODE2,
+                     b.FEEVALUE      AS FEEVALUE2,
+                     b.FEETYPE       AS FEETYPE2,
+                     b.LONGCODE      AS LONGCODE2,
+                     b.PROVINCEID    AS PROVINCEID2,
+                     b.NUMCHNLID     AS NUMCHNLID2,
+                     b.SERVICECODEID AS SERVICECODEID2,
+                     b.NUMASFLAG     AS NUMASFLAG2,
+                     b.numdirtytype,
+                     to_char(a.numecid)    AS NUMECID,
+                     a.numissigfilter AS NUMISSIGFILTER
+                from (SELECT t6.numstraid AS NUMSTRAID,
+                             t2.numprodid AS PRODUCTID,
+                             t4.NUMOPID AS OPERATORID,
+                             t4.Numinstid AS PROVICEID,
+                             t5.numtypeid AS STRATEGYTYPE,
+                             t4.numgwid AS GATEWAYID,
+                             t4.vc2type AS GATEWAYTYPE,
+                             t7.modelid || '' AS MODELID,
+                             t3.vc2svc AS SERVICECODE,
+                             t3.vc2feevalue AS FEEVALUE,
+                             t3.VC2TYPE AS FEETYPE,
+                             t3.vc2longcode AS LONGCODE,
+                             t4.numinstid AS PROVINCEID,
+                             t2.numchnid AS NUMCHNLID,
+                             t3.NUMSVCID AS SERVICECODEID,
+                             t6.numasflag || '' AS NUMASFLAG,
+                             t3.vc2longcode,
+                             t2.numecid     AS NUMECID,
+                             t8.numissigfilter AS NUMISSIGFILTER
+                        FROM tl_products t2, tl_servicecode t3, tl_ec_servicecode t8, tl_gateway t4
+                        left join (select c.vc2value as numgwid, a.numtaskid as modelid
+                                    from tl_task a, tl_task_opt b, tl_task_opt_item c
+                                   where a.numtaskid = b.numtaskid
+                                     and b.numoptid = c.numoptid
+                                     and c.vc2key = 'gatewayId') t7
+                          on t4.numgwid = t7.numgwid, tl_routestra t5, tl_routestra_as t6
+                       WHERE t5.numstraid = t6.numstraid
+                         AND t2.NUMPRODID = t5.numprodid
+                         AND t6.numsvcid = t3.NUMSVCID
+                         AND t3.numgwid = t4.numgwid
+                         AND t6.numasflag = 1
+                         AND t8.numsvcid = t3.numsvcid
+                         AND t2.numecid = t8.numecid
+                         AND t8.numstatus = 1
+                       ORDER BY t5.numtypeid, t5.numstraid, t6.numasflag) a
+                left join (SELECT t6.numstraid AS NUMSTRAID,
                               t2.numprodid AS PRODUCTID,
                               t4.NUMOPID AS OPERATORID,
                               t4.Numinstid AS PROVICEID,
@@ -152,28 +168,30 @@
                               t3.vc2longcode,
                               t13.numdirtytype
                         FROM tl_products t2, tl_servicecode t3, tl_gateway t4
-                         	left join (select c.vc2value  as numgwid,
+                           left join (select c.vc2value  as numgwid,
                                           a.numtaskid as modelid
                                      from tl_task a, tl_task_opt b, tl_task_opt_item c
                                     where a.numtaskid = b.numtaskid
                                       and b.numoptid = c.numoptid
                                       and c.vc2key = 'gatewayId') t7
-                           	on t4.numgwid = t7.numgwid, tl_routestra t5,
-                        	tl_routestra_as t6,tl_routestra_base t13
+                             on t4.numgwid = t7.numgwid, tl_routestra t5,
+                          tl_routestra_as t6,tl_routestra_base t13
                         WHERE t5.numstraid = t13.numstraid AND t5.numstraid = t6.numstraid AND t2.NUMPRODID = t5.numprodid
-							AND t6.numsvcid = t3.NUMSVCID AND t3.numgwid = t4.numgwid AND t6.numasflag = 2
+              AND t6.numsvcid = t3.NUMSVCID AND t3.numgwid = t4.numgwid AND t6.numasflag = 2
                         ORDER BY t5.numtypeid, t5.numstraid, t6.numasflag) b
-              			on a.NUMSTRAID = b.NUMSTRAID
+                    on a.NUMSTRAID = b.NUMSTRAID
 					  ">
 				</property>
 			</bean>
 		</property>
+
 		<property name="queryBalanceForXML">
 			<bean class="com.lxt2.common.common.model.SimpleSQL">
 				<property name="sqlType">
 					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
 				</property>
-				<property name="theSQL" value="SELECT t6.numstraid,
+				<property name="theSQL"
+					value="SELECT t6.numstraid,
 			              t2.numprodid   AS PRODUCTID,
 			              t4.NUMOPID     AS OPERATORID,
 			              t4.Numinstid   AS PROVICEID,
@@ -189,8 +207,10 @@
 			              t2.numchnid    AS NUMCHNLID,
 			              t3.NUMSVCID    AS SERVICECODEID,
 			              t3.vc2longcode,
-			              t13.numdirtytype
-			        FROM tl_products t2, tl_servicecode t3, tl_gateway t4
+			              t13.numdirtytype,
+		                    t2.numecid     AS NUMECID,
+		                    t8.numissigfilter AS NUMISSIGFILTER
+					        FROM tl_products t2, tl_servicecode t3, tl_ec_servicecode t8, tl_gateway t4
 			         	left join (select c.vc2value as numgwid, a.numtaskid as modelid
 			                      from tl_task a, tl_task_opt b, tl_task_opt_item c
 			                     where a.numtaskid = b.numtaskid
@@ -202,6 +222,9 @@
 			          AND t2.NUMPRODID = t5.numprodid
 			          AND t6.numsvcid = t3.NUMSVCID
 			          AND t3.numgwid = t4.numgwid
+			          AND t8.numsvcid = t3.numsvcid
+		              AND t2.numecid = t8.numecid
+		              AND t8.numstatus = 1
 			        ORDER BY t5.numtypeid, t5.numstraid
 					  ">
 				</property>

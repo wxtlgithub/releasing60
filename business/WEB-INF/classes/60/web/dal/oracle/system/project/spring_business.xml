@@ -960,9 +960,7 @@
 				</property>
 				<property name="theSQL"
 					value="  
-						 SELECT to_char(A.NUMCLIENTID) NUMCLIENTID,
-							       A.VC2CLIENTNAME,
-							       to_char(B.NUMECID) NUMECID,
+						 SELECT  to_char(B.NUMECID) NUMECID,
 							       to_char(B.VC2ECID) VC2ECID,
 							       B.VC2ECNAME,
 							       B.NUMSIGNTYPEID,
@@ -970,16 +968,14 @@
 							       D.VC2SIGNTURE1,
 							       D.VC2SIGNTUREWIDE,
 							       DECODE(B.NUMSIGNTYPEID,3,'true') VC2NOSIGNTURE
-							  FROM TL_CLIENT A,
-							       TL_EC_INFO B,
+							  FROM TL_EC_INFO B,
 							       TL_ECSIGNTURE_TYPE C,
 							       (SELECT NUMECID,
 							               STRCAT(DISTINCT DECODE(NUMTYPEID, 1, VC2SIGNTURE)) VC2SIGNTURE1,
 							               STRCAT(DISTINCT DECODE(NUMTYPEID, 2, VC2SIGNTURE)) VC2SIGNTUREWIDE
 							          FROM TL_ECSIGNTURE
 							         GROUP BY NUMECID) D
-							 WHERE A.NUMDEPARTID = B.NUMDEPARTID
-							   AND B.NUMSIGNTYPEID = C.NUMTYPEID
+							 WHERE  B.NUMSIGNTYPEID = C.NUMTYPEID
 							   AND B.NUMECID = D.NUMECID(+)
 					"></property>
 			</bean>

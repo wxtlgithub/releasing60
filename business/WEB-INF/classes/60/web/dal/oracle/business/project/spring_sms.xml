@@ -1597,14 +1597,17 @@
 			      from  TL_SMS_CONTENT_CH1_TEMP  tp
 			      where numcontentid = {0};
 			
-			  update tl_sms_content_st
-			     set numsuccess = (select count(*)
-			                         from  TL_SMS_CONTENT_CH1_TEMP 
-			                        where numflag = 1 and numcontentid = {0}),
-			         numfailed  = (select count(*)
-			                         from  TL_SMS_CONTENT_CH1_TEMP 
-			                        where numflag != 1 and numcontentid = {0})
-			   where numcontentid = {0};
+			   UPDATE TL_SMS_CONTENT_ST  
+				 SET (NUMSUCCESS,NUMFAILED,NUMCMCNT,NUMUMCNT,NUMCTCNT)=
+				 (SELECT NVL(SUM(DECODE(A.NUMFLAG,1,1,0)),0) NUMSUCCESS,
+				         NVL(SUM(DECODE(A.NUMFLAG,1,0,1)),0) NUMFAILED ,
+				         NVL(SUM(CASE WHEN A.NUMFLAG=1 AND B.NUMOPID=1 THEN 1 ELSE 0 END),0) NUMCMCNT,
+				         NVL(SUM(CASE WHEN A.NUMFLAG=1 AND B.NUMOPID=2 THEN 1 ELSE 0 END),0) NUMUMCNT,
+				         NVL(SUM(CASE WHEN A.NUMFLAG=1 AND B.NUMOPID=3 THEN 1 ELSE 0 END),0)  NUMCTCNT
+				    FROM TL_SMS_CONTENT_CH1_TEMP A,TL_OPPHASE B
+				   WHERE NUMCONTENTID = {0}
+				   AND SUBSTR(A.VC2MOBILE,1,3)=B.VC2PHASE(+))
+				 WHERE NUMCONTENTID = {0};
 			   
 				execute immediate 'alter table  tl_sms_content_ch_temp  truncate partition p_{0}';
 				execute immediate 'alter table  TL_SMS_CONTENT_CH1_TEMP  truncate partition p_{0}';
@@ -1662,14 +1665,17 @@
 			      from  TL_SMS_CONTENT_CH1_TEMP  tp
 			      where numcontentid = {0};
 			
-			  update tl_sms_content_st
-			     set numsuccess = (select count(*)
-			                         from  TL_SMS_CONTENT_CH1_TEMP 
-			                        where numflag = 1 and numcontentid = {0}),
-			         numfailed  = (select count(*)
-			                         from  TL_SMS_CONTENT_CH1_TEMP 
-			                        where numflag != 1 and numcontentid = {0})
-			   where numcontentid = {0};
+			  UPDATE TL_SMS_CONTENT_ST  
+				 SET (NUMSUCCESS,NUMFAILED,NUMCMCNT,NUMUMCNT,NUMCTCNT)=
+				 (SELECT NVL(SUM(DECODE(A.NUMFLAG,1,1,0)),0) NUMSUCCESS,
+				         NVL(SUM(DECODE(A.NUMFLAG,1,0,1)),0) NUMFAILED ,
+				         NVL(SUM(CASE WHEN A.NUMFLAG=1 AND B.NUMOPID=1 THEN 1 ELSE 0 END),0) NUMCMCNT,
+				         NVL(SUM(CASE WHEN A.NUMFLAG=1 AND B.NUMOPID=2 THEN 1 ELSE 0 END),0) NUMUMCNT,
+				         NVL(SUM(CASE WHEN A.NUMFLAG=1 AND B.NUMOPID=3 THEN 1 ELSE 0 END),0)  NUMCTCNT
+				    FROM TL_SMS_CONTENT_CH1_TEMP A,TL_OPPHASE B
+				   WHERE NUMCONTENTID = {0}
+				   AND SUBSTR(A.VC2MOBILE,1,3)=B.VC2PHASE(+))
+				 WHERE NUMCONTENTID = {0};
 			end;" />
 			
 		<!-- 查询表分区 -->

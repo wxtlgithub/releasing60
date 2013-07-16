@@ -59,9 +59,10 @@
 								(case numsvctype when 1 then '短信'||numlevel when 2 then '彩信'||numlevel when 3 then '短彩信'||numlevel end) as vclevel,
 								numsigntype, ec.numsigntypeid numsigntypeid, est.vc2typename vc2typename
 								from tl_ec_info ec,(
-								select distinct ecs.numecid,ecs.numopid,ecs.NUMSUBCODE,numsigntype
-								  from tl_ec_servicecode ecs, tl_servicecode sc, tl_gateway gw
-								 where ecs.NUMSVCID = sc.NUMSVCID and sc.NUMGWID = gw.NUMGWID
+								SELECT ECS.NUMECID, STRCAT(DISTINCT DECODE(NUMSIGNTYPE,0,'直签',1,'返佣')) NUMSIGNTYPE
+          FROM TL_EC_SERVICECODE ECS, TL_SERVICECODE SC
+         WHERE ECS.NUMSVCID = SC.NUMSVCID AND ECS.NUMSTATUS=1
+           GROUP BY ECS.NUMECID
 								) rt, tl_ecsignture_type est
 								 where ec.numsigntypeid=est.numtypeid and ec.numecid = rt.numecid(+)
                                  #0#
@@ -81,9 +82,10 @@
 								(case numsvctype when 1 then '短信'||numlevel when 2 then '彩信'||numlevel when 3 then '短彩信'||numlevel end) as vclevel,
 								numsigntype
 								from tl_ec_info ec,(
-								select distinct ecs.numecid,ecs.numopid,ecs.NUMSUBCODE,numsigntype
-								  from tl_ec_servicecode ecs, tl_servicecode sc, tl_gateway gw
-								 where ecs.NUMSVCID = sc.NUMSVCID and sc.NUMGWID = gw.NUMGWID
+								SELECT ECS.NUMECID, STRCAT(DISTINCT DECODE(NUMSIGNTYPE,0,'直签',1,'返佣')) NUMSIGNTYPE
+          FROM TL_EC_SERVICECODE ECS, TL_SERVICECODE SC
+         WHERE ECS.NUMSVCID = SC.NUMSVCID AND ECS.NUMSTATUS=1
+           GROUP BY ECS.NUMECID
 								) rt
 								 where ec.numecid = rt.numecid(+)
                                  #0#
@@ -194,6 +196,16 @@
 				</property>
 				<property name="theSQL"
 					value="select numseqid from tl_ec_servicecode where numsvcid = {0}"></property>
+			</bean>
+		</property>
+		<!-- EC业务是否存在 -->
+		<property name="queryServiceCodeAndEcid">
+		<bean class="com.lxt2.common.common.model.SimpleSQL">
+				<property name="sqlType">
+					<value type="com.lxt2.common.common.model.SQLType">SQL</value>
+				</property>
+				<property name="theSQL"
+					value="select numseqid from tl_ec_servicecode where numsvcid = {0} and numecid = {1} {2} and numstatus = 1"></property>
 			</bean>
 		</property>
 	</bean>

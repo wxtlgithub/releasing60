@@ -126,7 +126,7 @@
 			                      to_char(datcheck2,'yyyy-mm-dd hh24:mi:ss') datcheck2,numprenum,numprodid,
 			                      numsource,numsendtype,vc2typelist,numdepartid,numstatus,vc2numstatus,vc2longcode,
 			                      vc2username,username1,username2, vc2departname,numstatename,
-			                      numsendtypename,nummessageformatname,numtotal,numsuccess,numfailed
+			                      numsendtypename,nummessageformatname,numtotal,numsuccess,numfailed,NUMCMCNT,NUMUMCNT,NUMCTCNT
 									 from TLV_SMS_CONTENT  where VC2STATUS = 1 #0# 
 						) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
 						" />

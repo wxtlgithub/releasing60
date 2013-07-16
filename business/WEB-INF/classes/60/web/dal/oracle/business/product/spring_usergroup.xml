@@ -35,7 +35,6 @@
 							 WHERE A.NUMDEPARTID = B.NUMDEPARTID(+)
 							  	AND A.NUMUSERID = C.NUMUSERID(+)
 							   	AND A.NUMPRODID = D.NUMPRODID(+)
-  								AND A.NUMUSERGROUPID = E.NUMUSERGROUPID(+)
 							   	AND A.VC2VALIDFLAG = '1' 
 							#0# ORDER BY a.DATCREATTIME DESC,a.NUMUSERGROUPID desc
 						 ) adsfsds where rownum &lt; {0}+{1}+1) where numrowasdf > {0}
@@ -50,7 +49,6 @@
 							 WHERE A.NUMDEPARTID = B.NUMDEPARTID(+)
 							   AND A.NUMUSERID = C.NUMUSERID(+)
 							   AND A.NUMPRODID = D.NUMPRODID(+)
-  								AND A.NUMUSERGROUPID = E.NUMUSERGROUPID(+)
                 			 AND A.VC2VALIDFLAG = '1' #0# " />
 					</bean>
 				</property>

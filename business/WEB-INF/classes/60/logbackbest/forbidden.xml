@@ -1,0 +1,9 @@
+<included>
+	<logger name="com.mchange" additivity="false">
+		<appender-ref ref="rootError" />
+	</logger>
+
+	<logger name="org" additivity="false">
+  		<appender-ref ref="rootError" />
+ 	</logger>
+</included>

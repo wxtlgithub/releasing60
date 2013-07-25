@@ -1,0 +1,97 @@
+<included>
+	<!-- debug -->
+	<appender name="rescenterDist" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}rescenter/rescenter-dist.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}rescenter/rescenter-dist.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>DEBUG</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- info -->
+	<appender name="rescenterInfo" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}rescenter/rescenter-info.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}rescenter/rescenter-info.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+	   	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>INFO</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+
+	<!-- warn -->
+	<appender name="rescenterWarn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}rescenter/rescenter-warn.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}rescenter/rescenter-warn.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>WARN</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- error -->
+	<appender name="rescenterError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}rescenter/rescenter-error.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}rescenter/rescenter-error.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>ERROR</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+
+	<logger name="com.lxt2.rescenter" level="info" additivity="false">
+		<appender-ref ref="rescenterDist" />
+		<appender-ref ref="rescenterInfo" />
+		<appender-ref ref="rescenterWarn" />
+		<appender-ref ref="rescenterError" />
+	</logger>
+	<!-- rescenter监控logger -->
+	<logger name="LOGGER_RESCENTERMONITOR" level="info" additivity="false">
+		<appender-ref ref="rescenterDist" />
+		<appender-ref ref="rescenterInfo" />
+		<appender-ref ref="rescenterWarn" />
+		<appender-ref ref="rescenterError" />
+	</logger>
+</included>

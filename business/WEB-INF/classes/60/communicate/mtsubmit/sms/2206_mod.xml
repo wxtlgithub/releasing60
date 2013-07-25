@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="connectionManager2206" class="com.ihandy.db.ConnectionManager" init-method="init">
+		<property name="dataSource">
+			<map>
+				<entry key="mas" value-ref="masDataSource2206"/>
+                <entry key="masTest" value-ref="connTestDs"/>
+			</map>
+		</property>
+		<property name="gatewayId"   ref="gatewayId2206"/>
+		<property name="gatewayXmlParser"   ref="gatewayXml"/>
+	</bean>
+	
+	<bean id="mtsGatewayModule2206" class="com.ihandy.module.MasGatewayModule">
+		<property name="id" value="2206"/>
+		<property name="name" value="下行发送MAS"/>
+		<property name="hub" ref="hubImpl"/>
+		<property name="gateway" ref="mtsMasGateway2206"/>
+		<property name="submitQueue" ref="mtsSubmitQueue2206"/>
+		<property name="controlCmdMap">
+			<map>
+				<entry key="qePerf" value-ref="mtsQueueCmd2206"/>
+                <entry key="view" value-ref="mtsGateWayViewCmd2206"/>
+			</map>
+		</property>
+		<property name="kpiList">
+			<list>
+				<ref bean="mtsQueueKPI2206"/>
+				<ref bean="mtsGateWayModuleKPI2206"/>
+			</list>
+		</property>
+	</bean>
+		<!-- 模块的命令配置 -->
+	<bean id="mtsQueueCmd2206" class="com.lxt2.queuekc.QueuePerfCmd">
+		<property name="kpiQueueList">
+			<list>
+				<ref bean="mtsQueueKPI2206"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="mtsGateWayViewCmd2206" class="com.lxt2.base.module.ModuleKPICmd">
+		<property name="kpi" ref="mtsGateWayModuleKPI2206"/>
+	</bean>
+	
+	<bean id="mtsQueueKPI2206" class="com.lxt2.queuekc.QueueKPI">
+		<property name="queue" ref="mtsSubmitQueue2206"/>
+	</bean>
+	
+	<bean id="mtsGateWayModuleKPI2206" class="com.ihandy.module.MasGatewayModuleKPI">
+        <property name="cacheQueue" ref="mtsSubmitQueue2206"/>
+        <property name="dataGather" ref="mtsDataGather2206"/>
+        <property name="module" ref="mtsGatewayModule2206"/>
+    </bean>
+    
+    <bean id="mtsDataGather2206" class="com.ihandy.GatewayDataGather" init-method="init" destroy-method="destroy">
+    	<property name="path" value="${CLASSPATH}/${nodeID}/persistent/statistics/gateway2206.properties"/>
+    </bean>
+    
+	
+	<!--相关Queue配置信息  开始-->	
+
+	<bean id="mtsSubmitQueue2206" class="com.lxt2.queuekc.CacheQueue" destroy-method="destroy">
+		<property name="cache">
+			<bean class="ihandy.lxt20.persist.cache.Priority"/>
+		</property>
+		<property name="receiveWaitTime" value="1"/>
+		<property name="queueName" value="mtsSubmit2206"/>
+	</bean>
+	
+	<bean id="abstractAdapter2206" abstract="true">
+		<property name="hub" ref="hubImpl"></property>
+		<property name="sid" ref="ndSid"></property>
+	</bean>
+	
+	<bean id="mtsSubmitQueueAdapter2206" class="com.ihandy.queue.SubmitQueueAdapter" parent="abstractAdapter2206">
+		<property name="cacheQueue" ref="mtsSubmitQueue2206"/>
+		<property name="config" ref="mtsGatewayConfig2206"/>
+		<property name="saveLogger" ref="saveLogger" />
+	</bean>
+	
+	<bean id="mtsDeliverQueueAdapter2206" class="com.ihandy.queue.DeliverQueueAdapter" parent="abstractAdapter2206">
+	</bean>
+	
+	<bean id="mtsReportQueueAdapter2206" class="com.ihandy.queue.ReportQueueAdapter" parent="abstractAdapter2206">
+		<property name="config" ref="mtsGatewayConfig2206"/>
+	</bean>
+	
+	<!--相关Queue配置信息  结束-->	
+</beans>

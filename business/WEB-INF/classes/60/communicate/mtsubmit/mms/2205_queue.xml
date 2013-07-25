@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 彩信submit消息队列 -->
+	<bean id="mmsSubmitQueue2205" class="com.lxt2.queuekc.ReceiveControlCacheQueue"  destroy-method="destroy">
+		<property name="queueName" value="mmsSubmit2205"/>
+		<property name="cache">
+			<bean class="ihandy.lxt20.persist.cache.Priority"/>
+		</property>
+		<property name="listener">
+			<ref bean="mmsSubmitQueueListener2205"/>
+		</property>
+		<property name="receiveControlList">
+			<list>
+				<!-- 彩信Send队列大小控制 -->
+				<ref local="mmsSendQueueSizeReceiveControl2205"/>
+			</list>
+		</property>
+	</bean>
+	<!--彩信send消息队列-->
+	<bean id="mmsSendQueueStatistics2205" class="com.techcenter.msgqueue.receivecontrol.MemoryQueueStatistics">
+		<property name="memoryQueue" ref="mmsSendQueue2205"/>
+	</bean>
+	<!-- 监控彩信网关send队列大小控制，send队列的大小如果超过允许范围，将对待发表队列进行控制 -->
+	<bean id="mmsSendQueueSizeReceiveControl2205" class="com.techcenter.msgqueue.receivecontrol.MsgQueueSizeReceiveControlRunnable" init-method="init" destroy-method="destroy">
+		<property name="msgQueueStatistics" ref="mmsSendQueueStatistics2205"/>
+		<!-- 队列允许的消息个数 -->
+		<property name="allowMaxSize" value="200"/>
+		<!-- 两次监控查询之间的间隔时间，单位毫秒 -->
+		<property name="sleepTime" value="100"/>
+	</bean>
+	<bean id="mmsSendQueue2205" class="com.techcenter.msgqueue.MemoryQueue"   destroy-method="destroy">
+		<property name="queueName" value="mmsSendQueue2205"/>
+		<property name="listener" ref="mmsSendQueueListener2205"/>
+	</bean>
+</beans>

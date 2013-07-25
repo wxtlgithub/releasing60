@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="gatewayId2204" class="java.lang.Integer">
+		<constructor-arg index="0" value="4"></constructor-arg>
+	</bean>
+	<!-- 设置网关启动参数 -->
+	<bean id="mtsSgipParameter2204"  class="com.lxt2.gateway.sms.protocol.sgip.Sgip_Parameter"
+		scope="prototype"  init-method="init">
+		
+		<property name="gatewayId" ref="gatewayId2204"></property>
+		
+		<property name="gatewayXmlParser" ref="gatewayXml"></property>
+		
+		<!-- sockt服务使用状态Connector连接，Acceptor 监听 -->
+		<property name="typeSocket">
+			<bean id="com.lxt2.gateway.sms.protocol.sgip.Sgip_Parameter.SocketType_Connector"
+				class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean" />
+		</property>
+		<!-- 协议连接状态，MT下行，MO上行 -->
+		<property name="typeLink" value="MT" />
+		<!--网关协议自身版本编号-->
+		<property name="protocolVersion" value="48" />
+		<!--心跳信息启用标志，true启用，false不启用-->
+		<property name="connectActiveTest" value="true" />
+		<!-- 系统清理时间 -->
+		<property name="clearTime" value="10" />
+		<!-- 
+			0-对“计费用户”不计费，核减SP对称的信道费
+			1-对“计费用户”免费
+			2-对“计费用户”按条计信息费
+			3-对“计费用户”按包月收取信息费
+			4-对“计费用户”的收费是由SP实现
+		  -99-不使用该配置
+		-->
+		<property name="feeType" value="-99"/>
+		<!-- 2：默认；-99不使用该配置 ； 其他配置由用户提供； -->
+		<property name="feeUserType" value="-99"/>
+	</bean>
+	<!-- 网关配置 -->
+	<bean id="mtsSgipGatewayConfig2204" class="com.lxt2.gateway.sms.GatewayConfig" >
+		
+		<property name="gatewayXmlParser" ref="gatewayXml"></property>
+		
+		<property name="protocol">
+			<bean id="com.lxt2.gateway.sms.GatewayConfig.SGIP"
+				class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean" />
+		</property>
+		<!-- 网关速度控制 -->
+		<property name="speeder">
+			<bean id="sgipEquidistributionSpeeder2204" class="com.techcenter.speed.IntervalSecondSpeeder" destroy-method="destroy">
+				<constructor-arg index="0" value="100" />
+			</bean>
+		</property>
+		<!-- 网关ID -->
+		<property name="gatewayID" ref="gatewayId2204" />
+		<!-- 下行队列 -->
+		<property name="submitQueue" ref="mtsPersistentSubmitQueueAdapter2204" />
+		<!-- 下行响应队列 -->
+		<property name="respQueue" ref="mtsPersistentRespQueueAdapter2204" />
+		<!-- 上行队列 -->
+		<property name="deliverQueue" ref="mtsPersistentDeliverQueueAdapter2204" />
+		<!-- 状态报告处理队列 -->
+		<property name="reportQueue" ref="mtsPersistentReportQueueAdapter2204" />
+		<!-- 重发错误码 -->
+		<property name="errorReSendMap">
+			<map>
+				<entry key="-8" value="-8"/>
+			</map>
+		</property>
+		<!-- 限制重发测试标志，true：限制，false：不限制 -->
+		<property name="errorReSendCountLimitFlag" value="true"/>
+		<!-- 数据采集 -->
+		<property name="dataGather" ref="mtsDataGather2204"/>
+		<!-- 总线 -->
+		<property name="hub" ref="hubImpl"/>
+	</bean>
+	<!-- 设置短信发送Support -->
+	<bean id="mtsSgipSupport2204" class="com.lxt2.gateway.sms.SessionFlag"
+		scope="prototype">
+		<property name="handler" value="mtsSgipHandler2204" />
+		<property name="param" value="mtsSgipParameter2204" />
+		<property name="gwconfig" ref="mtsSgipGatewayConfig2204" />
+	</bean>
+	<bean name="mtsSgipHandler2204" class="com.lxt2.gateway.sms.protocol.sgip.Sgip_Handler"
+		scope="prototype">
+		<property name="gwconfig" ref="mtsSgipGatewayConfig2204" />
+	</bean>
+	<!-- 设置短信网关对象 -->
+	<bean id="mtsSgipGateway2204" name="gatewayGlobal" class="com.lxt2.gateway.sms.Gateway"
+		destroy-method="stopSystem"  lazy-init="true">
+		<property name="socketCount" value="1" />
+		<property name="supportName" value="mtsSgipSupport2204" />
+		<property name="config" ref="mtsSgipGatewayConfig2204"/>
+	</bean>
+	
+	<bean id="mtsSgipReportAdapter2204" class="com.lxt2.adapter.sgip.SgipReportAdapter"/>
+	
+	<bean id="mtsSgipDeliverAdapter2204" class="com.lxt2.adapter.sgip.SgipDeliverAdapter" init-method="init" >
+		<property name="gatewayid" ref="gatewayId2204"/>
+		<property name="gatewayXmlParser" ref="gatewayXml" />
+	</bean>
+</beans>

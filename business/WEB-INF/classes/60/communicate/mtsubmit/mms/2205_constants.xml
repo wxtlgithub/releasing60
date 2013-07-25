@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- 网关常量信息配置 -->
+	<bean id="mmsgConstants2205" class="com.lxt2.mmsgateway.MmsgConstants" init-method="init">
+		<property name="mm7ConfigPath" value="${mmsg.mm7ConfigPath2205}"/>
+		<property name="connConfigPath" value="${mmsg.connConfigPath2205}"/>
+		<property name="gatewayId" value="${mmsg.gatewayId2205}"/>
+		<property name="operatorId" value="${mmsg.operatorId2205}"/>
+		<!-- 个性化模板类型 -->
+		<property name="indvidualType" value="2"/>
+		<property name="gatewayConfig" ref="gatewayXml"/>
+	</bean>
+</beans>

@@ -1,0 +1,88 @@
+<included>
+	<!-- debug -->
+	<appender name="clumpedDebug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}clumped/clumped-debug.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}clumped/clumped-debug.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>DEBUG</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- info -->
+	<appender name="clumpedInfo" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}clumped/clumped-info.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}clumped/clumped-info.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+	   	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>INFO</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- warn -->
+	<appender name="clumpedWarn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}clumped/clumped-warn.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}clumped/clumped-warn.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>WARN</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- error -->
+	<appender name="clumpedError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}clumped/clumped-error.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}clumped/clumped-error.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>ERROR</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<logger name="com.lxt2.clumped" level="info" additivity="false">
+		<appender-ref ref="clumpedDebug" />
+		<appender-ref ref="clumpedInfo" />
+		<appender-ref ref="clumpedWarn" />
+		<appender-ref ref="clumpedError" />
+	</logger>
+</included>

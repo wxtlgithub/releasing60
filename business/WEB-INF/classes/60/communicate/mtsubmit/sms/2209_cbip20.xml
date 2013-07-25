@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!--网关ID -->
+	<bean id="gatewayId2209" class="java.lang.Integer">
+		<constructor-arg index="0" value="7" />
+	</bean>
+	<bean id="deliverAdapter2209" class="com.lxt2.adapter.cbip20.CbipDeliverAdapter"/>
+	<!--速度控制过滤器 -->
+	<bean name="mtsEquidistributionSpeeder2209" class="com.techcenter.speed.IntervalSecondSpeeder"
+		destroy-method="destroy">
+		<constructor-arg index="0" value="1000" />
+	</bean>
+
+	<!-- 拆分抽象bean -->
+	<bean id="mtsAbstractSpliter2209" abstract="true" lazy-init="true">
+		<!-- 网关ID -->
+		<property name="gatewayId" ref="gatewayId2209" />
+		<!-- 网关配置解析 -->
+		<property name="gatewayXmlParser" ref="gatewayXml" />
+	</bean>
+	<bean id="mtsSpliterMap2209" class="java.util.HashMap">
+		<constructor-arg index="0">
+			<map>
+				<entry key="15">
+					<bean class="com.techcenter.spliter.CommSmsSpliter" parent="mtsAbstractSpliter2209"
+						init-method="init">
+						<property name="smSplit">
+							<bean class="com.techcenter.spliter.SMSplit">
+							</bean>
+						</property>
+					</bean>
+				</entry>
+				<entry key="31">
+					<bean class="com.techcenter.spliter.WapPushSpliter" />
+				</entry>
+				<entry key="32">
+					<bean class="com.techcenter.spliter.LongSmsSpliter"
+						parent="mtsAbstractSpliter2209" init-method="init" />
+				</entry>
+				<entry key="41">
+					<bean class="com.techcenter.spliter.CommSmsSpliter" parent="mtsAbstractSpliter2209"
+						init-method="init">
+						<property name="smSplit">
+							<bean class="com.techcenter.spliter.SMSplit">
+							</bean>
+						</property>
+					</bean>
+				</entry>
+				<entry key="42">
+					<bean class="com.techcenter.spliter.SimpleLongSmsNoCheckLengthSpliter"
+						parent="mtsAbstractSpliter2209" />
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+	<!-- 下行处理类,该类由客户实现 -->
+	<bean id="mtsCoagentSender2209" class="com.lxt2.gateway.cbip.api.CoagentSender"
+		init-method="init">
+		<!-- 网关ID -->
+		<property name="gatewayId" ref="gatewayId2209" />
+		<!-- 网关配置解析 -->
+		<property name="gatewayXmlParser" ref="gatewayXml" />
+		<property name="equidistributionSpeeder" ref="mtsEquidistributionSpeeder2209" />
+		<property name="hub" ref="hubImpl" />
+		<property name="reSend" value="true" />
+		<property name="reSendCount" value="3" />
+		<property name="sid" ref="ndSid" />
+		<property name="cacheQueue" ref="mtsQueuecache2209" />
+		<property name="spliterMap" ref="mtsSpliterMap2209" />
+		<property name="dataGather" ref="cbipGatewayDataGather2209" />
+		<property name="saveLogger" ref="saveLogger"/>
+	</bean>
+	<!-- Submit队列 -->
+	<bean id="mtsSubmitQueue209" class="com.lxt2.queuekc.CacheQueue"
+		destroy-method="destroy">
+		<property name="cache">
+			<bean class="ihandy.lxt20.persist.cache.Priority" />
+		</property>
+		<property name="queueName" value="mtsSubmit2209" />
+		<property name="listener" ref="mtsQueuecacheListener2209"/>
+	</bean>
+	<!-- 发送队列 -->
+	<bean id="mtsQueuecache2209" class="com.lxt2.queuekc.CacheQueue"  init-method="init"
+		destroy-method="destroy">
+		<property name="cache">
+			<bean class="ihandy.lxt20.persist.cache.Priority" />
+		</property>
+		<property name="queueName" value="mtsSend2209" />
+	</bean>
+	
+	<bean id="mtsQueuecacheListener2209" class="com.lxt2.gateway.cbip.listener.SendQueueListener">
+		<property name="hub" ref="hubImpl" />
+		<property name="sendQueue" ref="mtsQueuecache2209" />
+		<property name="filters">
+			<list>
+				<ref bean="synchMmsResourceFilter2209"/>
+			</list>
+		</property>
+	</bean>
+	<bean id="synchMmsResourceFilter2209" class="com.lxt2.gateway.cbip.filter.SynchMmsResourceFilter">
+		<property name="resourceIdPersistent" ref="resourceIdPersistent2209" />
+		<property name="mmsgRCRemote" ref="wsResourceCenterOut" />
+		<property name="mmsgRCLocal" ref="wsResourceCenterIn" />
+	</bean>
+	
+	<bean id="resourceIdPersistent2209" class="com.lxt2.gateway.cbip.util.PropertResourceIdPersistent">
+		<property name="propertPath" value="${CLASSPATH}/${nodeID}/persistent/statistics/resourcepersistent2209.properties" />
+	</bean>
+	
+	<!-- 该客户端API可以配置的形式如下: 1、单链接，上下双通道 2、单链接，下行通道 3、单链接，上行通道 4、双链接，上下双通道 单链接的情况下，只需要配置一个clientEngine中只要启动一个mtClientCf或moClientCf 
+		双链接的情况下，clientEngine中要启动两个mtClientCf和moClientCf -->
+	<!-- 启动类 -->
+	<bean id="mtsClientEngine2209" class="com.techcenter.client.engine.ClientEngine">
+		<property name="conFactoryList">
+			<!-- 连接配置列表 -->
+			<list>
+				<ref local="mtClientCf2209" />
+				<ref local="moClientCf2209" />
+			</list>
+		</property>
+		<property name="running" value="true" />
+	</bean>
+
+	<!-- 客户端下行处理类 -->
+	<bean id="mtClientCf2209" parent="abstractCF2209"
+		class="com.techcenter.client.engine.ConnectorFactory" init-method="init">
+		<property name="handler" ref="mtClientHandler2209" />
+	</bean>
+	<!-- 系统处理类 -->
+	<bean id="mtClientHandler2209" parent="abstractParameter2209"
+		class="com.lxt2.gateway.cbip.handler.Cbip20Handler" init-method="init">
+		<!-- session类型 1：下行； 2：上行； 0：双向 【酌情修改】 -->
+		<property name="sessionType" value="1" />
+	</bean>
+	<!-- 客户端上行处理类 -->
+	<bean id="moClientCf2209" parent="abstractCF2209"
+		class="com.techcenter.client.engine.ConnectorFactory" init-method="init">
+		<property name="handler" ref="moClientHandler2209" />
+	</bean>
+	<!-- 系统处理类 -->
+	<bean id="moClientHandler2209" parent="abstractParameter2209"
+		class="com.lxt2.gateway.cbip.handler.Cbip20Handler" init-method="init">
+		<!-- session类型 1：下行； 2：上行； 0：双向 【酌情修改】 -->
+		<property name="sessionType" value="2" />
+	</bean>
+
+	<bean id="abstractCF2209" abstract="true" lazy-init="true">
+		<!-- 网关ID -->
+		<property name="gatewayId" ref="gatewayId2209" />
+		<!-- 网关配置解析 -->
+		<property name="gatewayXmlParser" ref="gatewayXml" />
+	</bean>
+	<bean id="abstractParameter2209" abstract="true" lazy-init="true">
+		<!-- 网关ID -->
+		<property name="gatewayId" ref="gatewayId2209" />
+		<!-- 网关配置解析 -->
+		<property name="gatewayXmlParser" ref="gatewayXml" />
+		<!-- 系统自由参数，不需要修改 -->
+		<property name="decoderList" ref="decoderList2209" />
+		<!-- 系统自由参数，不需要修改 -->
+		<property name="encoderMap" ref="encoderMap2209" />
+		<!-- 系统自由参数，不需要修改 -->
+		<property name="receivedHandlerList" ref="receivedHandlerList2209" />
+		<!-- 系统自由参数，不需要修改 -->
+		<property name="sentHandlerList" ref="sentHandlerList2209" />
+		<!-- 系统自由参数，不需要修改 -->
+		<property name="exceptionHandlerList">
+			<map>
+				<entry key="java.lang.Throwable">
+					<bean class="com.techcenter.client.msghandler.CommonExceptionHandler" />
+				</entry>
+			</map>
+		</property>
+		<!-- <property name="ecType" value="${ecType}" /> -->
+	</bean>
+
+	<bean id="decoderList2209" class="java.util.ArrayList">
+		<constructor-arg index="0">
+			<list>
+				<value>com.lxt2.protocol.codec.cbip20.decode.CbipActiveRespDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip20.decode.CbipLoginRespDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip20.decode.CbipSubmitRespDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip20.decode.CbipDeliverDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip20.decode.CbipReportDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip20.decode.CbipSubmitMmsDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip20.decode.CbipContentMmsRespDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip20.decode.CbipSubmitRespDecoder
+				</value>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="encoderMap2209" class="java.util.HashMap">
+		<constructor-arg index="0">
+			<map>
+				<entry key="com.lxt2.protocol.cbip20.CbipActive"
+					value="com.lxt2.protocol.codec.cbip20.encode.CbipActiveEncoder" />
+				<entry key="com.lxt2.protocol.cbip20.CbipLogin"
+					value="com.lxt2.protocol.codec.cbip20.encode.CbipLoginEncoder" />
+				<entry key="com.lxt2.protocol.cbip20.CbipSubmit"
+					value="com.lxt2.protocol.codec.cbip20.encode.CbipSubmitEncoder" />
+				<entry key="com.lxt2.protocol.cbip20.CbipSubmitResp"
+					value="com.lxt2.protocol.codec.cbip20.encode.CbipSubmitRespEncoder" />
+				<entry key="com.lxt2.protocol.cbip20.CbipSubmitMms"
+					value="com.lxt2.protocol.codec.cbip20.encode.CbipSubmitMmsEncoder" />
+				<entry key="com.lxt2.protocol.cbip20.CbipContentMms"
+					value="com.lxt2.protocol.codec.cbip20.encode.CbipContentMmsEncoder" />
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<bean id="receivedHandlerList2209" class="java.util.HashMap">
+		<constructor-arg index="0">
+			<map>
+				<entry key="com.lxt2.protocol.cbip20.CbipActiveResp">
+					<bean
+						class="com.techcenter.client.msghandler.cbip20.ActiveRespReceiverHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip20.CbipLoginResp">
+					<bean
+						class="com.techcenter.client.msghandler.cbip20.LoginRespReceiverHandler">
+						<property name="sender">
+							<ref bean="mtsCoagentSender2209" />
+						</property>
+						<property name="sid" ref="ndSid" />
+						<property name="submitAdapter">
+							<bean class="com.lxt2.adapter.cbip20.CbipSubmitSmsAndMmsAdapter" />
+						</property>
+					</bean>
+				</entry>
+				<entry key="com.lxt2.protocol.cbip20.CbipSubmitResp">
+					<bean
+						class="com.techcenter.client.msghandler.cbip20.SubmitRespReceiverHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip20.CbipDeliver">
+					<bean
+						class="com.techcenter.client.msghandler.cbip20.DeliverReceiverHandler">
+						<property name="hub" ref="hubImpl" />
+						<property name="sid" ref="ndSid" />
+						<property name="adapter" ref="deliverAdapter2209" />
+					</bean>
+				</entry>
+				<entry key="com.lxt2.protocol.cbip20.CbipReport">
+					<bean class="com.lxt2.gateway.cbip.handler.ReportReceiverHandler">
+						<property name="hub" ref="hubImpl" />
+						<property name="sid" ref="ndSid" />
+						<property name="adapter">
+							<bean class="com.lxt2.adapter.cbip20.CbipReportAdapter" />
+						</property>
+						<property name="dataGather" ref="cbipGatewayDataGather2209" />
+					</bean>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<bean id="sentHandlerList2209" class="java.util.HashMap">
+		<constructor-arg index="0">
+			<map>
+				<entry key="com.lxt2.protocol.cbip20.CbipActive">
+					<bean class="com.techcenter.client.msghandler.CommonHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip20.CbipLogin">
+					<bean class="com.techcenter.client.msghandler.CommonHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip20.CbipSubmit">
+					<bean class="com.techcenter.client.msghandler.CommonHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip20.CbipDeliverResp">
+					<bean class="com.techcenter.client.msghandler.CommonHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip20.CbipSubmitMms">
+					<bean class="com.techcenter.client.msghandler.CommonHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip20.CbipContentMms">
+					<bean class="com.techcenter.client.msghandler.CommonHandler" />
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+</beans>

@@ -1,0 +1,112 @@
+<included>
+	<!-- debug -->
+	<appender name="hubDist" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}hub/hub-dist.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}hub/hub-dist.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>DEBUG</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- info -->
+	<appender name="hubInfo" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}hub/hub-info.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}hub/hub-info.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+	   	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>INFO</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- warn -->
+	<appender name="hubWarn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}hub/hub-warn.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}hub/hub-warn.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>WARN</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- error -->
+	<appender name="hubError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}hub/hub-error.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}hub/hub-error.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>ERROR</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+ 	<!-- Hub上用于监控数据流程的日志 -->
+	<appender name="hubMonitor" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}hub/hub-monitor.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}hub/hub-monitor.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>INFO</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+
+	<logger name="com.lxt2.hub" level="info" additivity="false">
+		<appender-ref ref="hubDist" />
+		<appender-ref ref="hubInfo" />
+		<appender-ref ref="hubWarn" />
+	</logger>
+	<!-- hub监控logger -->
+	<logger name="LOGGER_HUBMONITOR" level="info" additivity="false">
+		<appender-ref ref="hubMonitor" />
+	</logger>
+</included>

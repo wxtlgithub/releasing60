@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	
+	<bean id="mtsGatewayModule2207" class="com.lxt2.gateway.cbip.module.CbipGatewayModule" >
+		<property name="hub" ref="hubImpl"/>
+		<property name="id" value="2207"/>
+		<property name="name" value="下行发送CBIP10"/>
+		<property name="clientEngine" ref="mtsClientEngine2207"/>
+		<property name="submitQueue" ref="mtsSubmitQueue207"/>
+		<!-- 命令集合 -->
+		<property name="controlCmdMap">
+			<map>
+				<entry key="qePerf" value-ref="mtsQueueCmd2207"/>
+                <entry key="view" value-ref="mtsGateWayViewCmd2207"/>
+			</map>
+		</property>
+		<!-- 指标集合 -->
+		<property name="kpiList">
+			<list>
+				<ref bean="mtsQueueKPI2207"/>
+                <ref bean="cbipGatewayModuleKPI2207"/>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 模块的指标配置 -->
+	<bean id="mtsQueueKPI2207" class="com.lxt2.queuekc.QueueKPI">
+		<property name="queue" ref="mtsQueuecache2207"/>
+	</bean>
+    <bean id="cbipGatewayModuleKPI2207" class="com.lxt2.gateway.cbip.module.kpi.CbipGatewayModuleKPI">
+        <property name="cacheQueue" ref="mtsQueuecache2207"/>
+        <property name="dataGather" ref="cbipGatewayDataGather2207"/>
+        <property name="module" ref="mtsGatewayModule2207"/>
+    </bean>
+	<!-- 模块的命令配置 -->
+	<bean id="mtsQueueCmd2207" class="com.lxt2.queuekc.QueuePerfCmd">
+		<property name="kpiQueueList">
+			<list>
+				<ref bean="mtsQueueKPI2207"/>
+			</list>
+		</property>
+	</bean>
+    <bean id="mtsGateWayViewCmd2207" class="com.lxt2.base.module.ModuleKPICmd">
+        <property name="kpi" ref="cbipGatewayModuleKPI2207"/>
+    </bean>
+    <bean id="cbipGatewayDataGather2207" class="com.lxt2.gateway.cbip.module.kpi.CbipGatewayDataGather" init-method="init" destroy-method="destroy">
+    	<property name="path" value="${CLASSPATH}/${nodeID}/persistent/statistics/gateway2207.properties"/>
+    </bean>
+    
+
+</beans>

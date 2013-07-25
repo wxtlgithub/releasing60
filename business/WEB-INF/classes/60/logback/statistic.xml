@@ -1,0 +1,20 @@
+<included>
+	<!-- debug -->
+	<appender name="STATISTIC" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}statistic.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}statistic.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+ 	</appender>
+	<logger name="LOGGER_STATISTIC" level="info" additivity="false">
+ 		<appender-ref ref="STATISTIC" />
+  	</logger>
+</included>

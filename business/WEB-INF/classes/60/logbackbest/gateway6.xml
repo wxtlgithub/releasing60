@@ -1,0 +1,89 @@
+<included>
+	<property name="GATEWAYID" value="6" />
+	<!-- debug -->
+	<appender name="gwDebug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}gateway/gateway_${GATEWAYID}/gw${GATEWAYID}-socket.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}gateway/gateway_${GATEWAYID}/gw${GATEWAYID}-socket.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>DEBUG</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- info -->
+	<appender name="gwInfo" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}gateway/gateway_${GATEWAYID}/gw${GATEWAYID}-info.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}gateway/gateway_${GATEWAYID}/gw${GATEWAYID}-info.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+	   	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>INFO</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- warn -->
+	<appender name="gwWarn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}gateway/gateway_${GATEWAYID}/gw${GATEWAYID}-warn.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}gateway/gateway_${GATEWAYID}/gw${GATEWAYID}-warn.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>WARN</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- error -->
+	<appender name="gwError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}gateway/gateway_${GATEWAYID}/gw${GATEWAYID}-error.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}gateway/gateway_${GATEWAYID}/gw${GATEWAYID}-error.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>Error</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<logger name="gw6" level="debug" additivity="false">
+		<appender-ref ref="gwDebug" />
+		<appender-ref ref="gwInfo" />
+		<appender-ref ref="gwWarn" />
+		<appender-ref ref="gwError" />
+	</logger>
+</included>

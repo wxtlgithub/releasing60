@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!--网关ID -->
+	<bean id="gatewayId2207" class="java.lang.Integer">
+		<constructor-arg index="0" value="7" />
+	</bean>
+	<bean id="standardDeliverAdapter2207" class="com.lxt2.adapter.cbip10.StandardDeliverAdapter">
+		<property name="gatewayID" ref="gatewayId2207" />
+	</bean>
+	<!--速度控制过滤器 -->
+	<bean name="mtsEquidistributionSpeeder2207" class="com.techcenter.speed.IntervalSecondSpeeder"
+		destroy-method="destroy">
+		<constructor-arg index="0" value="1000" />
+	</bean>
+
+	<!-- 拆分抽象bean -->
+	<bean id="mtsAbstractSpliter2207" abstract="true" lazy-init="true">
+		<!-- 网关ID -->
+		<property name="gatewayId" ref="gatewayId2207" />
+		<!-- 网关配置解析 -->
+		<property name="gatewayXmlParser" ref="gatewayXml" />
+	</bean>
+	<bean id="mtsSpliterMap2207" class="java.util.HashMap">
+		<constructor-arg index="0">
+			<map>
+				<entry key="15">
+					<bean class="com.techcenter.spliter.CommSmsSpliter" parent="mtsAbstractSpliter2207"
+						init-method="init">
+						<property name="smSplit">
+							<bean class="com.techcenter.spliter.SMSplit">
+							</bean>
+						</property>
+					</bean>
+				</entry>
+				<entry key="31">
+					<bean class="com.techcenter.spliter.WapPushSpliter" />
+				</entry>
+				<entry key="32">
+					<bean class="com.techcenter.spliter.LongSmsSpliter"
+						parent="mtsAbstractSpliter2207" init-method="init" />
+				</entry>
+				<entry key="41">
+					<bean class="com.techcenter.spliter.CommSmsSpliter" parent="mtsAbstractSpliter2207"
+						init-method="init">
+						<property name="smSplit">
+							<bean class="com.techcenter.spliter.SMSplit">
+							</bean>
+						</property>
+					</bean>
+				</entry>
+				<entry key="42">
+					<bean class="com.techcenter.spliter.SimpleLongSmsNoCheckLengthSpliter"
+						parent="mtsAbstractSpliter2207" />
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+	<!-- 下行处理类,该类由客户实现 -->
+	<bean id="mtsCoagentSender2207" class="com.lxt2.gateway.cbip.api.CoagentSender"
+		init-method="init">
+		<!-- 网关ID -->
+		<property name="gatewayId" ref="gatewayId2207" />
+		<!-- 网关配置解析 -->
+		<property name="gatewayXmlParser" ref="gatewayXml" />
+		<property name="equidistributionSpeeder" ref="mtsEquidistributionSpeeder2207" />
+		<property name="hub" ref="hubImpl" />
+		<property name="reSend" value="true" />
+		<property name="reSendCount" value="3" />
+		<property name="sid" ref="ndSid" />
+		<property name="cacheQueue" ref="mtsQueuecache2207" />
+		<property name="spliterMap" ref="mtsSpliterMap2207" />
+		<property name="dataGather" ref="cbipGatewayDataGather2207" />
+		<property name="saveLogger" ref="saveLogger"/>
+	</bean>
+	<!-- Submit队列 -->
+	<bean id="mtsSubmitQueue207" class="com.lxt2.queuekc.CacheQueue"
+		destroy-method="destroy">
+		<property name="cache">
+			<bean class="ihandy.lxt20.persist.cache.Priority" />
+		</property>
+		<property name="queueName" value="mtsSubmit2207" />
+		<property name="listener" ref="mtsQueuecacheListener2207"/>
+	</bean>
+	<!-- 发送队列 -->
+	<bean id="mtsQueuecache2207" class="com.lxt2.queuekc.CacheQueue"  init-method="init"
+		destroy-method="destroy">
+		<property name="cache">
+			<bean class="ihandy.lxt20.persist.cache.Priority" />
+		</property>
+		<property name="queueName" value="mtsSend2207" />
+	</bean>
+	
+	<bean id="mtsQueuecacheListener2207" class="com.lxt2.gateway.cbip.listener.SendQueueListener">
+		<property name="hub" ref="hubImpl" />
+		<property name="sendQueue" ref="mtsQueuecache2207" />
+		<property name="filters">
+			<list>
+				<ref bean="synchMmsResourceFilter2207"/>
+			</list>
+		</property>
+	</bean>
+	<bean id="synchMmsResourceFilter2207" class="com.lxt2.gateway.cbip.filter.SynchMmsResourceFilter">
+		<property name="resourceIdPersistent" ref="resourceIdPersistent2207" />
+		<property name="mmsgRCRemote" ref="wsResourceCenterOut" />
+		<property name="mmsgRCLocal" ref="wsResourceCenterIn" />
+	</bean>
+	
+	<bean id="resourceIdPersistent2207" class="com.lxt2.gateway.cbip.util.PropertResourceIdPersistent">
+		<property name="propertPath" value="${CLASSPATH}/${nodeID}/persistent/statistics/resourcepersistent2207.properties" />
+	</bean>
+	
+	<!-- 该客户端API可以配置的形式如下: 1、单链接，上下双通道 2、单链接，下行通道 3、单链接，上行通道 4、双链接，上下双通道 单链接的情况下，只需要配置一个clientEngine中只要启动一个mtClientCf或moClientCf 
+		双链接的情况下，clientEngine中要启动两个mtClientCf和moClientCf -->
+	<!-- 启动类 -->
+	<bean id="mtsClientEngine2207" class="com.techcenter.client.engine.ClientEngine">
+		<property name="conFactoryList">
+			<!-- 连接配置列表 -->
+			<list>
+				<ref local="mtClientCf2207" />
+				<ref local="moClientCf2207" />
+			</list>
+		</property>
+		<property name="running" value="true" />
+	</bean>
+
+	<!-- 客户端下行处理类 -->
+	<bean id="mtClientCf2207" parent="abstractCF2207"
+		class="com.techcenter.client.engine.ConnectorFactory" init-method="init">
+		<property name="handler" ref="mtClientHandler2207" />
+	</bean>
+	<!-- 系统处理类 -->
+	<bean id="mtClientHandler2207" parent="abstractParameter2207"
+		class="com.techcenter.client.handler.ClientIoHandler" init-method="init">
+		<!-- session类型 1：下行； 2：上行； 0：双向 【酌情修改】 -->
+		<property name="sessionType" value="1" />
+	</bean>
+	<!-- 客户端上行处理类 -->
+	<bean id="moClientCf2207" parent="abstractCF2207"
+		class="com.techcenter.client.engine.ConnectorFactory" init-method="init">
+		<property name="handler" ref="moClientHandler2207" />
+	</bean>
+	<!-- 系统处理类 -->
+	<bean id="moClientHandler2207" parent="abstractParameter2207"
+		class="com.techcenter.client.handler.ClientIoHandler" init-method="init">
+		<!-- session类型 1：下行； 2：上行； 0：双向 【酌情修改】 -->
+		<property name="sessionType" value="2" />
+	</bean>
+
+	<bean id="abstractCF2207" abstract="true" lazy-init="true">
+		<!-- 网关ID -->
+		<property name="gatewayId" ref="gatewayId2207" />
+		<!-- 网关配置解析 -->
+		<property name="gatewayXmlParser" ref="gatewayXml" />
+	</bean>
+	<bean id="abstractParameter2207" abstract="true" lazy-init="true">
+		<!-- 网关ID -->
+		<property name="gatewayId" ref="gatewayId2207" />
+		<!-- 网关配置解析 -->
+		<property name="gatewayXmlParser" ref="gatewayXml" />
+		<!-- 系统自由参数，不需要修改 -->
+		<property name="decoderList" ref="decoderList2207" />
+		<!-- 系统自由参数，不需要修改 -->
+		<property name="encoderMap" ref="encoderMap2207" />
+		<!-- 系统自由参数，不需要修改 -->
+		<property name="receivedHandlerList" ref="receivedHandlerList2207" />
+		<!-- 系统自由参数，不需要修改 -->
+		<property name="sentHandlerList" ref="sentHandlerList2207" />
+		<!-- 系统自由参数，不需要修改 -->
+		<property name="exceptionHandlerList">
+			<map>
+				<entry key="java.lang.Throwable">
+					<bean class="com.techcenter.client.msghandler.CommonExceptionHandler" />
+				</entry>
+			</map>
+		</property>
+		<!-- <property name="ecType" value="${ecType}" /> -->
+	</bean>
+
+	<bean id="decoderList2207" class="java.util.ArrayList">
+		<constructor-arg index="0">
+			<list>
+				<value>com.lxt2.protocol.codec.cbip10.decode.StandardActiveRespDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip10.decode.StandardLoginRespDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip10.decode.StandardSubmitResponseDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip10.decode.StandardInnerResponseDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip10.decode.StandardSubmitRespDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip10.decode.StandardDeliverDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip10.decode.StandardReportDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip10.decode.StandardSubmitMMSDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip10.decode.StandardContentMMSRespDecoder
+				</value>
+				<value>com.lxt2.protocol.codec.cbip10.decode.StandardInnerReportDecoder
+				</value>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="encoderMap2207" class="java.util.HashMap">
+		<constructor-arg index="0">
+			<map>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Active"
+					value="com.lxt2.protocol.codec.cbip10.encode.StandardActiveEncoder" />
+				<entry key="com.lxt2.protocol.cbip10.Standard_Login"
+					value="com.lxt2.protocol.codec.cbip10.encode.StandardLoginEncoder" />
+				<entry key="com.lxt2.protocol.cbip10.Standard_Submit"
+					value="com.lxt2.protocol.codec.cbip10.encode.StandardSubmitEncoder" />
+				<entry key="com.lxt2.protocol.cbip10.Standard_Submit_Response"
+					value="com.lxt2.protocol.codec.cbip10.encode.StandardSubmitResponseEncoder" />
+				<entry key="com.lxt2.protocol.cbip10.Standard_Submit_Resp"
+					value="com.lxt2.protocol.codec.cbip10.encode.StandardSubmitRespEncoder" />
+				<entry key="com.lxt2.protocol.cbip10.Standard_Submit_Response"
+					value="com.lxt2.protocol.codec.cbip10.encode.StandardDeliverRespEncoder" />
+				<entry key="com.lxt2.protocol.cbip10.Standard_Submit_MMS"
+					value="com.lxt2.protocol.codec.cbip10.encode.StandardSubmitMMSEncoder" />
+				<entry key="com.lxt2.protocol.cbip10.Standard_Content_MMS"
+					value="com.lxt2.protocol.codec.cbip10.encode.StandardContentMMSEncoder" />
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<bean id="receivedHandlerList2207" class="java.util.HashMap">
+		<constructor-arg index="0">
+			<map>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Active_Resp">
+					<bean
+						class="com.techcenter.client.msghandler.cbip10.ActiveRespReceiverHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Login_Resp">
+					<bean
+						class="com.techcenter.client.msghandler.cbip10.LoginRespReceiverHandler">
+						<property name="sender">
+							<ref bean="mtsCoagentSender2207" />
+						</property>
+						<property name="sid" ref="ndSid" />
+						<property name="submitAdapter">
+							<bean class="com.lxt2.adapter.cbip10.StandardSubmitAdapter" />
+						</property>
+					</bean>
+				</entry>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Submit_Response">
+					<bean
+						class="com.techcenter.client.msghandler.cbip10.SubmitRespReceiverHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Submit_Resp">
+					<bean
+						class="com.techcenter.client.msghandler.cbip10.SubmitRespReceiverHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Inner_Response">
+					<bean
+						class="com.techcenter.client.msghandler.cbip10.SubmitRespReceiverHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Deliver">
+					<bean
+						class="com.techcenter.client.msghandler.cbip10.DeliverReceiverHandler">
+						<property name="hub" ref="hubImpl" />
+						<property name="sid" ref="ndSid" />
+						<property name="adapter" ref="standardDeliverAdapter2207" />
+					</bean>
+				</entry>
+					<!-- 旧状态报告 -->
+				<entry key="com.lxt2.protocol.cbip10.Standard_Report_Old" value-ref="reportReceiverHandler"/>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Report"  value-ref="reportReceiverHandler"/>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Inner_Report"  value-ref="reportReceiverHandler"/>
+			</map>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="reportReceiverHandler" class="com.lxt2.gateway.cbip.handler.ReportReceiverHandler">
+		<property name="hub" ref="hubImpl" />
+		<property name="sid" ref="ndSid" />
+		<property name="adapter">
+			<bean class="com.lxt2.adapter.cbip10.StandardReportAdapter" >
+				<property name="gatewayid" ref="gatewayId2207"/>
+			</bean>
+		</property>
+		<property name="oldadapter">
+			<bean class="com.lxt2.adapter.csa.StandardReportOldAdapter">
+				<property name="gatewayid" ref="gatewayId2207"/>
+			</bean>
+		</property>
+		<property name="inneradapter">
+			<bean class="com.lxt2.adapter.csa.StandardInnerReportAdapter">
+				<property name="gatewayid" ref="gatewayId2207"/>
+			</bean>
+		</property>
+		<property name="dataGather" ref="cbipGatewayDataGather2207" />
+	</bean>
+
+	<bean id="sentHandlerList2207" class="java.util.HashMap">
+		<constructor-arg index="0">
+			<map>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Active">
+					<bean class="com.techcenter.client.msghandler.CommonHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Login">
+					<bean class="com.techcenter.client.msghandler.CommonHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Submit">
+					<bean class="com.techcenter.client.msghandler.CommonHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Deliver_Resp">
+					<bean class="com.techcenter.client.msghandler.CommonHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Submit_MMS">
+					<bean class="com.techcenter.client.msghandler.CommonHandler" />
+				</entry>
+				<entry key="com.lxt2.protocol.cbip10.Standard_Content_MMS">
+					<bean class="com.techcenter.client.msghandler.CommonHandler" />
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+</beans>

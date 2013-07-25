@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="gatewayId2206" class="java.lang.Integer">
+		<constructor-arg index="0" value="6"/>
+	</bean>
+	<bean id="mtdao2206" class="com.ihandy.dao.MTDAO"/>
+	<bean name="mtsGatewayConfig2206" class="com.ihandy.GatewayConfig">
+		<property name="gatewayID" ref="gatewayId2206" />
+		<property name="submitQueue" ref="mtsSubmitQueueAdapter2206"/>
+		<property name="deliverQueue" ref="mtsDeliverQueueAdapter2206"/>
+		<property name="reportQueue" ref="mtsReportQueueAdapter2206"/>
+		<property name="dataGather" ref="mtsDataGather2206"/>
+		<property name="manager" ref="connectionManager2206"/>
+		<property name="global" ref="global2206"/>
+	</bean>
+	
+	<bean id="global2206" class="com.ihandy.Global" />
+	<bean name="mtsMTHandler2206" class="com.ihandy.handler.MTHandler" lazy-init="true" depends-on="connectionManager2206">
+		<property name="gatewayConfig" ref="mtsGatewayConfig2206" />
+		<property name="mtDao" ref="mtdao2206" />
+		<property name="masInsertMt">
+			<value><![CDATA[insert into tbl_smsendtask(CreatorID,TaskName,SmSendedNum,OperationType,
+		SuboperationType,SendType,OrgAddr,DestAddr,SM_Content,NeedStateReport,ServiceID,
+		FeeType,FeeCode,MsgID,SMType,MessageID,DestAddrType,TaskStatus,SendLevel,SendState,
+		TryTimes,Count,SuccessID,sendtime,subtime) values('5111', ?,0,'WAS','66',
+		1,?,?,?,?,?,?,?,'',0,0,0,0,3-floor(?/4),0,0,1,0,?, getdate())]]></value>
+		</property>
+	</bean>
+	
+	<bean name="mtsMOHandler2206" class="com.ihandy.handler.MOHandler" lazy-init="true" depends-on="connectionManager2206">
+		<property name="gatewayConfig"  ref="mtsGatewayConfig2206" />
+		<!-- 配置文件路径 -->
+		<property name="configPath"  value="${CLASSPATH}/${nodeID}/persistent/record2206.properties"/>
+	</bean>
+	
+	<bean name="mtsRptHandler2206" class="com.ihandy.handler.RptHandler" lazy-init="true" depends-on="connectionManager2206">
+		<property name="gatewayConfig"  ref="mtsGatewayConfig2206" />
+		<property name="masSelectRpt">
+			<value><![CDATA[select  * from Tbl_Smresult_#date# where charindex(?,reserve2) > 0 ]]></value>
+		</property>
+	</bean>
+		
+	<bean name="mtsRespHandler2206" class="com.ihandy.handler.RespHandler" lazy-init="true" depends-on="connectionManager2206">
+		<property name="gatewayConfig" ref="mtsGatewayConfig2206"/>
+		<property name="configPath"  value="${CLASSPATH}/${nodeID}/persistent/record2206.properties"/>
+	</bean>
+
+	<bean id="mtsMasGateway2206" class="com.ihandy.Gateway" destroy-method="stopSystem"  lazy-init="true">
+		<property name="socketCount" value="1" />
+		<!-- 配置文件路径 -->
+		<property name="configPath"  value="${CLASSPATH}/${nodeID}/persistent/MiddleWare.cfg.xml"/>
+		<property name="supportName" >
+			<list>
+				<value>mtsMTHandler2206</value>
+ 				<value>mtsMOHandler2206</value> 
+ 				<value>mtsRptHandler2206</value> 
+ 				<value>mtsRespHandler2206</value> 
+			</list>
+		</property>
+		<property name="gatewayId"   ref="gatewayId2206"/>
+		<property name="gatewayXmlParser"   ref="gatewayXml"/>
+		<property name="config" ref="mtsGatewayConfig2206"/>
+	</bean>
+	
+</beans>

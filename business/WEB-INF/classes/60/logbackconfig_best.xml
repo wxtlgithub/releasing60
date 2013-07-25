@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+	<!-- 基于大小分文件的文件最大值 -->
+	<property name="SIZEBASE_MAX_SIZE" value="100MB" />
+	<!-- 基于大小分文件的最多文件数 -->
+	<property name="SIZEBASE_MAX_INDEX" value="5" />
+
+	<!-- 引入文件 -->
+	<property name="USER_HOME" value="${WORKDIR}../../../logs/" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/proxyservice.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/mtprocess.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/gateway1.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/gateway2.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/gateway3.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/gateway4.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/gateway5.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/gateway6.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/gateway7.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/gateway8.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/rptprocess.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/moprocess.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/hub.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/rescenter.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/datalog.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/clumpedprocess.xml" />
+	<include file="${WORKDIR}WEB-INF/classes/60/logbackbest/platform.xml" />
+
+	<!-- 性能日志 -->
+	<appender name="performance"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}performance.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${USER_HOME}performance.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>5</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+		</layout>
+	</appender>
+	<logger name="com.lxt2.clumped.task.PerformanceLoggerTask"
+		level="debug" additivity="false">
+		<appender-ref ref="performance" />
+	</logger>
+
+	<!-- sqllog -->
+	<appender name="sqllog"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}sql.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${USER_HOME}sql.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>5</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+		</layout>
+	</appender>
+	<logger name="com.techcenter.dbcore.dbbase.jdbc" additivity="false">
+		<appender-ref ref="sqllog" />
+	</logger>
+
+	<!-- 系统框架日志 -->
+	<appender name="framework"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${USER_HOME}framework.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${USER_HOME}framework.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>5</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+		</layout>
+	</appender>
+	<logger name="com.lxt2.framework" level="info">
+		<appender-ref ref="framework" />
+	</logger>
+	<logger name="com.lxt2.common" level="info">
+		<appender-ref ref="framework" />
+	</logger>
+	<!-- 性能日志配置 -->
+	<logger name="com.lxt2.clumped.task.PerformanceLoggerTask"
+		level="debug" additivity="false">
+		<appender-ref ref="performance" />
+	</logger>
+
+</configuration>

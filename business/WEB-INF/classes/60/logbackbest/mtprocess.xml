@@ -1,0 +1,88 @@
+<included>
+	<!-- debug -->
+	<appender name="mtpDebug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}mtp/mtp-debug.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}mtp/mtp-debug.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>DEBUG</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- info -->
+	<appender name="mtpInfo" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}mtp/mtp-info.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}mtp/mtp-info.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+	   	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>INFO</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- warn -->
+	<appender name="mtpWarn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}mtp/mtp-warn.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}mtp/mtp-warn.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>WARN</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<!-- error -->
+	<appender name="mtpError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<File>${USER_HOME}mtp/mtp-error.log</File>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      		<FileNamePattern>${USER_HOME}mtp/mtp-error.%i.log.zip</FileNamePattern>
+      		<MinIndex>1</MinIndex>
+      		<MaxIndex>5</MaxIndex>
+    	</rollingPolicy>
+    	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+     		<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+    	</triggeringPolicy>
+    	<layout class="ch.qos.logback.classic.PatternLayout">
+      		<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+    	</layout>
+    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+	      	<level>ERROR</level>
+	      	<onMatch>ACCEPT</onMatch>
+	      	<onMismatch>DENY</onMismatch>
+	    </filter>
+ 	</appender>
+	<logger name="com.lxt2.mtprocess" level="info" additivity="false">
+		<appender-ref ref="mtpDebug" />
+		<appender-ref ref="mtpInfo" />
+		<appender-ref ref="mtpWarn" />
+		<appender-ref ref="mtpError" />
+	</logger>
+</included>

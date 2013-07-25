@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	<!-- 使用服务框架启动模块需要注意的配置： cmpp30Gateway不能配置init-method -->
+	<bean id="gatewayId2211" class="java.lang.Integer">
+		<constructor-arg index="0" value="11" />
+	</bean>
+	<bean id="mtsCmpp30Parameter2211" class="com.lxt2.gateway.sms.protocol.cmpp30.Cmpp30_Parameter"
+		scope="prototype" init-method="init">
+		<property name="gatewayId" ref="gatewayId2211" />
+		<property name="gatewayXmlParser" ref="gatewayXml" />
+		<!-- sockt服务使用状态Connector连接，Acceptor 监听 -->
+		<property name="typeSocket">
+			<bean
+				id="com.lxt2.gateway.sms.protocol.cmpp30.Cmpp30_Parameter.SocketType_Connector"
+				class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean" />
+		</property>
+		<!-- 协议连接状态，MT下行，MO上行 -->
+		<property name="typeLink" value="MT" />
+		<!--网关协议自身版本编号 -->
+		<property name="protocolVersion" value="48" />
+		<!--心跳信息启用标志，true启用，false不启用 -->
+		<property name="connectActiveTest" value="true" />
+		<!-- 1：对“计费用户号码”免费 2：对“计费用户号码”按条计信息费 3：对“计费用户号码”按包月收取信息费 4：对“计费用户号码”的信息费封顶 5：对“计费用户号码”的收费是由SP实现 
+			-99：不使用该配置 -->
+		<property name="feeType" value="-99" />
+		<!-- 0：默认； -99不使用该配置 ； 其他配置由用户提供； -->
+		<property name="feeUserType" value="-99" />
+	</bean>
+	<bean id="mtsCmpp30GatewayConfig2211" class="com.lxt2.gateway.sms.GatewayConfig">
+		<!-- 网关配置解析 -->
+		<property name="gatewayXmlParser" ref="gatewayXml" />
+		<property name="protocol">
+			<bean id="com.lxt2.gateway.sms.GatewayConfig.CMPP30"
+				class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean" />
+		</property>
+		<!-- 网关速度控制 -->
+		<property name="speeder">
+			<bean id="mtsCmpp30EquidistributionSpeeder2211" class="com.techcenter.speed.IntervalSecondSpeeder"
+				destroy-method="destroy">
+				<!--发送速度控制时间间隔 -->
+				<constructor-arg index="0" value="100" />
+			</bean>
+		</property>
+		<!-- 网关ID -->
+		<property name="gatewayID" ref="gatewayId2211" />
+		<!-- 下行队列 -->
+		<property name="submitQueue" ref="mtsPersistentSubmitQueueAdapter2211" />
+		<!-- 下行响应队列 -->
+		<property name="respQueue" ref="mtsPersistentRespQueueAdapter2211" />
+		<!-- 上行队列 -->
+		<property name="deliverQueue" ref="mtsPersistentDeliverQueueAdapter2211" />
+		<!-- 状态报告处理队列 -->
+		<property name="reportQueue" ref="mtsPersistentReportQueueAdapter2211" />
+		<!-- 重发错误码 -->
+		<property name="errorReSendMap">
+			<map>
+				<entry key="-8" value="-8" />
+			</map>
+		</property>
+		<!-- 限制重发测试标志，true：限制，false：不限制 -->
+		<property name="errorReSendCountLimitFlag" value="true" />
+		<!-- 数据采集 -->
+		<property name="dataGather" ref="mtsDataGather2211" />
+		<!-- 总线 -->
+		<property name="hub" ref="hubImpl" />
+	</bean>
+
+	<!-- 设置短信发送Support -->
+	<bean id="mtsCmpp30Support2211" class="com.lxt2.gateway.sms.SessionFlag"
+		scope="prototype">
+		<property name="handler" value="mtsCmpp30Handler2211" />
+		<property name="param" value="mtsCmpp30Parameter2211" />
+		<property name="gwconfig" ref="mtsCmpp30GatewayConfig2211" />
+	</bean>
+
+	<bean name="mtsCmpp30Handler2211" class="com.lxt2.gateway.sms.protocol.cmpp30.Cmpp30_Handler"
+		scope="prototype">
+		<property name="gwconfig" ref="mtsCmpp30GatewayConfig2211" />
+	</bean>
+
+	<bean id="mtsCmpp30Gateway2211" name="gatewayGlobal" class="com.lxt2.gateway.sms.Gateway"
+		destroy-method="stopSystem" lazy-init="true">
+		<property name="socketCount" value="1" />
+		<property name="supportName" value="mtsCmpp30Support2211" />
+		<property name="config" ref="mtsCmpp30GatewayConfig2211" />
+	</bean>
+
+	<bean id="mtsCmpp30reportAdapter2211" class="com.lxt2.adapter.cmpp30.Cmpp30ReportAdapter" />
+
+	<bean id="mtsCmpp30DeliverAdapter2211" class="com.lxt2.adapter.cmpp30.Cmpp30DeliverAdapter"
+		init-method="init">
+		<property name="gatewayid" ref="gatewayId2211" />
+		<property name="gatewayXmlParser" ref="gatewayXml" />
+	</bean>
+
+</beans>

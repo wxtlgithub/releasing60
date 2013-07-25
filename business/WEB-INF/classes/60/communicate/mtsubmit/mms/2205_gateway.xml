@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- MMContent create实现 -->
+	<bean id="mmContentCreator2205" class="com.lxt2.mmsgateway.mmscreator.MMContentCreator">
+		<property name="commonResourceCenter" ref="commonResourceCenter"/>
+		<property name="templateReplace" >
+			<bean class="com.standardsm.individual.template.DefaultTemplateReplace"/>
+		</property>
+		<property name="individualType" value="2"/>
+	</bean>
+	<!-- 新彩信发送缺省实现 -->
+	<bean id="mmsSender2205" class="com.lxt2.mmsgateway.mmsc.NDefaultMmsSender" init-method="init">
+		<property name="mm7Mmsc" ref="mmsgConstants2205"/>
+		<!-- response中需要重复的代码，半角逗号分割 -->
+		<property name="responseResendCode">
+			<value>2001,-100,-101,-102,-104,-105</value>
+		</property>
+		<property name="maxSendTimes" value="3"/>
+		<property name="chargedParty" value="1"/>
+<!--		<property name="chargedPartyID" value="1"/>-->
+		<!--是否带子号码	false 不带子号码-->
+<!--		<property name="connSubCode" value="true"/>-->
+	</bean>
+</beans>

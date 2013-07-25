@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="mtsGatewayModule2208" class="com.lxt2.gateway.sms.module.SmsGatewayModule">
+		<property name="id" value="2208"/>
+		<property name="name" value="上海企信通全网通道"/>
+		<property name="hub" ref="hubImpl"/>
+		<property name="submitQueue" ref="mtsSubmitQueue2208"/>
+		<property name="adapter" ref="mtsPersistentSubmitQueueAdapter2208"/>
+		<property name="gateway" ref="mtsEmppGateway2208"/>
+		<!-- 命令集合 -->
+		<property name="controlCmdMap">
+			<map>
+				<entry key="qePerf" value-ref="mtsQueueCmd2208"/>
+                <entry key="view" value-ref="mtsGateWayViewCmd2208"/>
+			</map>
+		</property>
+		<!-- 指标集合 -->
+		<property name="kpiList">
+			<list>
+				<ref bean="mtsQueueKPI2208"/>
+				<ref bean="mtsGateWayModuleKPI2208"/>
+			</list>
+		</property>
+	</bean>
+	<!-- 模块的指标配置 -->
+	<bean id="mtsQueueKPI2208" class="com.lxt2.queuekc.QueueKPI">
+		<property name="queue" ref="mtsSubmitQueue2208"/>
+	</bean>
+	<!-- 模块的命令配置 -->
+	<bean id="mtsQueueCmd2208" class="com.lxt2.queuekc.QueuePerfCmd">
+		<property name="kpiQueueList">
+			<list>
+				<ref bean="mtsQueueKPI2208"/>
+			</list>
+		</property>
+	</bean>
+	<bean id="mtsSubmitQueue2208" class="com.lxt2.queuekc.CacheQueue" destroy-method="destroy">
+		<property name="cache">
+			<bean class="ihandy.lxt20.persist.cache.Priority"/>
+		</property>
+		<property name="queueName" value="mtsSubmit2208"/>
+	</bean>
+	<bean id="mtsPersistentSubmitQueueAdapter2208" class="com.lxt2.gateway.sms.queue.PersistentSubmitQueueAdapter">
+		<property name="cacheQueue" ref="mtsSubmitQueue2208"/>
+		<property name="hub" ref="hubImpl"/>
+		<property name="spliterRef" value="mtsSpliterMap2208"/>
+		<property name="config" ref="mtsEmppGatewayConfig2208"/>
+	</bean>
+	<bean id="mtsPersistentRespQueueAdapter2208" class="com.lxt2.gateway.sms.queue.PersistentRespQueueAdapter">
+		<property name="hub" ref="hubImpl"/>
+		<property name="sid" ref="ndSid"/>
+		<property name="config" ref="mtsEmppGatewayConfig2208"/>
+		<property name="saveLogger" ref="saveLogger"/>
+	</bean>
+	<bean id="mtsPersistentReportQueueAdapter2208" class="com.lxt2.gateway.sms.queue.PersistentReportQueueAdapter">
+		<property name="hub" ref="hubImpl"/>
+		<property name="reportAdapter" ref="mtsEmppreportAdapter2208"/>
+<!-- 		<property name="proc" value="1004"/> -->
+		<property name="sid" ref="ndSid"/>
+		<property name="config" ref="mtsEmppGatewayConfig2208"/>
+	</bean>
+	<bean id="mtsPersistentDeliverQueueAdapter2208" class="com.lxt2.gateway.sms.queue.PerisitentDeliverQueueAdapter">
+		<property name="hub" ref="hubImpl" />
+		<property name="deliverAdapter" ref="mtsEmppDeliverAdapter2208"/>
+		<property name="sid" ref="ndSid"/>
+	</bean>
+    <bean id="mtsGateWayModuleKPI2208" class="com.lxt2.gateway.sms.module.SmsGatewayModuleKPI">
+        <property name="cacheQueue" ref="mtsSubmitQueue2208"/>
+        <property name="dataGather" ref="mtsDataGather2208"/>
+        <property name="module" ref="mtsGatewayModule2208"/>
+    </bean>
+    <bean id="mtsDataGather2208" class="com.lxt2.gateway.sms.GatewayDataGather" init-method="init" destroy-method="destroy">
+    	<property name="path" value="${CLASSPATH}/${nodeID}/persistent/statistics/gateway2208.properties"/>
+    </bean>
+    <!-- 获取模块的监视信息 -->
+	<bean id="mtsGateWayViewCmd2208" class="com.lxt2.base.module.ModuleKPICmd">
+		<property name="kpi" ref="mtsGateWayModuleKPI2208"/>
+	</bean>
+	<!-- 拆分抽象bean -->
+	<bean id="mtsAbstractSpliter2208" abstract="true" lazy-init="true">
+		<property name="gatewayId" ref="gatewayId2208"></property>
+		<property name="gatewayXmlParser" ref="gatewayXml"></property>
+	</bean>
+	<bean id="mtsSpliterMap2208" class="java.util.HashMap" scope="prototype">
+		<constructor-arg index="0">
+			<map>
+				<entry key="15">
+					<!-- 普通短信拆分类 -->
+					<bean class="com.techcenter.spliter.CommSmsSpliter" init-method="init" scope="prototype" parent="mtsAbstractSpliter2208" >
+						<property name="smSplit">
+							<bean class="com.techcenter.spliter.SMSplit" />
+						</property>
+					</bean>
+				</entry>
+				<entry key="31">
+					<!-- wappush拆分类 -->
+					<bean class="com.techcenter.spliter.WapPushSpliter" />
+				</entry>
+				<entry key="32">
+					<!-- 长短信拆分类 -->
+					<bean class="com.techcenter.spliter.LongSmsSpliter" init-method="init" scope="prototype" parent="mtsAbstractSpliter2208" />
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+</beans>

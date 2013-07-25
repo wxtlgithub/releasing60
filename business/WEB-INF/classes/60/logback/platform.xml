@@ -1,0 +1,129 @@
+<included>
+	<!-- 业务管理日志 -->
+	<appender name="business" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<Key>level</Key>
+			<DefaultValue>info</DefaultValue>
+		</discriminator>
+		<sift>
+			<appender name="business-${level}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<File>${USER_HOME}business/business-${level}.log</File>
+				<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+					<FileNamePattern>${USER_HOME}business/business-${level}.%i.log.zip</FileNamePattern>
+					<MinIndex>1</MinIndex>
+					<MaxIndex>5</MaxIndex>
+				</rollingPolicy>
+				<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+					<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+				</triggeringPolicy>
+				<layout class="ch.qos.logback.classic.PatternLayout">
+					<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+				</layout>
+		    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			      	<level>INFO</level>
+			      	<onMismatch>ERROR</onMismatch>
+			    </filter>
+			</appender>
+		</sift>
+	</appender>
+	
+	<!-- 系统管理日志 -->
+	<appender name="system" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<Key>level</Key>
+			<DefaultValue>info</DefaultValue>
+		</discriminator>
+		<sift>
+			<appender name="system-${level}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<File>${USER_HOME}system/system-${level}.log</File>
+				<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+					<FileNamePattern>${USER_HOME}system/system-${level}.%i.log.zip</FileNamePattern>
+					<MinIndex>1</MinIndex>
+					<MaxIndex>5</MaxIndex>
+				</rollingPolicy>
+				<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+					<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+				</triggeringPolicy>
+				<layout class="ch.qos.logback.classic.PatternLayout">
+					<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+				</layout>
+		    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			      	<level>INFO</level>
+			      	<onMismatch>ERROR</onMismatch>
+			    </filter>
+			</appender>
+		</sift>
+	</appender>
+	
+	<!-- 服务管理日志info -->
+	<appender name="taskInfo" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<Key>taskName</Key>
+			<DefaultValue>task</DefaultValue>
+		</discriminator>
+		<sift>
+			<appender name="${taskName}-info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<File>${USER_HOME}task/${taskName}-info.log</File>
+				<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+					<FileNamePattern>${USER_HOME}task/${taskName}-info.%i.log.zip</FileNamePattern>
+					<MinIndex>1</MinIndex>
+					<MaxIndex>5</MaxIndex>
+				</rollingPolicy>
+				<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+					<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+				</triggeringPolicy>
+				<layout class="ch.qos.logback.classic.PatternLayout">
+					<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+				</layout>
+		    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			      	<level>INFO</level>
+			      	<onMismatch>ERROR</onMismatch>
+			    </filter>
+			</appender>
+		</sift>
+	</appender>
+	
+	<!-- 服务管理日志error -->
+	<appender name="taskError" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<Key>taskName</Key>
+			<DefaultValue>task</DefaultValue>
+		</discriminator>
+		<sift>
+			<appender name="${taskName}-error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<File>${USER_HOME}task/${taskName}-error.log</File>
+				<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+					<FileNamePattern>${USER_HOME}task/${taskName}-error.%i.log.zip</FileNamePattern>
+					<MinIndex>1</MinIndex>
+					<MaxIndex>5</MaxIndex>
+				</rollingPolicy>
+				<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+					<MaxFileSize>${SIZEBASE_MAX_SIZE}</MaxFileSize>
+				</triggeringPolicy>
+				<layout class="ch.qos.logback.classic.PatternLayout">
+					<Pattern>%date{MM-dd HH:mm:ss.SSS} %-5p[%F:%L][%t] - %msg%n</Pattern>
+				</layout>
+		    	<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			      	<level>INFO</level>
+			      	<onMismatch>ERROR</onMismatch>
+			    </filter>
+		    </appender>
+	    </sift>
+	</appender>
+	
+	<logger name="businessLogger" level="info">
+		<appender-ref ref="business" />
+	</logger>
+	
+	<logger name="systemLogger" level="info">
+		<appender-ref ref="system" />
+	</logger>
+	
+	<logger name="taskInfoLogger" level="info">
+		<appender-ref ref="taskInfo" />
+	</logger>
+	
+	<logger name="taskErrorLogger" level="info">
+		<appender-ref ref="taskError" />
+	</logger>
+</included>
